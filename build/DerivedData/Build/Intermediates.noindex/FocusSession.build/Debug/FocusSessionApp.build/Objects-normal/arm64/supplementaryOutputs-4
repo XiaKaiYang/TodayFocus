@@ -1,0 +1,23 @@
+{
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/BlockingRuleRepository.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.dia",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.swiftdeps"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/CurrentSessionView.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.dia",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.swiftdeps"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/BlockerViewModel.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.dia",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.swiftdeps"
+  }
+}

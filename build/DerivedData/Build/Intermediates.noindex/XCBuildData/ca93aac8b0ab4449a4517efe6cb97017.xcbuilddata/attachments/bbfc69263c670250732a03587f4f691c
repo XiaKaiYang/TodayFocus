@@ -1,0 +1,279 @@
+{
+  "" : {
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary.dia",
+    "emit-module-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary-emit-module.dia",
+    "pch" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary.swiftdeps"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/AppLaunchConfiguration.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Blocking/AppBlockProvider.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Blocking/BlockerCoordinator.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/FocusSessionModelContainer.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/BlockingRuleRepository.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/DistractionEventRepository.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/FocusSessionRepository.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/TasksRepository.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksRepository~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredBlockingRule.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredDistractionEvent.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredFocusSessionRecord.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredTask.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredTask.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredTask.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredTask.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredTask.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredTask.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredTask.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredTask.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/StoredTask~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/DevTools/DemoSnapshotRenderer.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/FocusSessionApp.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/SharedSnapshot/RuntimeSnapshotStore.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Tasks/FocusTask.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusTask.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusTask.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusTask.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusTask.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusTask.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusTask.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusTask.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/FocusTask~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Analytics/AnalyticsCharts.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Analytics/AnalyticsDashboardView.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/AppSection.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppSection.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppSection.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppSection.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppSection.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppSection.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppSection.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppSection.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppSection~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/AppShellView.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppShellView.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppShellView.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppShellView.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppShellView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppShellView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppShellView.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppShellView.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AppShellView~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Blocker/BlockerSettingsView.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/CurrentSessionView.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Tasks/TasksDashboardView.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/AnalyticsViewModel.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/BlockerViewModel.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/CurrentSessionViewModel.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel~partial.swiftmodule"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/TasksViewModel.swift" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.dia",
+    "index-unit-output-path" : "/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.o",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.swiftdeps",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/DerivedData/Build/Intermediates.noindex/FocusSession.build/Debug/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel~partial.swiftmodule"
+  }
+}

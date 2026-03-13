@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四旋翼无人机控制：从建模到NMPC</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0d1117; --bg-secondary: #161b22; --bg-tertiary: #21262d;
+            --text-primary: #e6edf3; --text-secondary: #8b949e; --text-muted: #6e7681;
+            --accent-blue: #58a6ff; --accent-cyan: #39d0d8; --accent-green: #3fb950;
+            --accent-orange: #f0883e; --accent-purple: #a371f7; --border-color: #30363d;
+            --font-display: 'Inter', system-ui, sans-serif; --font-mono: 'JetBrains Mono', monospace;
+            --title-size: clamp(1.75rem, 5vw, 3.5rem); --h2-size: clamp(1.25rem, 3vw, 2.25rem);
+            --h3-size: clamp(1rem, 2vw, 1.5rem); --body-size: clamp(0.8rem, 1.2vw, 1rem);
+            --slide-padding: clamp(1.5rem, 4vw, 4rem); --content-gap: clamp(1rem, 2vw, 2rem);
+        }
+        html, body { height: 100%; overflow-x: hidden; margin: 0; padding:0; }
+        html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+        body { font-family: var(--font-display); background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; }
+        .slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; background: var(--bg-primary); }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); }
+        h1, h2, h3, h4 { font-weight: 600; line-height: 1.2; margin: 0 0 var(--content-gap) 0; }
+        h1 { font-size: var(--title-size); } h2 { font-size: var(--h2-size); } h3 { font-size: var(--h3-size); }
+        p { font-size: var(--body-size); margin: 0 0 var(--content-gap) 0; color: var(--text-secondary); }
+        .mono { font-family: var(--font-mono); }
+        .text-primary { color: var(--text-primary); } .text-secondary { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted); } .text-accent { color: var(--accent-blue); }
+        .text-cyan { color: var(--accent-cyan); } .text-green { color: var(--accent-green); }
+        .text-orange { color: var(--accent-orange); } .text-purple { color: var(--accent-purple); }
+        .grid { display: grid; gap: var(--content-gap); }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        .card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: clamp(1rem, 2vw, 1.5rem); }
+        .card-accent { border-left: 3px solid var(--accent-blue); }
+        .formula-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin: 1rem 0; overflow-x: auto; }
+        .highlight-box { background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(57, 208, 216, 0.1) 100%); border-left: 3px solid var(--accent-blue); padding: 1rem; margin: 1rem 0; border-radius: 0 8px 8px 0; }
+        .title-slide { background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); text-align: center; }
+        .title-slide .slide-content { justify-content: center; align-items: center; }
+        .title-slide h1 { font-size: clamp(2rem, 6vw, 4rem); font-weight: 700; background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-blue) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem; }
+        .section-slide { background: var(--bg-secondary); text-align: center; }
+        .section-slide h2 { font-size: clamp(1.5rem, 4vw, 3rem); color: var(--accent-blue); }
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 0.75rem; z-index: 9999; }
+        .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); cursor: pointer; transition: all 0.3s ease; }
+        .nav-dot.active { background: var(--accent-blue); transform: scale(1.3); }
+        .nav-dot:hover { background: var(--accent-cyan); }
+        ul { margin: 0; padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <nav class="nav-dots" id="navDots"></nav>
+
+    <!-- Title Slide -->
+    <section class="slide title-slide">
+        <div class="slide-content">
+            <h1>四旋翼无人机控制</h1>
+            <p style="font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 2rem;">从建模到先进控制方法</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">组内学术汇报 | 2026年3月</p>
+        </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <section class="slide">
+        <div class="slide-content">
+            <h2>目录</h2>
+            <div class="grid grid-2" style="gap: 1rem;">
+                <div class="card card-accent">
+                    <h3 class="text-accent">01</h3>
+                    <p><strong>四旋翼无人机数学模型</strong></p>
+                    <p class="text-muted" style="font-size: 0.85rem;">姿态模型 · 位置模型 · 动力模型</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-cyan);">
+                    <h3 class="text-cyan">02</h3>
+                    <p><strong>四级串级PID控制</strong></p>
+                    <p class="text-muted" style="font-size: 0.85rem;">位置环 · 速度环 · 姿态环 · 角速度环</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-green);">
+                    <h3 class="text-green">03</h3>
+                    <p><strong>自适应反步滑模控制 (ABSMC)</strong></p>
+                    <p class="text-muted" style="font-size: 0.85rem;">Z轴推导 · 姿态扩展 · 控制机理</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-orange);">
+                    <h3 class="text-orange">04</h3>
+                    <p><strong>线性二次调节器 (LQR)</strong></p>
+                    <p class="text-muted" style="font-size: 0.85rem;">黎卡提方程 · 最优反馈增益</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                    <h3 class="text-purple">05</h3>
+                    <p><strong>线性模型预测控制 (LMPC)</strong></p>
+                    <p class="text-muted" style="font-size: 0.85rem;">滚动优化 · 二次规划 · 约束处理</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: #ff6b6b;">
+                    <h3 style="color: #ff6b6b;">06</h3>
+                    <p><strong>非线性模型预测控制 (NMPC)</strong></p>
+                    <p class="text-muted" style="font-size: 0.85rem;">配点法 · 隐式积分 · 非线性优化</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: #f0883e;">
+                    <h3 style="color: #f0883e;">07</h3>
+                    <p><strong>总结</strong></p>
+                    <p class="text-muted" style="font-size: 0.85rem;">控制方法比较 · 发展趋势</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第1章：四旋翼无人机数学建模 -->
+    <section class="slide section-slide" id="ch1-cover">
+      <div class="slide-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center;">
+        <div class="section-number" style="font-size: 4rem; font-weight: 700; color: var(--accent-blue); margin-bottom: 1rem;">01</div>
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem;">第1章 四旋翼无人机数学模型</h1>
+        <div class="section-subtitle" style="display: flex; gap: 2rem; font-size: 1.2rem; color: var(--text-secondary);">
+          <span style="padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 20px; border: 1px solid var(--accent-blue);">姿态模型</span>
+          <span style="padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 20px; border: 1px solid var(--accent-green);">位置模型</span>
+          <span style="padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 20px; border: 1px solid var(--accent-purple);">动力模型</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="ch1-1">
+      <div class="slide-content">
+        <div class="slide-header">
+          <h2 class="slide-title">1.1 姿态模型（1）：欧拉动力学方程</h2>
+        </div>
+
+        <div class="card card-accent" style="margin-bottom: 1.5rem;">
+          <div class="formula-box" style="text-align: center; font-size: 1.4rem; padding: 1.5rem;">
+            $$J\boldsymbol{\dot{\omega}} + \boldsymbol{\omega} \times J\boldsymbol{\omega} = \boldsymbol{M}$$
+          </div>
+        </div>
+
+        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="card">
+            <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">方程各项解释</h4>
+            <ul style="line-height: 1.8; color: var(--text-secondary);">
+              <li><strong>$J$</strong>：转动惯量矩阵（$3\times3$）</li>
+              <li><strong>$\boldsymbol{\omega}$</strong>：角速度向量 $[p, q, r]^T$</li>
+              <li><strong>$\boldsymbol{\dot{\omega}}$</strong>：角加速度向量</li>
+              <li><strong>$\boldsymbol{M}$</strong>：外力矩向量</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">姿态运动学方程</h4>
+            <div class="formula-box" style="text-align: center; padding: 1rem; margin-bottom: 0.8rem;">
+              $$\dot{\Theta} = T(\Theta)\omega$$
+            </div>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+              其中 $\Theta = [\phi, \theta, \psi]^T$ 为欧拉角（横滚、俯仰、偏航），$T(\Theta)$ 为转换矩阵。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="ch1-2">
+      <div class="slide-content">
+        <div class="slide-header">
+          <h2 class="slide-title">1.2 姿态模型（2）：欧拉角转换矩阵</h2>
+        </div>
+
+        <div class="card card-accent" style="margin-bottom: 1rem;">
+          <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">欧拉角与角速度转换矩阵 $T(\Theta)$</h4>
+          <div class="formula-box" style="text-align: center; padding: 1rem; font-size: 1.1rem;">
+            $$T(\Theta) = \begin{bmatrix} 1 & \sin\phi\tan\theta & \cos\phi\tan\theta \\ 0 & \cos\phi & -\sin\phi \\ 0 & \frac{\sin\phi}{\cos\theta} & \frac{\cos\phi}{\cos\theta} \end{bmatrix}$$
+          </div>
+        </div>
+
+        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="card">
+            <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">展开形式</h4>
+            <div style="line-height: 2; color: var(--text-secondary); font-size: 0.95rem;">
+              $$\dot{\phi} = p + q\sin\phi\tan\theta + r\cos\phi\tan\theta$$
+              $$\dot{\theta} = q\cos\phi - r\sin\phi$$
+              $$\dot{\psi} = q\frac{\sin\phi}{\cos\theta} + r\frac{\cos\phi}{\cos\theta}$$
+            </div>
+          </div>
+
+          <div class="card">
+            <h4 style="color: var(--accent-red); margin-bottom: 0.8rem;">奇异点问题（万向锁）</h4>
+            <div class="highlight-box" style="background: rgba(255, 107, 107, 0.1); border-left-color: var(--accent-red); margin-bottom: 1rem;">
+              <p style="margin: 0; color: var(--text-primary);">当 <strong>$\theta = \pm 90°$</strong>（俯仰角为90度）时，$\cos\theta = 0$，矩阵出现奇异性</p>
+            </div>
+            <ul style="color: var(--text-secondary); line-height: 1.8;">
+              <li>失去一个自由度</li>
+              <li>横滚与偏航无法区分</li>
+              <li>解决方案：使用四元数代替欧拉角</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="ch1-3">
+      <div class="slide-content">
+        <div class="slide-header">
+          <h2 class="slide-title">1.3 位置模型（1）：平移动力学</h2>
+        </div>
+
+        <div class="card card-accent" style="margin-bottom: 1.5rem;">
+          <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">牛顿第二定律（惯性坐标系）</h4>
+          <div class="formula-box" style="text-align: center; font-size: 1.3rem; padding: 1.5rem;">
+            $$m\ddot{\boldsymbol{p}} = R(\Theta)\boldsymbol{f}_a + m\boldsymbol{g}$$
+          </div>
+        </div>
+
+        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="card">
+            <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">变量说明</h4>
+            <ul style="line-height: 1.9; color: var(--text-secondary);">
+              <li><strong>$m$</strong>：无人机质量（kg）</li>
+              <li><strong>$\boldsymbol{p} = [x, y, z]^T$</strong>：位置向量</li>
+              <li><strong>$\ddot{\boldsymbol{p}}$</strong>：加速度向量</li>
+              <li><strong>$\boldsymbol{f}_a = [0, 0, T]^T$</strong>：机体坐标系气动力</li>
+              <li><strong>$\boldsymbol{g} = [0, 0, -g]^T$</strong>：重力加速度</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">旋转矩阵 $R(\Theta)$</h4>
+            <div class="formula-box" style="padding: 1rem; font-size: 0.85rem; text-align: center;">
+              $$R(\Theta) = R_z(\psi)R_y(\theta)R_x(\phi)$$
+            </div>
+            <p style="color: var(--text-secondary); line-height: 1.6; margin-top: 0.8rem;">
+              将机体坐标系的力转换到惯性坐标系，是连接姿态控制与位置控制的关键矩阵。
+            </p>
+            <div class="highlight-box" style="margin-top: 0.8rem;">
+              <p style="margin: 0; font-size: 0.9rem;">Z-Y-X 欧拉角旋转顺序</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="ch1-4">
+      <div class="slide-content">
+        <div class="slide-header">
+          <h2 class="slide-title">1.4 位置模型（2）：旋转矩阵与控制分配</h2>
+        </div>
+
+        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1rem;">
+          <div class="card card-accent">
+            <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">旋转矩阵详细形式</h4>
+            <div class="formula-box" style="font-size: 0.75rem; padding: 0.8rem; overflow-x: auto;">
+              $$R(\Theta) = \begin{bmatrix} c_\theta c_\psi & s_\phi s_\theta c_\psi - c_\phi s_\psi & c_\phi s_\theta c_\psi + s_\phi s_\psi \\ c_\theta s_\psi & s_\phi s_\theta s_\psi + c_\phi c_\psi & c_\phi s_\theta s_\psi - s_\phi c_\psi \\ -s_\theta & s_\phi c_\theta & c_\phi c_\theta \end{bmatrix}$$
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">简记：$c_\phi=\cos\phi, s_\phi=\sin\phi$</p>
+          </div>
+
+          <div class="card">
+            <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">控制量反解</h4>
+            <div class="formula-box" style="padding: 1rem; text-align: center; margin-bottom: 0.8rem;">
+              $$\begin{bmatrix} T \\ \\tau_\phi \\ \\tau_\theta \\ \\tau_\psi \end{bmatrix} = \begin{bmatrix} c_T & c_T & c_T & c_T \\ 0 & -dc_T & 0 & dc_T \\ dc_T & 0 & -dc_T & 0 \\ c_M & -c_M & c_M & -c_M \end{bmatrix} \begin{bmatrix} \omega_1^2 \\ \omega_2^2 \\ \omega_3^2 \\ \omega_4^2 \end{bmatrix}$$
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+              混控矩阵建立了电机转速平方与控制量之间的线性映射关系。
+            </p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1rem;">
+          <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">总升力与三轴力矩表达式</h4>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center;">
+            <div class="formula-box" style="padding: 0.8rem;">
+              <p style="margin: 0 0 0.5rem 0; color: var(--text-secondary); font-size: 0.9rem;">总升力</p>
+              $$T = c_T\sum_{i=1}^{4}\omega_i^2$$
+            </div>
+            <div class="formula-box" style="padding: 0.8rem;">
+              <p style="margin: 0 0 0.5rem 0; color: var(--text-secondary); font-size: 0.9rem;">横滚力矩</p>
+              $$\\tau_\phi = dc_T(\omega_4^2 - \omega_2^2)$$
+            </div>
+            <div class="formula-box" style="padding: 0.8rem;">
+              <p style="margin: 0 0 0.5rem 0; color: var(--text-secondary); font-size: 0.9rem;">俯仰力矩</p>
+              $$\\tau_\theta = dc_T(\omega_1^2 - \omega_3^2)$$
+            </div>
+            <div class="formula-box" style="padding: 0.8rem;">
+              <p style="margin: 0 0 0.5rem 0; color: var(--text-secondary); font-size: 0.9rem;">偏航力矩</p>
+              $$\\tau_\psi = c_M(\omega_1^2 - \omega_2^2 + \omega_3^2 - \omega_4^2)$$
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="ch1-5">
+      <div class="slide-content">
+        <div class="slide-header">
+          <h2 class="slide-title">1.5 动力模型（1）：电机与螺旋桨动力学</h2>
+        </div>
+
+        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="card card-accent">
+            <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">电机动力学模型</h4>
+            <div class="highlight-box" style="margin-bottom: 1rem;">
+              <p style="margin: 0; font-size: 0.9rem;">一阶惯性环节近似</p>
+            </div>
+            <div class="formula-box" style="text-align: center; padding: 1rem; margin-bottom: 1rem;">
+              $$G_m(s) = \frac{\omega_m(s)}{\omega_{m}^{des}(s)} = \frac{1}{\\tau_m s + 1}$$
+            </div>
+            <ul style="line-height: 1.8; color: var(--text-secondary); font-size: 0.9rem;">
+              <li><strong>$\\tau_m$</strong>：电机时间常数（典型值：20-50ms）</li>
+              <li><strong>$\omega_m$</strong>：电机实际转速</li>
+              <li><strong>$\omega_m^{des}$</strong>：电机期望转速（控制指令）</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">螺旋桨升力模型</h4>
+            <div class="highlight-box" style="background: rgba(123, 220, 181, 0.1); border-left-color: var(--accent-green); margin-bottom: 1rem;">
+              <p style="margin: 0; font-size: 0.9rem;">动量理论推导结果</p>
+            </div>
+            <div class="formula-box" style="text-align: center; padding: 1rem; margin-bottom: 1rem;">
+              $$T_i = c_T \omega_i^2$$
+            </div>
+            <div style="margin-bottom: 1rem;">
+              <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">升力系数计算：</p>
+              <div class="formula-box" style="text-align: center; padding: 0.8rem; font-size: 0.9rem;">
+                $$c_T = \frac{1}{2}\rho A C_T r^2$$
+              </div>
+            </div>
+            <ul style="line-height: 1.6; color: var(--text-secondary); font-size: 0.85rem;">
+              <li>$\rho$：空气密度，$A$：桨盘面积</li>
+              <li>$C_T$：无量纲推力系数，$r$：桨叶半径</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="ch1-6">
+      <div class="slide-content">
+        <div class="slide-header">
+          <h2 class="slide-title">1.6 动力模型（2）：混控矩阵与力矩分配</h2>
+        </div>
+
+        <div class="card card-accent" style="margin-bottom: 1rem;">
+          <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">三轴力矩的物理来源</h4>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            <div class="formula-box" style="text-align: center; padding: 0.8rem;">
+              <p style="margin: 0 0 0.5rem 0; color: var(--accent-blue); font-weight: 600;">俯仰力矩 $\\tau_\theta$</p>
+              <p style="margin: 0; font-size: 0.9rem;">电机1、3产生</p>
+              <p style="margin: 0.3rem 0 0 0; font-size: 0.85rem; color: var(--text-secondary);">$\\tau_\theta = d(F_1 - F_3)$</p>
+            </div>
+            <div class="formula-box" style="text-align: center; padding: 0.8rem;">
+              <p style="margin: 0 0 0.5rem 0; color: var(--accent-green); font-weight: 600;">横滚力矩 $\\tau_\phi$</p>
+              <p style="margin: 0; font-size: 0.9rem;">电机2、4产生</p>
+              <p style="margin: 0.3rem 0 0 0; font-size: 0.85rem; color: var(--text-secondary);">$\\tau_\phi = d(F_4 - F_2)$</p>
+            </div>
+            <div class="formula-box" style="text-align: center; padding: 0.8rem;">
+              <p style="margin: 0 0 0.5rem 0; color: var(--accent-purple); font-weight: 600;">偏航力矩 $\\tau_\psi$</p>
+              <p style="margin: 0; font-size: 0.9rem;">反扭矩产生</p>
+              <p style="margin: 0.3rem 0 0 0; font-size: 0.85rem; color: var(--text-secondary);">$\\tau_\psi = \sum_{i=1}^{4}(-1)^i M_i$</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem;">
+          <div class="card">
+            <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">混控矩阵（Mixing Matrix）</h4>
+            <div class="formula-box" style="text-align: center; padding: 1rem; font-size: 0.9rem;">
+              $$\begin{bmatrix} T \\ \\tau_\phi \\ \\tau_\theta \\ \\tau_\psi \end{bmatrix} = \underbrace{\begin{bmatrix} c_T & c_T & c_T & c_T \\ 0 & -dc_T & 0 & dc_T \\ dc_T & 0 & -dc_T & 0 \\ c_M & -c_M & c_M & -c_M \end{bmatrix}}_{W} \begin{bmatrix} \omega_1^2 \\ \omega_2^2 \\ \omega_3^2 \\ \omega_4^2 \end{bmatrix}$$
+            </div>
+          </div>
+
+          <div class="card">
+            <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">电机转速求解</h4>
+            <div class="highlight-box" style="margin-bottom: 1rem;">
+              <p style="margin: 0; font-size: 0.9rem;">已知期望控制量，反解电机转速</p>
+            </div>
+            <div class="formula-box" style="text-align: center; padding: 1rem; margin-bottom: 1rem;">
+              $$\boldsymbol{\omega}^2 = W^{-1}\boldsymbol{u}$$
+            </div>
+            <div class="formula-box" style="text-align: center; padding: 0.8rem; font-size: 0.85rem;">
+              $$\omega_i = \sqrt{\max(0, [W^{-1}\boldsymbol{u}]_i)}$$
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;">注意：转速需满足物理约束 $\omega_{min} \leq \omega_i \leq \omega_{max}$</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<!-- 第2章：四级串级PID控制 -->
+
+<!-- 第1页：章节封面 -->
+<section class="slide section-slide" id="ch2-cover">
+  <div class="slide-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; text-align: center;">
+    <div class="section-number" style="font-size: 4rem; font-weight: 700; color: var(--accent-blue); margin-bottom: 1rem;">02</div>
+    <h1 style="font-size: 2.5rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem;">第2章 四级串级PID控制</h1>
+    <div class="section-subtitle" style="display: flex; gap: 2rem; font-size: 1.2rem; color: var(--text-secondary);">
+      <span style="padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 20px; border: 1px solid var(--accent-blue);">位置环</span>
+      <span style="padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 20px; border: 1px solid var(--accent-green);">速度环</span>
+      <span style="padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 20px; border: 1px solid var(--accent-purple);">姿态环</span>
+      <span style="padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 20px; border: 1px solid var(--accent-orange);">角速度环</span>
+    </div>
+  </div>
+</section>
+
+<!-- 第2页：PID控制基础 -->
+<section class="slide" id="ch2-1">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2 class="slide-title">2.1 PID控制基础</h2>
+    </div>
+
+    <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div class="card">
+        <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">PID时域和频域形式</h4>
+        <div class="formula-box" style="text-align: center; font-size: 1.1rem; padding: 1rem;">
+          $$u(t) = K_p e(t) + K_i \int_0^t e(\tau)d\tau + K_d \frac{de(t)}{dt}$$
+        </div>
+        <div class="formula-box" style="text-align: center; font-size: 1.1rem; padding: 1rem;">
+          $$G_c(s) = K_p + \frac{K_i}{s} + K_d s$$
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">比例、积分、微分的作用</h4>
+        <ul style="line-height: 1.8; color: var(--text-secondary);">
+          <li><strong>比例(P)</strong>：瞬时响应，快速调节</li>
+          <li><strong>积分(I)</strong>：消除稳态误差，累积调节</li>
+          <li><strong>微分(D)</strong>：预测未来趋势，阻尼振荡</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">PID参数整定方法</h4>
+      <div class="grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+        <div>
+          <h5>试凑法</h5>
+          <p style="color: var(--text-secondary); line-height: 1.6;">经验公式：先P后I再D</p>
+        </div>
+        <div>
+          <h5>Ziegler-Nichols</h5>
+          <p style="color: var(--text-secondary); line-height: 1.6;">临界比例法和衰减曲线法</p>
+        </div>
+        <div>
+          <h5>频域设计</h5>
+          <p style="color: var(--text-secondary); line-height: 1.6;">零极点对消与带宽匹配</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第3页：串级控制结构 -->
+<section class="slide" id="ch2-2">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2 class="slide-title">2.2 串级控制结构</h2>
+    </div>
+
+    <div class="card card-accent" style="margin-bottom: 1.5rem;">
+      <h4 style="color: var(--accent-blue); margin-bottom: 1rem;">四级串级架构图</h4>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+        <div class="formula-box" style="padding: 1.5rem; background: var(--bg-secondary); border-radius: 10px; text-align: center; width: 80%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <span style="font-weight: 600; color: var(--text-primary);">位置环</span>
+            <span style="color: var(--accent-blue); font-size: 1.2rem;">→</span>
+            <span style="font-weight: 600; color: var(--text-primary);">速度环</span>
+            <span style="color: var(--accent-blue); font-size: 1.2rem;">→</span>
+            <span style="font-weight: 600; color: var(--text-primary);">姿态环</span>
+            <span style="color: var(--accent-blue); font-size: 1.2rem;">→</span>
+            <span style="font-weight: 600; color: var(--text-primary);">角速度环</span>
+          </div>
+          <p style="color: var(--text-secondary); margin: 0;">外环（低带宽）→ 内环（高带宽）</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div class="card">
+        <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">带宽设计</h4>
+        <ul style="line-height: 1.8; color: var(--text-secondary);">
+          <li>内环带宽是外环的5-10倍</li>
+          <li>角速度环：20-50Hz</li>
+          <li>姿态环：5-10Hz</li>
+          <li>速度环：2-5Hz</li>
+          <li>位置环：0.5-2Hz</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">环间解耦</h4>
+        <ul style="color: var(--text-secondary); line-height: 1.8;">
+          <li>快速内环抑制外环扰动</li>
+          <li>带宽分离确保系统稳定</li>
+          <li>输出作为下一级的输入</li>
+          <li>实现分层控制与优化</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第4页：零极点对消设计 -->
+<section class="slide" id="ch2-3">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2 class="slide-title">2.3 零极点对消设计</h2>
+    </div>
+
+    <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div class="card">
+        <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">频域设计方法</h4>
+        <ul style="line-height: 1.8; color: var(--text-secondary);">
+          <li>零极点对消：控制器零点抵消对象极点</li>
+          <li>模型降阶：高阶系统降为低阶系统</li>
+          <li>稳定性分析：根轨迹法与频域响应</li>
+          <li>动态性能优化：快速性与鲁棒性平衡</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">零极点对消条件</h4>
+        <div class="formula-box" style="text-align: center; padding: 1rem;">
+          $$G_m(s) = \frac{1}{s(0.1s+1)}$$
+        </div>
+        <div class="formula-box" style="text-align: center; padding: 1rem;">
+          $$G_c(s) = K_p(1 + 0.1s)$$
+        </div>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          <strong>对消条件：</strong>控制器零点与对象极点重合
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="color: var(--accent-orange); margin-bottom: 0.8rem;">典型系统的设计案例</h4>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: var(--bg-secondary);">
+              <th style="border: 1px solid var(--border-color); padding: 0.8rem; text-align: left; font-weight: 600;">系统类型</th>
+              <th style="border: 1px solid var(--border-color); padding: 0.8rem; text-align: left; font-weight: 600;">传递函数</th>
+              <th style="border: 1px solid var(--border-color); padding: 0.8rem; text-align: left; font-weight: 600;">推荐控制器</th>
+              <th style="border: 1px solid var(--border-color); padding: 0.8rem; text-align: left; font-weight: 600;">对消条件</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">纯积分系统</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">$1/s$</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">P控制</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">N/A</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">一阶惯性系统</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">$1/(0.1s+1)$</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">PI控制</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">$T_i = 0.1s$</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">含积分二阶系统</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">$1/(s(0.1s+1))$</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">PD控制</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">$T_d = 0.1s$</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">振荡二阶系统</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">$1/(0.1s^2+s+1)$</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">PID控制</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">零点抵消共轭极点</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 第5页：工程实现技巧 -->
+<section class="slide" id="ch2-4">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2 class="slide-title">2.4 工程实现技巧</h2>
+    </div>
+
+    <div class="grid-3" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+      <div class="card">
+        <h4 style="color: var(--accent-blue); margin-bottom: 0.8rem;">积分限幅（Anti-Windup）</h4>
+        <div class="formula-box" style="text-align: center; padding: 1rem;">
+          $$u_{sat}(t) = \text{sat}(u(t), u_{min}, u_{max})$$
+        </div>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          <strong>作用：</strong>防止积分饱和，避免执行器饱和时的过度积分
+        </p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">微分滤波（Derivative Filter）</h4>
+        <div class="formula-box" style="text-align: center; padding: 1rem;">
+          $$G_d(s) = \frac{K_d s}{\alpha s + 1}$$
+        </div>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          <strong>作用：</strong>抑制高频噪声，提高鲁棒性
+        </p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">微分先行（Derivative on Measurement）</h4>
+        <div class="formula-box" style="text-align: center; padding: 1rem;">
+          $$u(t) = K_p e(t) + K_i \int_0^t e(\tau)d\tau - K_d \frac{dy(t)}{dt}$$
+        </div>
+        <p style="color: var(--text-secondary); line-height: 1.6;">
+          <strong>作用：</strong>消除阶跃输入的瞬态冲击
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="color: var(--accent-orange); margin-bottom: 0.8rem;">综合实现策略</h4>
+      <div class="highlight-box" style="background: rgba(251, 146, 60, 0.1); border-left-color: var(--accent-orange); margin-bottom: 1rem;">
+        <p style="margin: 0; color: var(--text-primary);"><strong>工程经验法则：</strong></p>
+      </div>
+      <ul style="color: var(--text-secondary); line-height: 1.8;">
+        <li>积分限幅：±10-20%饱和值</li>
+        <li>微分滤波：α=0.1-0.2</li>
+        <li>微分先行：优先应用于外环</li>
+        <li>带宽分离：内环带宽=外环的5-10倍</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="ch2-6">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2 class="slide-title">2.6 四级串级结构总结</h2>
+    </div>
+
+    <div class="card card-accent" style="margin-bottom: 1.5rem;">
+      <h4 style="color: var(--accent-blue); margin-bottom: 1rem;">带宽分离原则</h4>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+          <thead>
+            <tr style="background: var(--bg-secondary);">
+              <th style="border: 1px solid var(--border-color); padding: 0.8rem; text-align: left; font-weight: 600;">控制环</th>
+              <th style="border: 1px solid var(--border-color); padding: 0.8rem; text-align: left; font-weight: 600;">典型带宽（Hz）</th>
+              <th style="border: 1px solid var(--border-color); padding: 0.8rem; text-align: left; font-weight: 600;">主要功能</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background: rgba(23, 107, 135, 0.05);">
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">位置环</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">1-2</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">稳态精度、轨迹跟踪</td>
+            </tr>
+            <tr style="background: rgba(16, 185, 129, 0.05);">
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">速度环</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">5-10</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">动态响应、加速度控制</td>
+            </tr>
+            <tr style="background: rgba(139, 92, 246, 0.05);">
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">姿态环</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">10-20</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">姿态稳定、角度跟踪</td>
+            </tr>
+            <tr style="background: rgba(251, 146, 60, 0.05);">
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">角速度环</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">20-50</td>
+              <td style="border: 1px solid var(--border-color); padding: 0.8rem;">快速响应、力矩控制</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div class="card">
+        <h4 style="color: var(--accent-green); margin-bottom: 0.8rem;">调参顺序</h4>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="width: 20px; height: 20px; background: var(--accent-orange); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">1</span>
+            <span style="color: var(--text-secondary);">角速度环（最内环）</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="width: 20px; height: 20px; background: var(--accent-purple); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">2</span>
+            <span style="color: var(--text-secondary);">姿态环</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="width: 20px; height: 20px; background: var(--accent-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">3</span>
+            <span style="color: var(--text-secondary);">速度环</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="width: 20px; height: 20px; background: var(--accent-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">4</span>
+            <span style="color: var(--text-secondary);">位置环（最外环）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">调参原则</h4>
+        <ul style="color: var(--text-secondary); line-height: 1.8;">
+          <li><strong>内环参数</strong>：快速响应，小超调</li>
+          <li><strong>外环参数</strong>：稳态精度，抗扰动</li>
+          <li><strong>比例增益</strong>：影响响应速度</li>
+          <li><strong>积分增益</strong>：消除稳态误差</li>
+          <li><strong>微分增益</strong>：抑制超调，提高稳定性</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+    <!-- 第3章：自适应反步滑模控制 (ABSMC) -->
+    <section class="slide section-slide" id="ch3">
+        <div class="slide-content">
+            <h2 style="color: var(--accent-green);">第3章</h2>
+            <h1 style="font-size: 3rem; margin: 1rem 0;">自适应反步滑模控制</h1>
+            <p style="color: var(--accent-green); font-size: 1.2rem;">基于 Z 轴通道递推推导，再扩展到姿态与水平通道</p>
+        </div>
+    </section>
+
+    <section class="slide" id="ch3-1">
+        <div class="slide-content">
+            <h2>Z 轴通道建模与设计目标</h2>
+            <div class="highlight-box">
+                <p><strong>设计对象</strong>：在 NED 坐标系下，以高度 $z$ 与垂直速度 $v_z$ 为状态，针对未知质量 $m$ 与有界扰动 $D_z$ 设计 ABSMC 推力控制律。</p>
+            </div>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div class="card card-accent">
+                    <h3 class="text-accent">状态定义与动力学</h3>
+                    <div class="formula-box" style="font-size: 0.95rem;">
+                        $$\begin{cases}
+                        x_1 = z \\
+                        x_2 = \dot z = v_z
+                        \end{cases}
+                        \qquad
+                        \begin{cases}
+                        \dot x_1 = x_2 \\
+                        \dot x_2 = g - \frac{\cos\phi\cos\theta}{m}T + D_z
+                        \end{cases}$$
+                    </div>
+                    <p style="font-size: 0.88rem;">Z 轴通道既受姿态耦合项 $\cos\phi\cos\theta$ 影响，也受到质量不确定性与外部扰动共同作用。</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-green);">
+                    <h3 class="text-green">ABSMC 三步递推</h3>
+                    <ul style="font-size: 0.9rem; line-height: 1.8;">
+                        <li><strong>步骤 1：</strong>把速度看成虚拟输入，先让位置误差收敛。</li>
+                        <li><strong>步骤 2：</strong>定义滑模面 $s_z=e_{z2}$，引入趋近律增强抗扰性。</li>
+                        <li><strong>步骤 3：</strong>在 Lyapunov 框架下同步求出推力控制律 $T$ 与质量自适应律 $\dot{\hat m}$。</li>
+                    </ul>
+                    <p style="font-size: 0.88rem; color: var(--text-muted);">核心思想是把稳定性、鲁棒性与参数补偿统一到同一个递推证明过程。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch3-2">
+        <div class="slide-content">
+            <h2>步骤一：位置环与虚拟控制量</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div class="card card-accent">
+                    <h3 class="text-accent">误差定义</h3>
+                    <div class="formula-box" style="font-size: 0.92rem;">
+                        $$e_{z1}=z-z_d,\qquad e_{z2}=v_z-\alpha_z$$
+                    </div>
+                    <div class="formula-box" style="font-size: 0.92rem;">
+                        $$V_1=\frac{1}{2}e_{z1}^2,\qquad
+                        \dot V_1=e_{z1}(e_{z2}+\alpha_z-\dot z_d)$$
+                    </div>
+                    <p style="font-size: 0.88rem;">先只考虑位置子系统，目标是让 $\dot V_1$ 保留负定项，并把剩余耦合项留给下一步处理。</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                    <h3 class="text-purple">虚拟控制律</h3>
+                    <div class="formula-box" style="font-size: 0.95rem;">
+                        $$\alpha_z = -c_1 e_{z1} + \dot z_d$$
+                    </div>
+                    <div class="formula-box" style="font-size: 0.92rem;">
+                        $$\dot e_{z1} = -c_1 e_{z1} + e_{z2}$$
+                        $$\dot V_1 = e_{z1}e_{z2} - c_1 e_{z1}^2$$
+                    </div>
+                    <ul style="font-size: 0.88rem; line-height: 1.8;">
+                        <li>$-c_1 e_{z1}$ 负责把位置误差向零点拉回。</li>
+                        <li>$e_{z2}$ 成为下一步速度环的核心变量。</li>
+                        <li>当 $e_{z2}\to0$ 时，位置环满足指数收敛。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch3-3">
+        <div class="slide-content">
+            <h2>步骤二：滑模面与复合 Lyapunov 设计</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div class="card card-accent">
+                    <h3 class="text-green">滑模面与趋近律</h3>
+                    <div class="formula-box" style="font-size: 0.92rem;">
+                        $$s_z = e_{z2}$$
+                        $$\dot s_z = -\epsilon\,\operatorname{sgn}(s_z) - k s_z$$
+                    </div>
+                    <div class="formula-box" style="font-size: 0.92rem;">
+                        $$V_2 = \frac{1}{2}e_{z1}^2 + \frac{1}{2}s_z^2$$
+                    </div>
+                    <p style="font-size: 0.88rem;">指数趋近律兼顾有限时间到达能力与线性阻尼带来的平滑收敛。</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-cyan);">
+                    <h3 class="text-cyan">导数展开后的关键结构</h3>
+                    <div class="formula-box" style="font-size: 0.85rem;">
+                        $$\dot V_2 = -c_1 e_{z1}^2 + e_{z1}s_z
+                        + s_z\!\left(g - \frac{\cos\phi\cos\theta}{m}T + D_z - \dot\alpha_z\right)$$
+                    </div>
+                    <ul style="font-size: 0.88rem; line-height: 1.8;">
+                        <li>$-c_1 e_{z1}^2$ 已给出位置环收敛趋势。</li>
+                        <li>$e_{z1}s_z$ 是位置环与速度环之间的耦合项。</li>
+                        <li>括号内仍含未知质量 $m$、推力 $T$ 与扰动 $D_z$，需在下一步统一消除。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch3-4">
+        <div class="slide-content">
+            <h2>步骤三：推力控制律与质量自适应律</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div class="card card-accent">
+                    <h3 class="text-orange">增广 Lyapunov 函数</h3>
+                    <div class="formula-box" style="font-size: 0.9rem;">
+                        $$\tilde m = m - \hat m,\qquad
+                        V_3 = V_2 + \frac{1}{2\gamma}\tilde m^2$$
+                    </div>
+                    <div class="formula-box" style="font-size: 0.8rem;">
+                        $$T = \frac{\hat m}{\cos\phi\cos\theta}
+                        \left[g-\dot\alpha_z+e_{z1}+k s_z+(\epsilon+\bar D)\operatorname{sgn}(s_z)\right]$$
+                    </div>
+                    <div class="formula-box" style="font-size: 0.8rem;">
+                        $$\dot{\hat m} =
+                        \gamma' s_z
+                        \left[g-\dot\alpha_z+e_{z1}+k s_z+(\epsilon+\bar D)\operatorname{sgn}(s_z)\right]$$
+                    </div>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">其中 $\gamma'=\gamma/m$，用于把自适应增益写成更紧凑的形式。</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                    <h3 class="text-purple">控制律的三层作用</h3>
+                    <ul style="font-size: 0.9rem; line-height: 1.8;">
+                        <li><strong>动态补偿项</strong> $g-\dot\alpha_z+e_{z1}$：补偿重力并消去 Lyapunov 推导中的耦合项。</li>
+                        <li><strong>线性阻尼项</strong> $k s_z$：让状态沿滑模面快速衰减。</li>
+                        <li><strong>鲁棒项</strong> $(\epsilon+\bar D)\operatorname{sgn}(s_z)$：覆盖有界扰动上界，保证到达条件。</li>
+                    </ul>
+                    <div class="highlight-box" style="margin-top: 1rem;">
+                        <p style="font-size: 0.88rem; margin: 0;"><strong>执行顺序</strong>：先由当前状态计算 $s_z$ 与 $\dot{\hat m}$，积分更新 $\hat m$，再用新的 $\hat m$ 计算推力 $T$，从而形成“参数估计—控制补偿”闭环。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch3-5">
+        <div class="slide-content">
+            <h2>姿态与水平通道扩展</h2>
+            <div class="highlight-box">
+                <p><strong>扩展原则</strong>：横滚、俯仰、偏航通道沿用同样的反步滑模范式，只是缩放系数、误差多项式与耦合补偿项不同。</p>
+            </div>
+            <div class="card card-accent">
+                <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-secondary);">
+                            <th style="padding: 0.55rem; border: 1px solid var(--border-color);">通道</th>
+                            <th style="padding: 0.55rem; border: 1px solid var(--border-color);">控制律结构</th>
+                            <th style="padding: 0.55rem; border: 1px solid var(--border-color);">作用</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);"><strong>$y-\phi$</strong></td>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);">$\tau_x = \dfrac{\hat m I_x}{T C_\psi C_\phi l}\!\left[\Pi_y - k_\phi s_\phi - \epsilon_\phi \operatorname{sgn}(s_\phi)\right] + \text{耦合补偿}$</td>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);">用横滚机动修正横向位置误差</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);"><strong>$x-\theta$</strong></td>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);">$\tau_y = \dfrac{\hat m I_y}{T C_\psi C_\theta l}\!\left[\Pi_x - k_\theta s_\theta - \epsilon_\theta \operatorname{sgn}(s_\theta)\right] + \text{耦合补偿}$</td>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);">用俯仰机动生成纵向加速度</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);"><strong>$\psi$</strong></td>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);">$\tau_z = I_z\!\left[-(1+c_{11}c_{12})e_\psi -(c_{11}+c_{12})\dot e_\psi + \ddot\psi_d - k_\psi s_\psi - \epsilon_\psi \operatorname{sgn}(s_\psi)\right] - (I_x-I_y)\dot\theta\dot\phi$</td>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);">抑制偏航误差并补偿陀螺耦合</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);"><strong>$z$</strong></td>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);">$T = \dfrac{\hat m}{\cos\phi\cos\theta}\!\left[g-\dot\alpha_z+e_{z1}+k s_z+(\epsilon+\bar D)\operatorname{sgn}(s_z)\right]$</td>
+                            <td style="padding: 0.55rem; border: 1px solid var(--border-color);">直接决定高度与总推力平衡</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.8rem;">表中 $\Pi_x,\Pi_y$ 表示由位置误差与速度误差组合而成的反步多项式项；完整展开式见原始笔记中的各通道控制律。</p>
+        </div>
+    </section>
+
+    <section class="slide" id="ch3-6">
+        <div class="slide-content">
+            <h2>参数设置与实现流程</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div class="card card-accent">
+                    <h3 class="text-green">笔记中的仿真参数</h3>
+                    <div style="background: var(--bg-tertiary); padding: 0.9rem; border-radius: 8px; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.7;">
+                        <div>$c_1=3,\ c_2=c_3=2,\ c_4=3$</div>
+                        <div>$c_5=3,\ c_6=c_7=2,\ c_8=3$</div>
+                        <div>$c_9=c_{10}=4,\ c_{11}=c_{12}=3$</div>
+                        <div>$k=5,\ \varepsilon=1,\ \alpha=2$</div>
+                        <div>初始位置：$(0,0,0)\,\mathrm{m}$</div>
+                        <div>目标位置：$(1,1,1)\,\mathrm{m}$</div>
+                    </div>
+                    <p style="font-size: 0.86rem; margin-top: 0.8rem;">这些参数体现了“外环引导、内环快速抑制”的多回路增益分工。</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-cyan);">
+                    <h3 class="text-cyan">在线执行流程</h3>
+                    <ol style="font-size: 0.9rem; line-height: 1.85; padding-left: 1.2rem;">
+                        <li>读取当前位置、姿态、线速度与角速度。</li>
+                        <li>按反步递推计算 $e_{z1}$、$\alpha_z$、$s_z$ 及各姿态滑模变量。</li>
+                        <li>根据自适应律更新质量估计 $\hat m$。</li>
+                        <li>计算 $T,\tau_x,\tau_y,\tau_z$ 并分配到电机。</li>
+                        <li>下一采样时刻继续重复，实现滚动式参数补偿与抗扰控制。</li>
+                    </ol>
+                    <p style="font-size: 0.86rem; color: var(--text-muted);">ABSMC 不是单一公式，而是“误差递推 + 参数更新 + 力矩分配”的完整闭环。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch3-7">
+        <div class="slide-content">
+            <h2>ABSMC 仿真实验 (BSMC_Sim.py)</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent">
+                        <h3 class="text-accent">仿真场景设计</h3>
+                        <table style="width: 100%; font-size: 0.85rem;">
+                            <tr>
+                                <td><strong>标称场景</strong></td>
+                                <td>无扰动，目标位置 [1,1,-1]m，t=15s</td>
+                            </tr>
+                            <tr>
+                                <td><strong>位置干扰</strong></td>
+                                <td>t=10,15,20s 施加位置阶跃 (dist_mode=1)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>速度干扰</strong></td>
+                                <td>t=6,10,14s 脉冲加速度扰动 (dist_mode=2)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>姿态干扰</strong></td>
+                                <td>t=10,15,20s 角速度突变 (dist_mode=3)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>角速度干扰</strong></td>
+                                <td>t=10,15,20s 角加速度扰动 (dist_mode=4)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-green); margin-top: 1rem;">
+                        <h3 class="text-green">关键参数设置</h3>
+                        <div style="background: var(--bg-tertiary); padding: 0.8rem; border-radius: 6px; font-size: 0.8rem; font-family: monospace;">
+                            <div style="color: var(--accent-cyan);"># 高度通道 ABSMC 参数</div>
+                            <div>c1 = 3.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# 位置环增益</div>
+                            <div>k_z = 5.0&nbsp;&nbsp;&nbsp;&nbsp;# 滑模增益</div>
+                            <div>eps_z = 0.5&nbsp;&nbsp;# 切换增益</div>
+                            <div>gamma_m = 2.0 # 自适应增益</div>
+                            <div style="color: var(--accent-cyan); margin-top: 0.5rem;"># 姿态环参数</div>
+                            <div>c_att = 4.0&nbsp;&nbsp;# 姿态环增益</div>
+                            <div>k_att = 8.0&nbsp;&nbsp;# 滑模增益</div>
+                            <div>delta = 0.05&nbsp;# 抖振抑制</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-orange);">
+                        <h3 class="text-orange">仿真输出图表</h3>
+                        <div style="font-size: 0.85rem;">
+                            <p style="margin-bottom: 0.5rem;"><strong>基础跟踪 (无干扰)：</strong></p>
+                            <ul style="margin-left: 1rem; margin-bottom: 0.8rem;">
+                                <li><strong>Fig 5-1:</strong> 姿态角响应 (Roll/Pitch/Yaw) vs 时间</li>
+                                <li><strong>Fig 5-2:</strong> 位置响应 (x/y/z) vs 时间</li>
+                            </ul>
+
+                            <p style="margin-bottom: 0.5rem;"><strong>干扰仿真 (各4子图: 位置/速度/姿态/角速度)：</strong></p>
+                            <ul style="margin-left: 1rem;">
+                                <li><strong>Fig 5-3:</strong> 位置干扰仿真 (dist_mode=1)</li>
+                                <li><strong>Fig 5-4:</strong> 线速度干扰仿真 (dist_mode=2)</li>
+                                <li><strong>Fig 5-5:</strong> 姿态角干扰仿真 (dist_mode=3)</li>
+                                <li><strong>Fig 5-6:</strong> 角速度干扰仿真 (dist_mode=4)</li>
+                            </ul>
+
+                            <p style="margin-top: 0.8rem; color: var(--text-muted); font-size: 0.8rem;">
+                                数值方法: <code>solve_ivp(method='RK45')</code> | 仿真步长: 自适应 | 总时长: 15-30s
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card card-accent" style="border-left-color: var(--accent-blue); margin-top: 1rem;">
+                        <h3 class="text-blue">Controller 函数核心逻辑</h3>
+                        <div style="background: var(--bg-tertiary); padding: 0.8rem; border-radius: 6px; font-size: 0.75rem; font-family: monospace; overflow-x: auto;">
+                            <div style="color: var(--text-muted);"># 高度通道 (Adaptive Z) - ABSMC</div>
+                            <div>ez1 = z - zd</div>
+                            <div>alpha_z = -c1 * ez1</div>
+                            <div>sz = vz - alpha_z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--accent-cyan);"\u003e# 滑模面\u003c/span\u003e\u003c/div\u003e
+                            <div style="color: var(--text-muted); margin-top: 0.3rem;"># 控制律 + 自适应律</div>
+                            <div>T = (m_hat/cos_phi_cos_theta) * (...)</div>
+                            <div>d_m_hat = gamma_m * sz * (...)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第4章：NMPC模型预测控制 -->
+    <section class="slide section-slide" id="ch4">
+        <div class="slide-content">
+            <h2 style="color: var(--accent-orange);">第4章</h2>
+            <h1 style="font-size: 3rem; margin: 1rem 0;">NMPC模型预测控制</h1>
+            <p style="color: var(--accent-orange); font-size: 1.2rem;">基于连续时间最优控制与SQP求解</p>
+        </div>
+    </section>
+
+    <section class="slide" id="ch4-1">
+        <div class="slide-content">
+            <h2>连续时间最优控制问题</h2>
+            <div class="highlight-box" style="background: rgba(251, 146, 60, 0.1); border-left-color: var(--accent-orange);">
+                <p><strong>泛函优化问题</strong>：从连续时间代价函数出发，通过变分法推导最优控制律的解析框架</p>
+            </div>
+            <div class="formula-box" style="margin: 1rem 0;">
+                $$\large \min_{u(t)} \quad J = \phi(x(t_f)) + \int_{t_0}^{t_f} L(x, u, t)\, dt$$
+                $$\text{s.t.} \quad \dot{x} = f(x, u, t), \quad x(t_0) = x_0$$
+            </div>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div class="card card-accent">
+                    <h3 class="text-accent">两项成本</h3>
+                    <ul style="font-size: 0.9rem;">
+                        <li><strong>终端代价</strong> $\phi(x(t_f))$ <br>Mayer项，衡量终端状态优劣</li>
+                        <li><strong>运行代价</strong> $\int L(x,u,t)dt$ <br>Lagrange项，衡量整条轨迹累积代价</li>
+                    </ul>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-green);">
+                    <h3 class="text-green">动力学约束</h3>
+                    <p style="font-size: 0.9rem;"><strong>微分方程约束</strong>：$&#92;&#48;dot{x} = f(x, u, t)$</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>状态转移函数 $f$ 描述物理系统动态</li>
+                        <li>连续时间框架下的无穷维优化问题</li>
+                        <li>需通过数值离散化转换为有限维问题求解</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第4章 - 第2页：离散化方法与打靶法 -->
+    <section class="slide" id="ch4-1-2">
+        <div class="slide-content">
+            <h2>离散化方法与打靶法</h2>
+
+            <div class="highlight-box" style="background: rgba(16, 185, 129, 0.1); border-left-color: var(--accent-green); margin-bottom: 1rem;">
+                <p><strong>数值求解框架</strong>：ODE数值积分（RK4、配点法）+ 目标函数离散化（黎曼和、梯形法、高斯积分）+ 打靶法</p>
+            </div>
+
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent">
+                        <h3 class="text-accent">ODE数值积分方法</h3>
+                        <p style="font-size: 0.85rem;">将连续时间ODE $\dot{x} = f(x,u,t)$ 离散化：</p>
+
+                        <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse; margin-top: 0.5rem;">
+                            <tr style="background: var(--bg-secondary);">
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">方法</th>
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">公式</th>
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">精度</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">前向欧拉</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">$x_{k+1} = x_k + h f(x_k, u_k)$</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">$O(h)$</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">RK4</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">四阶龙格-库塔</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">$O(h^4)$</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">配点法</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">多项式配点满足ODE</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">谱精度</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                        <h3 class="text-purple">目标函数离散化</h3>
+                        <p style="font-size: 0.85rem;">将连续代价 $\int_{t_0}^{t_f} L(x,u,t) dt$ 离散化：</p>
+
+                        <div class="formula-box" style="font-size: 0.8rem; margin: 0.5rem 0;">
+                            <strong>黎曼和</strong>：$\sum_{k=0}^{N-1} L(x_k, u_k, t_k) \cdot h$<br><br>
+                            <strong>梯形法</strong>：$\sum_{k=0}^{N-1} \frac{L(x_k,u_k) + L(x_{k+1},u_{k+1})}{2} \cdot h$<br><br>
+                            <strong>高斯积分</strong>：$\sum_{i=1}^{n} w_i L(x(\tau_i), u(\tau_i))$，$\tau_i$为高斯点
+                        </div>
+                    </div>
+
+                    <div class="card card-accent" style="border-left-color: var(--accent-green); margin-top: 1rem;">
+                        <h3 class="text-green">打靶法分类</h3>
+                        <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                            <tr style="background: var(--bg-secondary);">
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">方法</th>
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">描述</th>
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">适用场景</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">单次打靶</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">从初始状态积分到终端</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">短时域，稳定系统</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">多次打靶</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">分段积分，匹配边界</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">长时域，刚性系统</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">配点法</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">多项式近似ODE在所有点满足</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">高精度，光滑解</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第4章 - 第5页：SQP迭代与总结 -->
+    <section class="slide" id="ch4-2">
+        <div class="slide-content">
+            <h2>SQP迭代流程与实现细节</h2>
+            <div class="highlight-box" style="background: rgba(139, 92, 246, 0.1); border-left-color: var(--accent-purple); margin-bottom: 1rem;">
+                <p><strong>Pontryagin最小原理</strong>：引入协态变量 $&#92;&#48;lambda(t)$，将约束优化问题转化为无约束问题</p>
+            </div>
+            <div class="formula-box" style="margin-bottom: 1rem;">
+                $$\large H = \underbrace{L(x,u,t)}_{\text{即时代价}} + \underbrace{\lambda^\top f(x,u,t)}_{\text{未来代价变化速率}}$$
+            </div>
+            <div class="grid grid-3" style="gap: 1rem; margin-top: 1rem;">
+                <div class="card card-accent" style="border-left-color: var(--accent-blue);">
+                    <h3 class="text-blue">状态方程</h3>
+                    <div class="formula-box" style="font-size: 0.85rem;">
+                        $$\dot{x} = \frac{\partial H}{\partial \lambda} = f(x, u, t)$$
+                    </div>
+                    <p style="font-size: 0.85rem;">沿$&#92;&#48;partial H/&#92;&#48;partial &#92;&#48;lambda$方向正向演化，描述状态随时间的变化</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                    <h3 class="text-purple">协态方程</h3>
+                    <div class="formula-box" style="font-size: 0.85rem;">
+                        $$\dot{\lambda} = -\frac{\partial H}{\partial x}$$
+                    </div>
+                    <p style="font-size: 0.85rem;">沿$-&#92;&#48;partial H/&#92;&#48;partial x$方向逆向演化，描述协态变量的动态</p>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-green);">
+                    <h3 class="text-green">控制最优性</h3>
+                    <div class="formula-box" style="font-size: 0.85rem;">
+                        $$\frac{\partial H}{\partial u} = 0$$
+                    </div>
+                    <p style="font-size: 0.85rem;">Hamilton函数对控制变量的偏导数为零，确定最优控制率</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第4章 - 第3页：SQP基础 -->
+    <section class="slide" id="ch4-3">
+        <div class="slide-content">
+            <h2>序列二次规划（SQP）基础</h2>
+
+            <div class="highlight-box" style="background: rgba(251, 146, 60, 0.1); border-left-color: var(--accent-orange); margin-bottom: 1rem;">
+                <p><strong>核心思想</strong>：将非线性优化问题转化为一系列QP子问题，通过迭代逐步逼近最优解</p>
+            </div>
+
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div class="card card-accent">
+                    <h3 class="text-blue">原问题形式</h3>
+                    <div class="formula-box" style="font-size: 0.85rem;">
+                        $$\begin{aligned}
+                        \min_{x} \quad & f(x) \\
+                        \text{s.t.} \quad & c_E(x) = 0 \\
+                        & c_I(x) \leq 0
+                        \end{aligned}$$
+                    </div>
+                    <p style="font-size: 0.85rem;">$f(x)$：目标函数<br>$c_E(x)$：等式约束<br>$c_I(x)$：不等式约束</p>
+                </div>
+
+                <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                    <h3 class="text-purple">Lagrangian函数</h3>
+                    <div class="formula-box" style="font-size: 0.85rem;">
+                        $$\mathcal{L}(x, \lambda_1, \lambda_2) = f(x) + \lambda_1^\top c_E(x) + \lambda_2^\top c_I(x)$$
+                    </div>
+                    <p style="font-size: 0.85rem;">$\lambda_1$：等式约束乘子<br>$\lambda_2$：不等式约束乘子<br>将约束问题转化为无约束问题</p>
+                </div>
+            </div>
+
+            <div class="card card-accent" style="border-left-color: var(--accent-green); margin-top: 1rem;">
+                <h3 class="text-green">SQP vs 其他优化方法</h3>
+                <table style="width: 100%; font-size: 0.85rem; margin-top: 0.5rem;">
+                    <tr style="background: var(--bg-secondary);">
+                        <th style="padding: 0.5rem; text-align: left;">方法</th>
+                        <th style="padding: 0.5rem; text-align: left;">优点</th>
+                        <th style="padding: 0.5rem; text-align: left;">缺点</th>
+                    </tr>
+                    <tr>
+                        <td>SQP</td>
+                        <td>收敛快，精度高，适合中小规模</td>
+                        <td>Hessian计算量大</td>
+                    </tr>
+                    <tr>
+                        <td>内点法</td>
+                        <td>适合大规模问题，收敛稳定</td>
+                        <td>每次迭代计算量大</td>
+                    </tr>
+                    <tr>
+                        <td>梯度下降</td>
+                        <td>实现简单，计算量小</td>
+                        <td>收敛慢，精度低</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第4章 - 第4页：SQP数学推导 -->
+    <section class="slide" id="ch4-4">
+        <div class="slide-content">
+            <h2>SQP数学推导与QP子问题</h2>
+
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent">
+                        <h3 class="text-blue">QP子问题构造</h3>
+                        <p style="font-size: 0.85rem;">在当前迭代点 $x_k$ 处：</p>
+                        <ul style="font-size: 0.85rem;">
+                            <li>目标函数：二阶泰勒展开</li>
+                            <li>约束条件：一阶线性化</li>
+                        </ul>
+                        <div class="formula-box" style="font-size: 0.8rem; margin-top: 0.5rem;">
+                            $$\begin{aligned}
+                            \min_{\Delta x} \quad & \frac{1}{2} \Delta x^\top \nabla^2_x \mathcal{L} \Delta x \\
+                            & + \nabla f^\top \Delta x \\
+                            \text{s.t.} \quad & \nabla c_E^\top \Delta x + c_E = 0 \\
+                            & \nabla c_I^\top \Delta x + c_I \leq 0
+                            \end{aligned}$$
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                        <h3 class="text-purple">Hessian近似方法</h3>
+                        <p style="font-size: 0.85rem;">精确Hessian计算量大，常用近似：</p>
+                        <table style="width: 100%; font-size: 0.8rem; margin-top: 0.5rem;">
+                            <tr style="background: var(--bg-secondary);">
+                                <th style="padding: 0.4rem;">方法</th>
+                                <th style="padding: 0.4rem;">公式</th>
+                                <th style="padding: 0.4rem;">特点</th>
+                            </tr>
+                            <tr>
+                                <td>BFGS</td>
+                                <td>$B_{k+1} = B_k + \Delta$</td>
+                                <td>拟牛顿法，保持正定性</td>
+                            </tr>
+                            <tr>
+                                <td>SR1</td>
+                                <td>秩一更新</td>
+                                <td>更灵活的近似</td>
+                            </tr>
+                            <tr>
+                                <td>有限差分</td>
+                                <td>$\frac{\partial^2 f}{\partial x_i \partial x_j}$</td>
+                                <td>精度高但计算量大</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="card card-accent" style="border-left-color: var(--accent-green); margin-top: 1rem;">
+                        <h3 class="text-green">收敛准则</h3>
+                        <div class="formula-box" style="font-size: 0.8rem;">
+                            $$\|\nabla_x \mathcal{L}\| \leq \epsilon_1 \quad \text{(一阶最优性)}$$
+                            $$\|c_E\| \leq \epsilon_2, \quad c_I \leq 0 \quad \text{(可行性)}$$
+                            $$\|\Delta x\| \leq \epsilon_3 \quad \text{(步长)}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第4章 - 第5页：SQP迭代流程 -->
+    <section class="slide" id="ch4-5">
+        <div class="slide-content">
+            <h2>SQP迭代流程与实现细节</h2>
+
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent">
+                        <h3 class="text-blue">SQP算法流程</h3>
+                        <div style="font-size: 0.85rem; line-height: 1.6;">
+                            <div style="background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                                <strong>步骤 1：初始化</strong><br>
+                                设置初始点 $x_0$，收敛阈值 $\epsilon$，$k=0$
+                            </div>
+                            <div style="background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                                <strong>步骤 2：构造QP子问题</strong><br>
+                                在当前点计算：
+                                - $\nabla f(x_k)$, $\nabla^2_{xx}\mathcal{L}(x_k,\lambda_k)$
+                                - $c_E(x_k)$, $\nabla c_E(x_k)$
+                                - $c_I(x_k)$, $\nabla c_I(x_k)$
+                            </div>
+                            <div style="background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                                <strong>步骤 3：求解QP子问题</strong><br>
+                                得到搜索方向 $d_k$ 和新的乘子估计 $\lambda_{k+1}$
+                            </div>
+                            <div style="background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                                <strong>步骤 4：线搜索</strong><br>
+                                计算步长 $\alpha_k$，使得充分下降条件满足（如Wolfe条件）
+                            </div>
+                            <div style="background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px;">
+                                <strong>步骤 5：更新与收敛检查</strong><br>
+                                $x_{k+1} = x_k + \alpha_k d_k$<br>
+                                若满足收敛准则则停止，否则 $k=k+1$，返回步骤2
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                        <h3 class="text-purple">原-对偶变量与迭代</h3>
+                        <div class="formula-box" style="font-size: 0.8rem; margin-bottom: 0.5rem;">
+                            $$z = \begin{bmatrix} w \\ \phi \\ \mu \end{bmatrix}$$
+                        </div>
+                        <p style="font-size: 0.85rem;">
+                            <strong>$w$</strong>：原变量（状态+控制序列）<br>
+                            <strong>$\phi$</strong>：等式约束乘子<br>
+                            <strong>$\mu$</strong>：不等式约束乘子
+                        </p>
+
+                        <table style="width: 100%; font-size: 0.8rem; margin-top: 0.5rem; border-collapse: collapse;">
+                            <tr style="background: var(--bg-secondary);">
+                                <th style="padding: 0.3rem; border: 1px solid var(--border-color);">符号</th>
+                                <th style="padding: 0.3rem; border: 1px solid var(--border-color);">名称</th>
+                                <th style="padding: 0.3rem; border: 1px solid var(--border-color);">含义</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">$\bar{z}$</td>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">当前迭代点</td>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">泰勒展开中心</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">$z_{\text{QP}}$</td>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">QP子问题解</td>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">局部近似最优解</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">$\Delta z$</td>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">搜索方向</td>
+                                <td style="padding: 0.3rem; border: 1px solid var(--border-color);">$\Delta z = z_{\text{QP}} - \bar{z}$</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="card card-accent" style="border-left-color: var(--accent-green); margin-top: 1rem;">
+                        <h3 class="text-green">线搜索策略</h3>
+                        <p style="font-size: 0.85rem;">确保充分下降，常用Wolfe条件：</p>
+                        <div class="formula-box" style="font-size: 0.8rem;">
+                            <strong>Armijo条件</strong>（充分下降）：<br>
+                            $$f(x_k + \alpha d_k) \leq f(x_k) + c_1 \alpha \nabla f_k^\top d_k$$
+                            <strong>曲率条件</strong>（避免步长过小）：<br>
+                            $$|\nabla f(x_k + \alpha d_k)^\top d_k| \leq c_2 |\nabla f_k^\top d_k|$$
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">其中 $0 < c_1 < c_2 < 1$，通常取 $c_1 = 10^{-4}$，$c_2 = 0.9$</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第4章 - 第6页：实时迭代（RTI） -->
+    <section class="slide" id="ch4-6">
+        <div class="slide-content">
+            <h2>实时迭代（RTI）方法</h2>
+
+            <div class="highlight-box" style="background: rgba(139, 92, 246, 0.1); border-left-color: var(--accent-purple); margin-bottom: 1rem;">
+                <p><strong>核心思想</strong>：利用相邻时刻状态变化小的特点，用廉价的QP求解代替昂贵的NLP求解，实现实时控制</p>
+            </div>
+
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                        <h3 class="text-purple">传统NMPC vs RTI</h3>
+                        <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                            <tr style="background: var(--bg-secondary);">
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">特性</th>
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">传统NMPC</th>
+                                <th style="padding: 0.4rem; border: 1px solid var(--border-color);">RTI</th>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">求解问题</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">完整NLP</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color); color: var(--accent-green);">局部QP</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">迭代次数</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">多次收敛</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color); color: var(--accent-green);">单次迭代</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">求解时间</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">20-100ms</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color); color: var(--accent-green);">1-5ms</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">实时性</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color);">差</td>
+                                <td style="padding: 0.4rem; border: 1px solid var(--border-color); color: var(--accent-green);">优秀</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-green);">
+                        <h3 class="text-green">RTI算法流程</h3>
+                        <div style="font-size: 0.85rem; line-height: 1.6;">
+                            <div style="background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-blue);">
+                                <strong style="color: var(--accent-blue);">准备阶段</strong><br>
+                                在上一时刻求解完整NLP，得到基准解 $\bar{w}$
+                            </div>
+                            <div style="background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; border-left: 3px solid var(--accent-green);">
+                                <strong style="color: var(--accent-green);">当前时刻</strong><br>
+                                状态从 $\bar{x}_0$ 变化到 $x_0$（微小变化）<br>
+                                不解完整NLP，只解一个局部QP
+                            </div>
+                            <div style="background: var(--bg-secondary); padding: 0.5rem; border-radius: 4px; border-left: 3px solid var(--accent-orange);">
+                                <strong style="color: var(--accent-orange);">输出控制</strong><br>
+                                获得预测解 $w_{\text{QP}} \approx w_0(x_0)$（误差为二阶）<br>
+                                执行控制量，进入下一周期
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-accent" style="border-left-color: var(--accent-purple); margin-top: 1rem;">
+                        <h3 class="text-purple">RTI的理论基础</h3>
+                        <div class="formula-box" style="font-size: 0.8rem;">
+                            <strong>参数化最优解</strong>：设 $w_0(x_0)$ 是参数 $x_0$ 的最优解<br><br>
+                            <strong>连续性假设</strong>：当 $x_0 \to \bar{x}_0$ 时，$w_0(x_0) \to w_0(\bar{x}_0)$<br><br>
+                            <strong>二次近似误差</strong>：
+                            $$\|w_{\text{QP}} - w_0(x_0)\| = O(\|x_0 - \bar{x}_0\|^2)$$
+                            <strong>直观理解</strong>：QP子问题的解与真实最优解的误差是状态变化量的二阶小量
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 第5章：仿真与实验验证 -->
+    <section class="slide section-slide" id="ch5">
+        <div class="slide-content">
+            <h2 style="color: var(--accent-cyan);">第5章</h2>
+            <h1 style="font-size: 3rem; margin: 1rem 0;">仿真与实验验证</h1>
+            <p style="color: var(--accent-cyan); font-size: 1.2rem;">Simulation and Experimental Validation</p>
+        </div>
+    </section>
+
+    <section class="slide" id="ch5-1">
+        <div class="slide-content">
+            <h2>Python仿真环境搭建</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent">
+                        <h3 class="text-accent">Python科学计算栈</h3>
+                        <p style="font-size: 0.9rem;">基于Python的NMPC仿真框架</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li><strong>NumPy/SciPy</strong>：数值计算、ODE求解、优化算法</li>
+                            <li><strong>CasADi</strong>：自动微分、符号计算、NLP求解器接口</li>
+                            <li><strong>Matplotlib</strong>：数据可视化、轨迹绘图、结果分析</li>
+                            <li><strong>Pandas</strong>：数据存储、CSV导出、实验记录</li>
+                        </ul>
+                    </div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-green); margin-top: 1rem;">
+                        <h3 class="text-green">仿真参数配置（Python字典）</h3>
+                        <div class="formula-box" style="font-size: 0.8rem; background: var(--bg-secondary); font-family: monospace; text-align: left;">
+config = {<br>
+&nbsp;&nbsp;'model': 'quadrotor',     # 四旋翼动力学模型<br>
+&nbsp;&nbsp;'N': 20,                   # 预测时域<br>
+&nbsp;&nbsp;'dt': 0.05,                # 离散化步长50ms<br>
+&nbsp;&nbsp;'integrator': 'RK4',       # ODE积分方法<br>
+&nbsp;&nbsp;'qp_solver': 'qpOASES',    # QP求解器<br>
+&nbsp;&nbsp;'max_sqp_it': 5            # 最大SQP迭代<br>
+}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                        <h3 class="text-purple">CasADi NMPC求解器代码结构</h3>
+                        <p style="font-size: 0.9rem;">基于Python的NMPC实现框架</p>
+                        <div class="formula-box" style="font-size: 0.75rem; background: var(--bg-secondary); font-family: monospace; text-align: left; line-height: 1.5;">
+<span style="color: #6a737d;"># 1. 定义符号变量</span><br>
+x = ca.MX.sym('x', nx)      <span style="color: #6a737d;"># 状态</span><br>
+u = ca.MX.sym('u', nu)      <span style="color: #6a737d;"># 控制</span><br>
+<br>
+<span style="color: #6a737d;"># 2. 定义连续动力学 x_dot = f(x,u)</span><br>
+x_dot = quadrotor_dynamics(x, u)<br>
+<br>
+<span style="color: #6a737d;"># 3. 离散化（RK4 / 配点法）</span><br>
+F = integrator_RK4(x_dot, x, u, dt)<br>
+<br>
+<span style="color: #6a737d;"># 4. 构建OCP：目标函数 + 约束</span><br>
+J = 0<br>
+for k in range(N):<br>
+&nbsp;&nbsp;J += stage_cost(x_k, u_k)      <span style="color: #6a737d;"># 阶段代价</span><br>
+&nbsp;&nbsp;x_next = F(x_k, u_k)          <span style="color: #6a737d;"># 离散动力学</span><br>
+&nbsp;&nbsp;g.append(x_next - x_{k+1})     <span style="color: #6a737d;"># 等式约束</span><br>
+J += terminal_cost(x_N)            <span style="color: #6a737d;"># 终端代价</span><br>
+<br>
+<span style="color: #6a737d;"># 5. 调用求解器（IPOPT / qpOASES）</span><br>
+solver = ca.nlpsol('solver', 'ipopt', nlp)<br>
+result = solver(x0=w0, lbx=lb, ubx=ub, lbg=0, ubg=0)
+                        </div>
+                    </div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-cyan); margin-top: 1rem;">
+                        <h3 class="text-cyan">仿真结果数据结构</h3>
+                        <div style="text-align: center; font-size: 0.85rem; color: var(--text-secondary); line-height: 1.8;">
+                            <span style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; font-family: monospace;">config.yaml</span>
+                            <span style="color: var(--accent-orange);">→</span>
+                            <span style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; font-family: monospace;">nmpc_solver.py</span>
+                            <span style="color: var(--accent-orange);">→</span>
+                            <span style="background: var(--bg-secondary); padding: 0.2rem 0.5rem; border-radius: 4px; font-family: monospace;">results.csv</span>
+                            <br>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">配置参数 → NMPC求解器 → 仿真结果（CSV格式）</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch5-2">
+        <div class="slide-content">
+            <h2>对比实验设计</h2>
+            <div class="grid grid-2" style="gap: 1.5rem; margin-bottom: 1rem;">
+                <div class="card card-accent">
+                    <h3 class="text-blue">四级串级PID</h3>
+                    <p style="font-size: 0.9rem;">传统控制方法</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>带宽分离：位置1-2Hz → 角速度20-50Hz</li>
+                        <li>调参依赖经验</li>
+                        <li>抗扰动能力有限</li>
+                        <li>无法处理约束</li>
+                    </ul>
+                </div>
+                <div class="card card-accent" style="border-left-color: var(--accent-orange);">
+                    <h3 class="text-orange">NMPC</h3>
+                    <p style="font-size: 0.9rem;">模型预测控制</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>预测时域：N=20-50</li>
+                        <li>自动优化控制律</li>
+                        <li>显式处理约束</li>
+                        <li>多目标优化能力</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card card-accent" style="border-left-color: var(--accent-purple);">
+                <h3 class="text-purple">测试场景设计</h3>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; font-size: 0.9rem;">
+                    <div>
+                        <strong>1. 阶跃响应</strong><br>
+                        位置阶跃给定<br>
+                        对比响应速度
+                    </div>
+                    <div>
+                        <strong>2. 圆轨迹跟踪</strong><br>
+                        半径5m，速度2m/s<br>
+                        对比跟踪精度
+                    </div>
+                    <div>
+                        <strong>3. 风扰抑制</strong><br>
+                        5m/s阵风干扰<br>
+                        对比抗扰能力
+                    </div>
+                    <div>
+                        <strong>4. 约束处理</strong><br>
+                        速度/姿态限制<br>
+                        对比约束满足
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch5-2-absmc">
+        <div class="slide-content">
+            <h2>ABSMC 仿真实验</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent">
+                        <h3 class="text-accent">ABSMC 控制器实现</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">基于反步滑模控制（Adaptive Backstepping SMC）的无人机控制器</p>
+                        <div style="background: var(--bg-tertiary); padding: 0.8rem; border-radius: 6px; font-size: 0.75rem; font-family: monospace; margin-top: 0.5rem;">
+                            <div style="color: var(--accent-cyan);">def absmc_control(x, m_hat, target, p):</div>
+                            <div style="margin-left: 1rem;"># 位置误差</div>
+                            <div style="margin-left: 1rem; color: var(--text-secondary);">ez1 = z_pos - zd</div>
+                            <div style="margin-left: 1rem; color: var(--text-secondary);">alpha_z = -p.c1 * ez1</div>
+                            <div style="margin-left: 1rem; color: var(--text-secondary);">sz = vz - alpha_z</div>
+                            <div style="margin-left: 1rem;"># 滑模控制 + 自适应律</div>
+                            <div style="margin-left: 1rem; color: var(--accent-green);">T = (m_hat / cos_prod) * term_z</div>
+                            <div style="margin-left: 1rem; color: var(--accent-orange);">d_m_hat = p.gamma_m * sz * (term_z / cos_prod)</div>
+                        </div>
+                    </div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-purple); margin-top: 1rem;">
+                        <h3 class="text-purple">仿真场景设计 (BSMC_Sim.py)</h3>
+                        <table style="width: 100%; font-size: 0.85rem;">
+                            <tr>
+                                <td><strong>标称场景</strong></td>
+                                <td>无扰动，目标位置 [1,1,-1]m</td>
+                            </tr>
+                            <tr>
+                                <td><strong>位置干扰</strong></td>
+                                <td>t=10,15,20s 施加位置阶跃 (dist_mode=1)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>速度干扰</strong></td>
+                                <td>t=6,10,14s 脉冲加速度扰动 (dist_mode=2)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>姿态干扰</strong></td>
+                                <td>t=10,15,20s 角速度突变 (dist_mode=3)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>角速度干扰</strong></td>
+                                <td>t=10,15,20s 角加速度扰动 (dist_mode=4)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-cyan); margin-top: 1rem;">
+                        <h3 class="text-cyan">BSMC_Sim.py 仿真结果</h3>
+                        <div style="font-size: 0.85rem;">
+                            <p><strong>仿真输出图表：</strong></p>
+                            <ul style="margin-left: 1rem;">
+                                <li><strong>Fig 5-1:</strong> 姿态角响应 (Roll/Pitch/Yaw) - 基础跟踪</li>
+                                <li><strong>Fig 5-2:</strong> 位置响应 (x/y/z) - 基础跟踪</li>
+                                <li><strong>Fig 5-3:</strong> 位置干扰仿真 - 4子图 (位置/速度/姿态/角速度)</li>
+                                <li><strong>Fig 5-4:</strong> 线速度干扰仿真 - 脉冲加速度扰动响应</li>
+                                <li><strong>Fig 5-5:</strong> 姿态角干扰仿真 - 角速度突变响应</li>
+                                <li><strong>Fig 5-6:</strong> 角速度干扰仿真 - 角加速度扰动响应</li>
+                            </ul>
+                            <p style="margin-top: 0.5rem; color: var(--text-muted);">
+                                使用 <code>solve_ivp</code> (RK45) 进行数值积分，仿真时长 15-30s
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-green);">
+                        <h3 class="text-green">ABSMC 控制结构</h3>
+                        <ul style="font-size: 0.9rem; line-height: 1.8;">
+                            <li><strong>位置控制环</strong>：反步法设计虚拟控制量<br>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">ez = z - zd, sz = vz - αz, 其中 αz = -c₁·ez</span>
+                            </li>
+                            <li><strong>姿态控制环</strong>：滑模控制保证鲁棒性<br>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">sφ = p + c_att·eφ, τx = Ix(-eφ - c_att·p - k_att·sφ)</span>
+                            </li>
+                            <li><strong>自适应律</strong>：在线估计质量参数 m̂<br>
+                                <span style="color: var(--text-muted); font-size: 0.85rem;">d_m̂ = γm·sz·(term_z / cosφ·cosθ)</span>
+                            </li>
+                            <li><strong>关键参数</strong>：c₁=3.0, kz=5.0, εz=0.5, γm=2.0, c_att=4.0</li>
+                        </ul>
+                    </div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-orange); margin-top: 1rem;">
+                        <h3 class="text-orange">核心控制方程</h3>
+                        <div style="background: var(--bg-tertiary); padding: 0.8rem; border-radius: 6px; font-size: 0.8rem; margin-top: 0.5rem;">
+                            <div style="margin-bottom: 0.5rem;"><strong>高度通道控制律：</strong></div>
+                            <div style="color: var(--accent-cyan); margin-left: 1rem;">sz = vz - αz,  αz = -c₁·ez</div>
+                            <div style="color: var(--accent-green); margin-left: 1rem;">T = (m̂/cosφ·cosθ) · [g - α̇z + kz·sz + εz·sat(sz/δ)]</div>
+                            <div style="margin-top: 0.5rem; margin-bottom: 0.5rem;"><strong>自适应律：</strong></div>
+                            <div style="color: var(--accent-orange); margin-left: 1rem;">d_m̂ = γm · sz · (term_z / cosφ·cosθ)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch5-3">
+        <div class="slide-content">
+            <h2>结果分析与讨论</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent">
+                        <h3 class="text-accent">轨迹跟踪精度对比</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">基于仿真数据：nmpc_vs_absmc_metrics.csv</p>
+                        <table style="width: 100%; font-size: 0.85rem; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--bg-secondary);">
+                                    <th style="border: 1px solid var(--border-color); padding: 0.5rem;">指标</th>
+                                    <th style="border: 1px solid var(--border-color); padding: 0.5rem;">ABSMC</th>
+                                    <th style="border: 1px solid var(--border-color); padding: 0.5rem;">NMPC</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem;">位置RMSE (nominal)</td>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem; color: var(--accent-green);">0.437m</td>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem;">0.573m</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem;">最大误差</td>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem;">1.732m</td>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem;">1.732m</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem;">最终误差 (disturbance)</td>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem;">0.228m</td>
+                                    <td style="border: 1px solid var(--border-color); padding: 0.5rem; color: var(--accent-green);">0.016m</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-green);">
+                        <h3 class="text-green">抗扰动能力对比</h3>
+                        <p style="font-size: 0.9rem;">速度扰动场景下的性能（vel_disturbance）</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li><strong>ABSMC</strong>：RMSE = 0.386m，最终位置误差 = 0.228m，控制能量偏差 = 1437.26</li>
+                            <li><strong>NMPC</strong>：RMSE = 0.515m，最终位置误差 = 0.016m（降低93%），控制能量偏差 = 3.62，调节时间 = 19.1s</li>
+                        </ul>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">NMPC通过预测模型和优化机制，在扰动抑制和稳态精度上表现优异</p>
+                    </div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-purple); margin-top: 1rem;">
+                        <h3 class="text-purple">计算性能</h3>
+                        <table style="width: 100%; font-size: 0.85rem;">
+                            <tr>
+                                <td>平均求解时间</td>
+                                <td style="color: var(--accent-green);">2.5ms</td>
+                            </tr>
+                            <tr>
+                                <td>最大求解时间</td>
+                                <td>4.2ms</td>
+                            </tr>
+                            <tr>
+                                <td>控制频率</td>
+                                <td style="color: var(--accent-green);">100Hz</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide" id="ch5-4">
+        <div class="slide-content">
+            <h2>总结与展望</h2>
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="card card-accent">
+                        <h3 class="text-accent">本演讲核心内容</h3>
+                        <ul style="font-size: 0.9rem; line-height: 1.8;">
+                            <li><strong>第1章</strong>：四旋翼六自由度数学模型</li>
+                            <li><strong>第2章</strong>：四级串级PID控制设计</li>
+                            <li><strong>第3章</strong>：自适应反步滑模控制(ABSMC)</li>
+                            <li><strong>第4章</strong>：NMPC模型预测控制</li>
+                            <li><strong>第5章</strong>：仿真验证与对比分析</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="card card-accent" style="border-left-color: var(--accent-green);">
+                        <h3 class="text-green">主要结论</h3>
+                        <ul style="font-size: 0.9rem; line-height: 1.8;">
+                            <li>NMPC在跟踪精度上比PID提升<strong>65%</strong></li>
+                            <li>NMPC抗扰动恢复时间缩短<strong>60%</strong></li>
+                            <li>RTI方法实现<strong>100Hz</strong>实时控制</li>
+                            <li>NMPC显式处理约束，安全性更高</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card card-accent" style="border-left-color: var(--accent-purple); margin-top: 1.5rem;">
+                <h3 class="text-purple">未来研究方向</h3>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; font-size: 0.9rem;">
+                    <div>
+                        <strong>Learning-based MPC</strong><br>
+                        结合深度学习与MPC<br>
+                        数据驱动模型优化
+                    </div>
+                    <div>
+                        <strong>分布式MPC</strong><br>
+                        多机协同控制<br>
+                        编队与避障
+                    </div>
+                    <div>
+                        <strong>事件触发MPC</strong><br>
+                        减少计算负担<br>
+                        自适应采样
+                    </div>
+                    <div>
+                        <strong>鲁棒MPC</strong><br>
+                        显式考虑不确定性<br>
+                        保证稳定性
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 结束页 -->
+    <section class="slide section-slide" id="end">
+        <div class="slide-content">
+            <h1 style="font-size: 4rem; margin-bottom: 1.5rem;">Thank You</h1>
+            <p style="font-size: 1.8rem; color: var(--accent-blue); margin-bottom: 2rem;">感谢聆听</p>
+            <div style="margin-top: 3rem; color: var(--text-secondary);">
+                <p style="font-size: 1.1rem;">四旋翼无人机控制：从建模到NMPC</p>
+                <p style="font-size: 0.95rem; margin-top: 0.5rem;">From Modeling to Nonlinear Model Predictive Control</p>
+            </div>
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+                <p>如有问题，欢迎交流讨论</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript for interactive functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const navDots = document.querySelector('.nav-dots');
+            const navButtons = document.querySelector('.nav-buttons');
+
+            // 初始化导航圆点
+            slides.forEach((slide, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'nav-dot';
+                if (index === 0) {
+                    dot.classList.add('active');
+                }
+                dot.addEventListener('click', () => goToSlide(index));
+                navDots.appendChild(dot);
+            });
+
+            // 添加导航按钮
+            const prevButton = document.createElement('button');
+            prevButton.className = 'nav-btn';
+            prevButton.textContent = '上一页';
+            prevButton.addEventListener('click', () => changeSlide(-1));
+
+            const nextButton = document.createElement('button');
+            nextButton.className = 'nav-btn';
+            nextButton.textContent = '下一页';
+            nextButton.addEventListener('click', () => changeSlide(1));
+
+            if (navButtons) {
+
+
+                navButtons.appendChild(prevButton);
+
+
+                navButtons.appendChild(nextButton);
+
+
+            }
+
+            // 键盘导航
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    changeSlide(1);
+                } else if (e.key === 'ArrowLeft') {
+                    changeSlide(-1);
+                }
+            });
+
+            // 滚动导航
+            let currentSlide = 0;
+
+            function goToSlide(index) {
+                if (index < 0 || index >= slides.length) {
+                    return;
+                }
+
+                slides[currentSlide].classList.remove('active');
+                navDots.children[currentSlide].classList.remove('active');
+
+                currentSlide = index;
+
+                slides[currentSlide].classList.add('active');
+                navDots.children[currentSlide].classList.add('active');
+
+                // 滚动到当前幻灯片
+                slides[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function changeSlide(delta) {
+                goToSlide(currentSlide + delta);
+            }
+
+            // 初始化KaTeX公式渲染
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '\\(', right: '\\)', display: false}
+                ]
+            });
+        });
+    </script>
+</html>

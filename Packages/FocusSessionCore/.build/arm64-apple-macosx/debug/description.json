@@ -1,0 +1,923 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.xctest/Contents/MacOS/FocusSessionCorePackageTests",
+      "packagePath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore",
+      "productName" : "FocusSessionCorePackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.FocusSessionCore-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/sources",
+      "importPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Analytics/AnalyticsCalculator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockDecision.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockerProfileSnapshot.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/FocusSessionCore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BlockingRule.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BreakRecord.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/DistractionEvent.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/FocusSessionRecord.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/ReflectionRecord.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/SessionProfile.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/ActiveSessionSnapshot.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionEvent.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionReducer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionState.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "FocusSessionCore",
+      "moduleOutputPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules/FocusSessionCore.swiftmodule",
+      "objects" : [
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/AnalyticsCalculator.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockDecision.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockerProfileSnapshot.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/FocusSessionCore.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockingRule.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BreakRecord.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/DistractionEvent.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/FocusSessionRecord.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/ReflectionRecord.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionProfile.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/ActiveSessionSnapshot.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionEvent.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionReducer.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionState.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx15.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/include/FocusSessionCore-Swift.h",
+        "-swift-version",
+        "6",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "focussessioncore"
+      ],
+      "outputFileMapPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/AnalyticsCalculator.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockDecision.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockerProfileSnapshot.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/FocusSessionCore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockingRule.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BreakRecord.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/DistractionEvent.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/FocusSessionRecord.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/ReflectionRecord.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionProfile.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/ActiveSessionSnapshot.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionEvent.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionReducer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules/FocusSessionCore.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Analytics/AnalyticsCalculator.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockDecision.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockerProfileSnapshot.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/FocusSessionCore.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BlockingRule.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BreakRecord.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/DistractionEvent.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/FocusSessionRecord.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/ReflectionRecord.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/SessionProfile.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/ActiveSessionSnapshot.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionEvent.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionReducer.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionState.swift"
+      ],
+      "tempsPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.FocusSessionCorePackageTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/sources",
+      "importPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules/FocusSessionCoreTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "FocusSessionCorePackageTests",
+      "moduleOutputPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules/FocusSessionCorePackageTests.swiftmodule",
+      "objects" : [
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx15.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/include/FocusSessionCorePackageTests-Swift.h",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "focussessioncore"
+      ],
+      "outputFileMapPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules/FocusSessionCorePackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.FocusSessionCoreTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/sources",
+      "importPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/AnalyticsCalculatorTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/DomainModelTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/SessionReducerTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules/FocusSessionCore.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "FocusSessionCoreTests",
+      "moduleOutputPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules/FocusSessionCoreTests.swiftmodule",
+      "objects" : [
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/AnalyticsCalculatorTests.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/DomainModelTests.swift.o",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/SessionReducerTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx15.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "6",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "focussessioncore"
+      ],
+      "outputFileMapPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/AnalyticsCalculatorTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/DomainModelTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/SessionReducerTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules/FocusSessionCoreTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/AnalyticsCalculatorTests.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/DomainModelTests.swift",
+        "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/SessionReducerTests.swift"
+      ],
+      "tempsPath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "FocusSessionCore" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "FocusSessionCore",
+      "-package-name",
+      "focussessioncore",
+      "-c",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Analytics/AnalyticsCalculator.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockDecision.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockerProfileSnapshot.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/FocusSessionCore.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BlockingRule.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BreakRecord.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/DistractionEvent.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/FocusSessionRecord.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/ReflectionRecord.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/SessionProfile.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/ActiveSessionSnapshot.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionEvent.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionReducer.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionState.swift",
+      "-I",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx15.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/include/FocusSessionCore-Swift.h",
+      "-swift-version",
+      "6",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "focussessioncore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "FocusSessionCorePackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "FocusSessionCorePackageTests",
+      "-package-name",
+      "focussessioncore",
+      "-c",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.derived/runner.swift",
+      "-I",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx15.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/include/FocusSessionCorePackageTests-Swift.h",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "focussessioncore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "FocusSessionCoreTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "FocusSessionCoreTests",
+      "-package-name",
+      "focussessioncore",
+      "-c",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/AnalyticsCalculatorTests.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/DomainModelTests.swift",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/SessionReducerTests.swift",
+      "-I",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx15.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "6",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "focussessioncore",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "FocusSessionCore" : [
+
+    ],
+    "FocusSessionCorePackageTests" : [
+      "FocusSessionCoreTests",
+      "FocusSessionCore"
+    ],
+    "FocusSessionCoreTests" : [
+      "FocusSessionCore"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Analytics/AnalyticsCalculator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockDecision.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockerProfileSnapshot.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/FocusSessionCore.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BlockingRule.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BreakRecord.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/DistractionEvent.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/FocusSessionRecord.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/ReflectionRecord.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/SessionProfile.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/ActiveSessionSnapshot.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionEvent.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionReducer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionState.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/sources"
+    },
+    "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/sources"
+    },
+    "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/ActiveSessionSnapshot.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/AnalyticsCalculator.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockDecision.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockerProfileSnapshot.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BlockingRule.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/BreakRecord.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/DistractionEvent.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/FocusSessionCore.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/FocusSessionRecord.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/ReflectionRecord.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionEvent.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionProfile.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionReducer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCore.build/SessionState.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/AnalyticsCalculatorTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/DomainModelTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/SessionReducerTests.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/AnalyticsCalculatorTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/DomainModelTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/SessionReducerTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/sources"
+    },
+    "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

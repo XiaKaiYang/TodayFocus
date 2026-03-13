@@ -1,0 +1,246 @@
+{
+  "" : {
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary.dia",
+    "emit-module-dependencies" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary-emit-module.dia",
+    "pch" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp-primary.swiftdeps"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/AppLaunchConfiguration.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/AppPreferencesStore.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppPreferencesStore.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppPreferencesStore.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppPreferencesStore.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Blocking/AppBlockProvider.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppBlockProvider.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Blocking/BlockerCoordinator.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerCoordinator.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/FocusSessionModelContainer.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/BlockingRuleRepository.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockingRuleRepository.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/DistractionEventRepository.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/DistractionEventRepository.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/FocusSessionRepository.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/PlanGoalsRepository.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanGoalsRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanGoalsRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanGoalsRepository.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/TasksRepository.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredBlockingRule.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredDistractionEvent.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredFocusSessionRecord.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredPlanGoal.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredPlanGoal.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredPlanGoal.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredPlanGoal.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/StoredTask.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredTask.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredTask.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredTask.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/DevTools/DemoSnapshotRenderer.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/DemoSnapshotRenderer.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/FocusSessionApp.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionApp.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Plan/PlanGoal.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanGoal.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanGoal.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanGoal.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/SharedSnapshot/RuntimeSnapshotStore.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Tasks/FocusTask.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusTask.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusTask.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusTask.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Analytics/AnalyticsCharts.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsCharts.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Analytics/AnalyticsDashboardView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsDashboardView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/AppMenuTitleSynchronizer.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppMenuTitleSynchronizer.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppMenuTitleSynchronizer.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppMenuTitleSynchronizer.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/AppSection.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppSection.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppSection.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppSection.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/AppShellView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppShellView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppShellView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppShellView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/CurrentSessionStatusItemController.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionStatusItemController.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionStatusItemController.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionStatusItemController.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/WindowChromeConfigurator.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/WindowChromeConfigurator.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/WindowChromeConfigurator.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/WindowChromeConfigurator.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppSurfaceTheme.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppSurfaceTheme.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppSurfaceTheme.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppSurfaceTheme.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Blocker/BlockerSettingsView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerSettingsView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/CurrentSessionLayoutMetrics.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionLayoutMetrics.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionLayoutMetrics.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionLayoutMetrics.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/CurrentSessionSceneConfiguration.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionSceneConfiguration.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionSceneConfiguration.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionSceneConfiguration.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/CurrentSessionView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/FocusClockDialView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusClockDialView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusClockDialView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusClockDialView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/FocusEntryStarfieldView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusEntryStarfieldView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusEntryStarfieldView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusEntryStarfieldView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Notes/NotesLibraryView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/NotesLibraryView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/NotesLibraryView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/NotesLibraryView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Plan/PlanDashboardView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanDashboardView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanDashboardView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanDashboardView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Settings/SettingsDashboardView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SettingsDashboardView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SettingsDashboardView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SettingsDashboardView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Tasks/TasksDashboardView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksDashboardView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Trash/TrashDashboardView.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TrashDashboardView.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TrashDashboardView.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TrashDashboardView.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/AnalyticsViewModel.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AnalyticsViewModel.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/BlockerViewModel.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/BlockerViewModel.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/CurrentSessionViewModel.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/CurrentSessionViewModel.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/NotesLibraryViewModel.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/NotesLibraryViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/NotesLibraryViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/NotesLibraryViewModel.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/PlanViewModel.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanViewModel.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/SettingsViewModel.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SettingsViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SettingsViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SettingsViewModel.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/TasksViewModel.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.o"
+  },
+  "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  }
+}

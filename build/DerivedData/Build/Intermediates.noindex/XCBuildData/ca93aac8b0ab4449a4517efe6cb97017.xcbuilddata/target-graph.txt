@@ -1,0 +1,6 @@
+Target dependency graph (3 targets)
+Target 'FocusSessionApp' in project 'FocusSession'
+➜ Explicit dependency on target 'FocusSessionCore' in project 'FocusSessionCore'
+Target 'FocusSessionCore' in project 'FocusSessionCore'
+➜ Explicit dependency on target 'FocusSessionCore' in project 'FocusSessionCore'
+Target 'FocusSessionCore' in project 'FocusSessionCore' (no dependencies)

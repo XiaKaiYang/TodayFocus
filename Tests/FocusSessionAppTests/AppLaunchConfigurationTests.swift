@@ -1,0 +1,20 @@
+import XCTest
+@testable import FocusSession
+
+final class AppLaunchConfigurationTests: XCTestCase {
+    func testDefaultLaunchDoesNotEnableDemoMode() {
+        let configuration = AppLaunchConfiguration(environment: [:])
+
+        XCTAssertNil(configuration.initialSection)
+        XCTAssertFalse(configuration.usesBlockerDemo)
+    }
+
+    func testBlockerDemoModeSelectsBlockerAndEnablesDemoContent() {
+        let configuration = AppLaunchConfiguration(
+            environment: ["FOCUSSESSION_DEMO_MODE": "blocker"]
+        )
+
+        XCTAssertEqual(configuration.initialSection, .blocker)
+        XCTAssertTrue(configuration.usesBlockerDemo)
+    }
+}

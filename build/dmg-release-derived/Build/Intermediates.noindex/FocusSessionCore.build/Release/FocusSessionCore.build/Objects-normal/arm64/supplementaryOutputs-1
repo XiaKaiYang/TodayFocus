@@ -1,0 +1,12 @@
+{
+  "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Sources/FocusSessionCore/Analytics/AnalyticsCalculator.swift" : {
+    "abi-baseline-json" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSessionCore.build/Release/FocusSessionCore.build/Objects-normal/arm64/FocusSessionCore.abi.json",
+    "const-values" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSessionCore.build/Release/FocusSessionCore.build/Objects-normal/arm64/FocusSessionCore-primary.swiftconstvalues",
+    "dependencies" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSessionCore.build/Release/FocusSessionCore.build/Objects-normal/arm64/FocusSessionCore-primary.d",
+    "diagnostics" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSessionCore.build/Release/FocusSessionCore.build/Objects-normal/arm64/FocusSessionCore-primary.dia",
+    "objc-header" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSessionCore.build/Release/FocusSessionCore.build/Objects-normal/arm64/FocusSessionCore-Swift.h",
+    "swiftdoc" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSessionCore.build/Release/FocusSessionCore.build/Objects-normal/arm64/FocusSessionCore.swiftdoc",
+    "swiftmodule" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSessionCore.build/Release/FocusSessionCore.build/Objects-normal/arm64/FocusSessionCore.swiftmodule",
+    "swiftsourceinfo" : "/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSessionCore.build/Release/FocusSessionCore.build/Objects-normal/arm64/FocusSessionCore.swiftsourceinfo"
+  }
+}

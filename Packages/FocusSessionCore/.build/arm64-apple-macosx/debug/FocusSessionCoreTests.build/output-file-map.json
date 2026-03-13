@@ -1,0 +1,26 @@
+{
+  "": {
+    "swift-dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/master.swiftdeps"
+  },
+  "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/AnalyticsCalculatorTests.swift": {
+    "dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/AnalyticsCalculatorTests.d",
+    "object": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/AnalyticsCalculatorTests.swift.o",
+    "swiftmodule": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/AnalyticsCalculatorTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/AnalyticsCalculatorTests.swiftdeps",
+    "diagnostics": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/AnalyticsCalculatorTests.dia"
+  },
+  "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/DomainModelTests.swift": {
+    "dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/DomainModelTests.d",
+    "object": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/DomainModelTests.swift.o",
+    "swiftmodule": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/DomainModelTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/DomainModelTests.swiftdeps",
+    "diagnostics": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/DomainModelTests.dia"
+  },
+  "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/Tests/FocusSessionCoreTests/SessionReducerTests.swift": {
+    "dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/SessionReducerTests.d",
+    "object": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/SessionReducerTests.swift.o",
+    "swiftmodule": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/SessionReducerTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/SessionReducerTests.swiftdeps",
+    "diagnostics": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCoreTests.build/SessionReducerTests.dia"
+  }
+}

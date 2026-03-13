@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/master.swiftdeps"
+  },
+  "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.derived/runner.swift": {
+    "dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/runner.d",
+    "object": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/runner.swift.o",
+    "swiftmodule": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/runner.swiftdeps",
+    "diagnostics": "/Users/xiakaiyang/Documents/New project/Packages/FocusSessionCore/.build/arm64-apple-macosx/debug/FocusSessionCorePackageTests.build/runner.dia"
+  }
+}

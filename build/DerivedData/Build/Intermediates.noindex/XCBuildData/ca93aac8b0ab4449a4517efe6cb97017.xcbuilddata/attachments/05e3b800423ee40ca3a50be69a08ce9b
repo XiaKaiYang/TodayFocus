@@ -1,0 +1,14 @@
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Analytics/AnalyticsCalculator.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockDecision.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Blocking/BlockerProfileSnapshot.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/FocusSessionCore.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BlockingRule.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/BreakRecord.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/DistractionEvent.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/FocusSessionRecord.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/ReflectionRecord.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/Models/SessionProfile.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/ActiveSessionSnapshot.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionEvent.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionReducer.swift
+/Users/xiakaiyang/Documents/New\ project/Packages/FocusSessionCore/Sources/FocusSessionCore/SessionEngine/SessionState.swift
