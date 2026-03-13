@@ -1,0 +1,14 @@
+.DS_Store
+.playwright-cli/
+.venv-sim/
+artifacts/
+build/
+default.profraw
+docs/plans/
+findings.md
+progress.md
+task_plan.md
+quadrotor_control_presentation_work.html
+
+Packages/FocusSessionCore/.build/
+Packages/FocusSessionCore/.swiftpm/

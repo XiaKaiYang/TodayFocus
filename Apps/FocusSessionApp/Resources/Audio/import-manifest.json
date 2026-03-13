@@ -1,0 +1,167 @@
+[
+  {
+    "destination": "Session/SoundEffects/achievement.wav",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/achievement.wav"
+  },
+  {
+    "destination": "Session/SoundEffects/confident.wav",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/confident.wav"
+  },
+  {
+    "destination": "Session/SoundEffects/ending-soon.wav",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/ending-soon.wav"
+  },
+  {
+    "destination": "Session/SoundEffects/eventually.wav",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/eventually.wav"
+  },
+  {
+    "destination": "Session/SoundEffects/light.wav",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/light.wav"
+  },
+  {
+    "destination": "Session/SoundEffects/stop.wav",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/stop.wav"
+  },
+  {
+    "destination": "Session/WhiteNoise/Clock Ticking.wav",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Clock Ticking.wav"
+  },
+  {
+    "destination": "Session/WhiteNoise/Duskfall on a River.mp3",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Duskfall on a River.mp3"
+  },
+  {
+    "destination": "Session/WhiteNoise/Gong.mp3",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Gong.mp3"
+  },
+  {
+    "destination": "Session/WhiteNoise/Kitchen Timer.wav",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Kitchen Timer.wav"
+  },
+  {
+    "destination": "Session/WhiteNoise/Light Rain Falling on Forest Floor.mp3",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Light Rain Falling on Forest Floor.mp3"
+  },
+  {
+    "destination": "Session/WhiteNoise/Mountain Atmosphere.mp3",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Mountain Atmosphere.mp3"
+  },
+  {
+    "destination": "Session/WhiteNoise/Ocean Waves.mp3",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Ocean Waves.mp3"
+  },
+  {
+    "destination": "Session/WhiteNoise/Peaceful Wind Atop a Hill.mp3",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Peaceful Wind Atop a Hill.mp3"
+  },
+  {
+    "destination": "Session/WhiteNoise/Thunder in the Woods.mp3",
+    "sourceApp": "Session",
+    "sourcePath": "/Applications/Session.app/Contents/Resources/Assets/White Noise/Thunder in the Woods.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/Clock.m4a",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/Clock.m4a"
+  },
+  {
+    "destination": "TickTick/SoundEffects/africa.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/africa.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/blocks.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/blocks.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/chimes.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/chimes.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/crystal.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/crystal.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/default.wav",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/default.wav"
+  },
+  {
+    "destination": "TickTick/SoundEffects/drip.aac",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/drip.aac"
+  },
+  {
+    "destination": "TickTick/SoundEffects/harp.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/harp.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/jingle.aac",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/jingle.aac"
+  },
+  {
+    "destination": "TickTick/SoundEffects/knock.aac",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/knock.aac"
+  },
+  {
+    "destination": "TickTick/SoundEffects/ladder.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/ladder.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/lattice.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/lattice.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/leap.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/leap.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/matrix.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/matrix.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/music_box.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/music_box.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/pomo_end.aac",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/pomo_end.aac"
+  },
+  {
+    "destination": "TickTick/SoundEffects/pulse.mp3",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/pulse.mp3"
+  },
+  {
+    "destination": "TickTick/SoundEffects/spiral.aac",
+    "sourceApp": "TickTick",
+    "sourcePath": "/Applications/TickTick.app/Contents/Resources/spiral.aac"
+  }
+]

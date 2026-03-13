@@ -1,0 +1,189 @@
+name: FocusSession
+
+options:
+  minimumXcodeGenVersion: 2.45.0
+  createIntermediateGroups: true
+  groupSortPosition: top
+  deploymentTarget:
+    macOS: "15.0"
+
+configs:
+  Debug: debug
+  Release: release
+
+configFiles:
+  Debug: Config/Development.xcconfig
+  Release: Config/Shared.xcconfig
+
+settings:
+  base:
+    PRODUCT_NAME: $(TARGET_NAME)
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+    MACOSX_DEPLOYMENT_TARGET: 15.0
+    SWIFT_VERSION: 6.0
+    CODE_SIGNING_ALLOWED: NO
+    CODE_SIGNING_REQUIRED: NO
+    ENABLE_HARDENED_RUNTIME: NO
+    GENERATE_INFOPLIST_FILE: YES
+
+packages:
+  FocusSessionCore:
+    path: Packages/FocusSessionCore
+
+targets:
+  FocusSessionApp:
+    type: application
+    platform: macOS
+    sources:
+      - path: Apps/FocusSessionApp
+    dependencies:
+      - package: FocusSessionCore
+    info:
+      path: Apps/FocusSessionApp/Info.plist
+      properties:
+        CFBundleDisplayName: TodayFocus
+        LSMinimumSystemVersion: "15.0"
+        NSPrincipalClass: NSApplication
+        NSSupportsAutomaticTermination: true
+        NSSupportsSuddenTermination: false
+    entitlements:
+      path: Config/Entitlements/FocusSessionApp.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.com.example.FocusSession
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession
+        PRODUCT_NAME: TodayFocus
+        PRODUCT_MODULE_NAME: FocusSession
+
+  FocusSessionHelper:
+    type: application
+    platform: macOS
+    sources:
+      - path: Apps/FocusSessionHelper
+    dependencies:
+      - package: FocusSessionCore
+    info:
+      path: Apps/FocusSessionHelper/Info.plist
+      properties:
+        CFBundleDisplayName: FocusSessionHelper
+        LSMinimumSystemVersion: "15.0"
+        LSUIElement: true
+    entitlements:
+      path: Config/Entitlements/FocusSessionHelper.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.com.example.FocusSession
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Helper
+        PRODUCT_NAME: FocusSessionHelper
+        SKIP_INSTALL: YES
+
+  FocusSessionWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Extensions/FocusSessionWidget
+    dependencies:
+      - package: FocusSessionCore
+    info:
+      path: Extensions/FocusSessionWidget/Info.plist
+      properties:
+        CFBundleDisplayName: FocusSessionWidget
+        LSMinimumSystemVersion: "15.0"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Config/Entitlements/FocusSessionWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.com.example.FocusSession
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Widget
+        PRODUCT_NAME: FocusSessionWidget
+        SKIP_INSTALL: YES
+
+  FocusSessionIntents:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Extensions/FocusSessionIntents
+    dependencies:
+      - package: FocusSessionCore
+    info:
+      path: Extensions/FocusSessionIntents/Info.plist
+      properties:
+        CFBundleDisplayName: FocusSessionIntents
+        LSMinimumSystemVersion: "15.0"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.intents-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).IntentHandler
+          NSExtensionAttributes:
+            IntentsSupported:
+              - StartSessionIntent
+              - TogglePauseIntent
+              - TotalFocusTimeIntent
+    entitlements:
+      path: Config/Entitlements/FocusSessionIntents.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.com.example.FocusSession
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Intents
+        PRODUCT_NAME: FocusSessionIntents
+        SKIP_INSTALL: YES
+
+  FocusSessionSafari:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Extensions/FocusSessionSafari
+    info:
+      path: Extensions/FocusSessionSafari/Info.plist
+      properties:
+        CFBundleDisplayName: FocusSessionSafari
+        LSMinimumSystemVersion: "15.0"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.Safari.web-extension
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).SafariWebExtensionHandler
+    entitlements:
+      path: Config/Entitlements/FocusSessionSafari.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.com.example.FocusSession
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Safari
+        PRODUCT_NAME: FocusSessionSafari
+        SKIP_INSTALL: YES
+
+  FocusSessionAppTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/FocusSessionAppTests
+    dependencies:
+      - target: FocusSessionApp
+      - package: FocusSessionCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.AppTests
+        PRODUCT_NAME: FocusSessionAppTests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/TodayFocus.app/Contents/MacOS/TodayFocus
+        BUNDLE_LOADER: $(TEST_HOST)
+
+schemes:
+  FocusSessionSafari:
+    build:
+      targets:
+        FocusSessionSafari: all
