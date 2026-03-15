@@ -8,6 +8,7 @@ final class StoredTask {
     var details: String?
     var estimatedMinutes: Int
     var priorityRawValue: String?
+    var subtasksData: Data?
     var startAt: Date?
     var endAt: Date?
     var isCompleted: Bool
@@ -23,6 +24,7 @@ final class StoredTask {
     var repeatRemainingCount: Int?
     var visibleFrom: Date?
     var recurrenceSeriesID: UUID?
+    var displayOrder: Int?
 
     init(task: FocusTask) {
         self.id = task.id
@@ -30,6 +32,7 @@ final class StoredTask {
         self.details = task.details
         self.estimatedMinutes = task.estimatedMinutes
         self.priorityRawValue = task.priority.rawValue
+        self.subtasksData = Self.encodeSubtasks(task.subtasks)
         self.startAt = task.startAt
         self.endAt = task.endAt
         self.isCompleted = task.isCompleted
@@ -45,6 +48,7 @@ final class StoredTask {
         self.repeatRemainingCount = task.repeatRemainingCount
         self.visibleFrom = task.visibleFrom
         self.recurrenceSeriesID = task.recurrenceSeriesID
+        self.displayOrder = task.displayOrder >= 0 ? task.displayOrder : nil
     }
 
     func update(from task: FocusTask) {
@@ -52,6 +56,7 @@ final class StoredTask {
         details = task.details
         estimatedMinutes = task.estimatedMinutes
         priorityRawValue = task.priority.rawValue
+        subtasksData = Self.encodeSubtasks(task.subtasks)
         startAt = task.startAt
         endAt = task.endAt
         isCompleted = task.isCompleted
@@ -67,6 +72,7 @@ final class StoredTask {
         repeatRemainingCount = task.repeatRemainingCount
         visibleFrom = task.visibleFrom
         recurrenceSeriesID = task.recurrenceSeriesID
+        displayOrder = task.displayOrder >= 0 ? task.displayOrder : nil
     }
 
     var domainModel: FocusTask {
@@ -76,6 +82,7 @@ final class StoredTask {
             details: details,
             estimatedMinutes: estimatedMinutes,
             priority: TaskPriority(rawValue: priorityRawValue ?? "") ?? .none,
+            subtasks: Self.decodeSubtasks(from: subtasksData),
             startAt: startAt,
             endAt: endAt,
             isCompleted: isCompleted,
@@ -90,7 +97,23 @@ final class StoredTask {
             repeatTotalCount: repeatTotalCount,
             repeatRemainingCount: repeatRemainingCount,
             visibleFrom: visibleFrom,
-            recurrenceSeriesID: recurrenceSeriesID
+            recurrenceSeriesID: recurrenceSeriesID,
+            displayOrder: displayOrder ?? -1
         )
+    }
+
+    private static func encodeSubtasks(_ subtasks: [TaskSubtask]) -> Data? {
+        try? JSONEncoder().encode(subtasks)
+    }
+
+    private static func decodeSubtasks(from data: Data?) -> [TaskSubtask] {
+        guard
+            let data,
+            let subtasks = try? JSONDecoder().decode([TaskSubtask].self, from: data)
+        else {
+            return []
+        }
+
+        return subtasks
     }
 }

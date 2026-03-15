@@ -5,6 +5,7 @@
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/AppLaunchConfiguration.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/AppShell/AppMenuTitleSynchronizer.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/AppPreferencesStore.swift
+/Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/AppResponsiveLayout.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/AppShell/AppSection.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/AppShell/AppShellView.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/AppSurfaceTheme.swift
@@ -25,6 +26,7 @@
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Data/FocusSessionModelContainer.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Data/Repositories/FocusSessionRepository.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Tasks/FocusTask.swift
+/Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/AppShell/MobileShellRouting.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/Notes/NotesLibraryView.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/ViewModels/NotesLibraryViewModel.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/Plan/PlanDashboardView.swift
@@ -34,6 +36,8 @@
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/SharedSnapshot/RuntimeSnapshotStore.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/Settings/SettingsDashboardView.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/ViewModels/SettingsViewModel.swift
+/Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Sound/SoundCenter.swift
+/Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Sound/SoundPlaybackRequest.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Data/StoredBlockingRule.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Data/StoredDistractionEvent.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Data/StoredFocusSessionRecord.swift
@@ -43,5 +47,7 @@
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/Data/Repositories/TasksRepository.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/ViewModels/TasksViewModel.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/Trash/TrashDashboardView.swift
+/Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/WhiteNoise/WhiteNoiseDashboardView.swift
+/Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/ViewModels/WhiteNoiseViewModel.swift
 /Users/xiakaiyang/Documents/New\ project/Apps/FocusSessionApp/UI/AppShell/WindowChromeConfigurator.swift
 /Users/xiakaiyang/Documents/New\ project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/DerivedSources/GeneratedAssetSymbols.swift

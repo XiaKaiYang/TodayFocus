@@ -5,6 +5,7 @@
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppLaunchConfiguration.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppMenuTitleSynchronizer.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppPreferencesStore.o
+/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppResponsiveLayout.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppSection.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppShellView.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/AppSurfaceTheme.o
@@ -25,6 +26,7 @@
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionModelContainer.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusSessionRepository.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/FocusTask.o
+/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/MobileShellRouting.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/NotesLibraryView.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/NotesLibraryViewModel.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/PlanDashboardView.o
@@ -34,6 +36,8 @@
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/RuntimeSnapshotStore.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SettingsDashboardView.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SettingsViewModel.o
+/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SoundCenter.o
+/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/SoundPlaybackRequest.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredBlockingRule.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredDistractionEvent.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/StoredFocusSessionRecord.o
@@ -43,6 +47,8 @@
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksRepository.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TasksViewModel.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/TrashDashboardView.o
+/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/WhiteNoiseDashboardView.o
+/Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/WhiteNoiseViewModel.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/WindowChromeConfigurator.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Intermediates.noindex/FocusSession.build/Release/FocusSessionApp.build/Objects-normal/arm64/GeneratedAssetSymbols.o
 /Users/xiakaiyang/Documents/New project/build/dmg-release-derived/Build/Products/Release/FocusSessionCore.o

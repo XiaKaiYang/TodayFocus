@@ -209,17 +209,14 @@ final class AppShellViewModelTests: XCTestCase {
         )
     }
 
-    func testSettingsLaunchDestinationIncludesPlan() throws {
-        let root = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-        let settingsFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/Settings/SettingsDashboardView.swift")
-        let settingsContents = try String(contentsOf: settingsFileURL, encoding: .utf8)
-
+    func testSettingsLaunchDestinationIncludesPlan() {
         XCTAssertTrue(
-            settingsContents.contains("AppDropdownOption(value: .plan"),
-            "Startup settings should allow launching straight into Plan."
+            AppSection.launchDestinationSections(on: .macOS).contains(.plan),
+            "Startup settings should allow launching straight into Plan on macOS."
+        )
+        XCTAssertTrue(
+            AppSection.launchDestinationSections(on: .iOS).contains(.plan),
+            "Startup settings should allow launching straight into Plan on iOS."
         )
     }
 

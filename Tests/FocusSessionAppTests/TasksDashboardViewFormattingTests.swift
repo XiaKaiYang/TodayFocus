@@ -45,6 +45,49 @@ final class TasksDashboardViewFormattingTests: XCTestCase {
         XCTAssertTrue(source.contains("Tomorrow"))
     }
 
+    func testTasksDashboardSourceAddsParentSubtaskRenderingAndDragState() throws {
+        let source = try String(
+            contentsOfFile: "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Tasks/TasksDashboardView.swift",
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(source.contains("expandedParentTaskIDs"))
+        XCTAssertTrue(source.contains("draggedTaskID"))
+        XCTAssertTrue(source.contains("draggedTaskTranslation"))
+        XCTAssertTrue(source.contains("taskRowFrames"))
+        XCTAssertTrue(source.contains("taskSubtaskRow("))
+        XCTAssertTrue(source.contains("\"list.bullet.indent\""))
+        XCTAssertTrue(source.contains("task.hasSubtasks"))
+        XCTAssertTrue(source.contains("viewModel.toggleTaskSubtaskCompletion("))
+        XCTAssertTrue(source.contains("viewModel.moveTask("))
+        XCTAssertTrue(source.contains(".scrollDisabled(draggedTaskID != nil)"))
+        XCTAssertTrue(source.contains("DragGesture(minimumDistance: 4"))
+    }
+
+    func testTasksDashboardSourceAddsSubtaskSelectFlowForParentTasks() throws {
+        let source = try String(
+            contentsOfFile: "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Tasks/TasksDashboardView.swift",
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(source.contains("task.subtasks.filter { !$0.isCompleted }"))
+        XCTAssertTrue(source.contains("remainingSubtasks.count == 1"))
+        XCTAssertTrue(source.contains("viewModel.startFocus(for: task, subtask:"))
+        XCTAssertTrue(source.contains(".popover("))
+    }
+
+    func testTasksDashboardSourceUsesFullCreateCopy() throws {
+        let source = try String(
+            contentsOfFile: "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Tasks/TasksDashboardView.swift",
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(source.contains("Button(\"Create\")"))
+        XCTAssertTrue(source.contains("Text(viewModel.isEditingTask ? \"Edit\" : \"Create\")"))
+        XCTAssertTrue(source.contains("Button(viewModel.isEditingTask ? \"Save\" : \"Create\")"))
+        XCTAssertFalse(source.contains("\"Creat\""))
+    }
+
     func testScheduleTextUsesTodayForReferenceDayRanges() {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!

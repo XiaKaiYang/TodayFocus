@@ -38,16 +38,16 @@ Phase 4
   - Runtime snapshot persistence
   - App shell navigation
   - Task list and task-to-focus launch flow
+  - Subtask-aware Today task focus selection and completion flow
   - Analytics dashboard
   - Notes-backed current session workspace with recent session history
   - Shared light-surface visual system applied across the shell and major product pages
   - Transparent idle current-session stage and hub-based dial redesign
+  - iPhone+iPad app target scaffolding with mobile shell routing, CloudKit-backed shared-store bootstrap, and cross-platform editor/timeline support
 - Next likely slices:
-  - Blocker configuration and event logging
-  - Settings replacement and preferences wiring
-  - Visual polish pass on the remaining current-session edge cases
-  - Continue interaction polish now that white-text regressions are blocked by theme tokens and source audit
-  - Continue form readability polish now that guarded Create/Blocker fields use custom prompt and label rendering
+  - Install the local iOS platform components so the new mobile target can be compiled and simulator-tested on this machine
+  - Run iPhone and iPad simulator smoke tests for the shared flows once the SDK is available
+  - Polish mobile-only layout details discovered during live iOS verification
 
 ### Phase 5: Delivery
 - [ ] Summarize what was built
@@ -78,6 +78,7 @@ Phase 4
 | `git status` failed because the workspace is not a git repository | 1 | Continue without git assumptions and track work through planning files. |
 | `FocusSessionIntents` failed with unsupported target type `app-extension.intents-service` on macOS | 1 | Switched the target to a generic `app-extension` and configured the intents service via `NSExtensionPointIdentifier`. |
 | `FocusSessionSafari` initially had no generated scheme | 1 | Added an explicit `schemes` entry for `FocusSessionSafari` in `project.yml`. |
+| `FocusSessionMobileApp` could not be compiled locally because Xcode reported `iOS 26.2 is not installed` | 1 | Completed static source audits plus macOS-side regression coverage, and left simulator verification pending until the local iOS platform is installed. |
 
 ## Notes
 - Re-read this plan before major decisions.

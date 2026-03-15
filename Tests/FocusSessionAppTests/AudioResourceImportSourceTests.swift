@@ -64,8 +64,10 @@ final class AudioResourceImportSourceTests: XCTestCase {
             encoding: .utf8
         )
 
-        XCTAssertTrue(project.contains("path = Resources/Audio;"))
-        XCTAssertTrue(project.contains("lastKnownFileType = folder; path = Resources/Audio;"))
-        XCTAssertTrue(project.contains("Audio in Resources"))
+        XCTAssertTrue(project.contains("path = Audio;"))
+        XCTAssertTrue(project.contains("import-manifest.json in Resources"))
+        XCTAssertTrue(project.contains("Ocean Waves.mp3 in Resources"))
+        XCTAssertTrue(project.contains("default.wav in Resources"))
+        XCTAssertTrue(project.contains("light.wav in Resources"))
     }
 }

@@ -94,12 +94,29 @@ enum TaskRepeatWeekday: Int, CaseIterable, Equatable, Hashable, Codable {
     var calendarWeekday: Int { rawValue }
 }
 
+struct TaskSubtask: Equatable, Identifiable, Codable {
+    let id: UUID
+    var title: String
+    var isCompleted: Bool
+
+    init(
+        id: UUID = UUID(),
+        title: String,
+        isCompleted: Bool = false
+    ) {
+        self.id = id
+        self.title = title
+        self.isCompleted = isCompleted
+    }
+}
+
 struct FocusTask: Equatable, Identifiable {
     let id: UUID
     var title: String
     var details: String?
     var estimatedMinutes: Int
     var priority: TaskPriority
+    var subtasks: [TaskSubtask]
     var startAt: Date?
     var endAt: Date?
     var isCompleted: Bool
@@ -115,6 +132,7 @@ struct FocusTask: Equatable, Identifiable {
     var repeatRemainingCount: Int?
     var visibleFrom: Date?
     var recurrenceSeriesID: UUID?
+    var displayOrder: Int
 
     init(
         id: UUID = UUID(),
@@ -122,6 +140,7 @@ struct FocusTask: Equatable, Identifiable {
         details: String? = nil,
         estimatedMinutes: Int = 25,
         priority: TaskPriority = .none,
+        subtasks: [TaskSubtask] = [],
         startAt: Date? = nil,
         endAt: Date? = nil,
         isCompleted: Bool = false,
@@ -136,13 +155,15 @@ struct FocusTask: Equatable, Identifiable {
         repeatTotalCount: Int? = nil,
         repeatRemainingCount: Int? = nil,
         visibleFrom: Date? = nil,
-        recurrenceSeriesID: UUID? = nil
+        recurrenceSeriesID: UUID? = nil,
+        displayOrder: Int = -1
     ) {
         self.id = id
         self.title = title
         self.details = details
         self.estimatedMinutes = estimatedMinutes
         self.priority = priority
+        self.subtasks = subtasks
         self.startAt = startAt
         self.endAt = endAt
         self.isCompleted = isCompleted
@@ -158,10 +179,19 @@ struct FocusTask: Equatable, Identifiable {
         self.repeatRemainingCount = repeatRemainingCount
         self.visibleFrom = visibleFrom
         self.recurrenceSeriesID = recurrenceSeriesID
+        self.displayOrder = displayOrder
     }
 
     var isRepeating: Bool {
         repeatRule != .none
+    }
+
+    var hasSubtasks: Bool {
+        subtasks.isEmpty == false
+    }
+
+    var areAllSubtasksCompleted: Bool {
+        hasSubtasks && subtasks.allSatisfy(\.isCompleted)
     }
 
     var isLinkedToSubtask: Bool {
@@ -218,5 +248,11 @@ struct FocusTask: Equatable, Identifiable {
         }
 
         return calendar.isDate(visibleFrom, inSameDayAs: tomorrow)
+    }
+
+    func resettingSubtasks() -> [TaskSubtask] {
+        subtasks.map { subtask in
+            TaskSubtask(id: subtask.id, title: subtask.title, isCompleted: false)
+        }
     }
 }

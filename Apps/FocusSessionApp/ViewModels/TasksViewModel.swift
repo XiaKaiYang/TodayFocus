@@ -65,6 +65,7 @@ final class TasksViewModel: ObservableObject {
     @Published var usesTimeRange = false
     @Published var newTaskStartAt = Date()
     @Published var newTaskEndAt = Date().addingTimeInterval(25 * 60)
+    @Published var taskSubtasksDraft: [TaskSubtask] = []
     @Published private(set) var linkedSubtaskID: UUID?
     @Published private(set) var linkedSubtaskTitle: String?
     @Published var contributionValueText = ""
@@ -72,7 +73,7 @@ final class TasksViewModel: ObservableObject {
 
     private let repository: TasksRepository
     private let linkedTaskSettlementCoordinator: LinkedTaskSettlementCoordinator
-    private let onStartTask: ((FocusTask) -> Void)?
+    private let onStartTask: ((FocusTask, TaskSubtask?) -> Void)?
     private let onTasksChanged: (() -> Void)?
     private let soundEffectPlayer: SoundEffectPlaying?
     private let now: () -> Date
@@ -82,7 +83,7 @@ final class TasksViewModel: ObservableObject {
     init(
         repository: TasksRepository? = nil,
         linkedTaskSettlementCoordinator: LinkedTaskSettlementCoordinator? = nil,
-        onStartTask: ((FocusTask) -> Void)? = nil,
+        onStartTask: ((FocusTask, TaskSubtask?) -> Void)? = nil,
         onTasksChanged: (() -> Void)? = nil,
         soundEffectPlayer: SoundEffectPlaying? = nil,
         now: @escaping () -> Date = Date.init,
@@ -180,6 +181,7 @@ final class TasksViewModel: ObservableObject {
         newTaskDetails = task.details ?? ""
         newEstimatedMinutes = task.estimatedMinutes
         newTaskPriority = task.priority
+        taskSubtasksDraft = task.subtasks
         newTaskRepeatRule = task.repeatRule
         newTaskRepeatWeekday = task.repeatWeekday ?? .monday
         newTaskRepeatCountText = task.repeatTotalCount.map(String.init) ?? ""
@@ -227,6 +229,7 @@ final class TasksViewModel: ObservableObject {
         }
 
         let trimmedDetails = newTaskDetails.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sanitizedSubtasks = taskSubtasksDraft.compactMap(Self.sanitizedSubtask(from:))
         let startAt = usesTimeRange ? newTaskStartAt : nil
         let endAt = usesTimeRange ? newTaskEndAt : nil
         let repeatRule = newTaskRepeatRule
@@ -275,6 +278,7 @@ final class TasksViewModel: ObservableObject {
                 details: trimmedDetails.isEmpty ? nil : trimmedDetails,
                 estimatedMinutes: newEstimatedMinutes,
                 priority: newTaskPriority,
+                subtasks: sanitizedSubtasks,
                 startAt: startAt,
                 endAt: endAt,
                 linkedSubtaskID: linkedSubtaskID,
@@ -283,7 +287,8 @@ final class TasksViewModel: ObservableObject {
                 repeatWeekday: repeatWeekday,
                 repeatTotalCount: repeatTotalCount,
                 repeatRemainingCount: repeatRemainingCount,
-                recurrenceSeriesID: recurrenceSeriesID
+                recurrenceSeriesID: recurrenceSeriesID,
+                displayOrder: 0
             )
         case let .edit(id):
             guard let existingTask = tasks.first(where: { $0.id == id }) else {
@@ -296,6 +301,7 @@ final class TasksViewModel: ObservableObject {
                 details: trimmedDetails.isEmpty ? nil : trimmedDetails,
                 estimatedMinutes: newEstimatedMinutes,
                 priority: newTaskPriority,
+                subtasks: sanitizedSubtasks,
                 startAt: startAt,
                 endAt: endAt,
                 isCompleted: existingTask.isCompleted,
@@ -308,7 +314,8 @@ final class TasksViewModel: ObservableObject {
                 repeatTotalCount: repeatTotalCount,
                 repeatRemainingCount: repeatRemainingCount,
                 visibleFrom: existingTask.visibleFrom,
-                recurrenceSeriesID: recurrenceSeriesID
+                recurrenceSeriesID: recurrenceSeriesID,
+                displayOrder: existingTask.priority == newTaskPriority ? existingTask.displayOrder : 0
             )
         }
 
@@ -316,8 +323,23 @@ final class TasksViewModel: ObservableObject {
             switch composerMode {
             case .create:
                 try repository.save(task)
+                try pinTaskToTop(taskID: task.id, in: task.priority, excluding: [])
             case .edit:
-                try repository.update(task)
+                let previousTask = tasks.first(where: { $0.id == task.id })
+                let editsRecurringSeries = previousTask?.isRepeating == true || task.isRepeating
+                if editsRecurringSeries {
+                    try repository.updateRecurringInstance(
+                        task,
+                        previousSeriesID: previousTask?.recurrenceSeriesID
+                    )
+                    load()
+                } else {
+                    try repository.update(task)
+                }
+                if let previousTask, previousTask.priority != task.priority {
+                    try reindexPriority(previousTask.priority, excluding: [task.id])
+                    try pinTaskToTop(taskID: task.id, in: task.priority, excluding: [])
+                }
             }
             resetComposer()
             composerMode = .create
@@ -333,6 +355,9 @@ final class TasksViewModel: ObservableObject {
 
     func markTaskCompleted(_ task: FocusTask) {
         guard let currentTask = tasks.first(where: { $0.id == task.id }), currentTask.isCompleted == false else {
+            return
+        }
+        guard currentTask.hasSubtasks == false else {
             return
         }
 
@@ -363,6 +388,10 @@ final class TasksViewModel: ObservableObject {
 
         do {
             try linkedTaskSettlementCoordinator.restoreTask(id: updatedTask.id)
+            if var restoredTask = try repository.task(id: updatedTask.id), restoredTask.hasSubtasks {
+                restoredTask.subtasks = restoredTask.resettingSubtasks()
+                try repository.update(restoredTask)
+            }
             load()
             onTasksChanged?()
         } catch {
@@ -381,12 +410,109 @@ final class TasksViewModel: ObservableObject {
     }
 
     @discardableResult
-    func startFocus(for task: FocusTask) -> Bool {
+    func startFocus(for task: FocusTask, subtask: TaskSubtask? = nil) -> Bool {
         guard let onStartTask else {
             return false
         }
-        onStartTask(task)
+        onStartTask(task, subtask)
         return true
+    }
+
+    func addTaskSubtaskDraft() {
+        taskSubtasksDraft.append(TaskSubtask(title: ""))
+    }
+
+    func updateTaskSubtaskDraftTitle(_ title: String, id: UUID) {
+        guard let index = taskSubtasksDraft.firstIndex(where: { $0.id == id }) else {
+            return
+        }
+        taskSubtasksDraft[index].title = title
+    }
+
+    func removeTaskSubtaskDraft(id: UUID) {
+        taskSubtasksDraft.removeAll { $0.id == id }
+    }
+
+    func toggleTaskSubtaskCompletion(_ subtask: TaskSubtask, in task: FocusTask) {
+        guard var currentTask = tasks.first(where: { $0.id == task.id }), currentTask.isCompleted == false else {
+            return
+        }
+        guard let subtaskIndex = currentTask.subtasks.firstIndex(where: { $0.id == subtask.id }) else {
+            return
+        }
+
+        do {
+            if currentTask.subtasks[subtaskIndex].isCompleted {
+                currentTask.subtasks[subtaskIndex].isCompleted = false
+                try repository.update(currentTask)
+            } else if try linkedTaskSettlementCoordinator.completeSubtask(
+                taskID: currentTask.id,
+                subtaskID: subtask.id,
+                completedAt: now(),
+                calendar: calendar
+            ) {
+                soundEffectPlayer?.play(
+                    SoundPlaybackRequest(assetName: "ending-soon.wav", volume: 1)
+                )
+            }
+            load()
+            onTasksChanged?()
+        } catch {
+            errorMessage = "Unable to update task."
+        }
+    }
+
+    func completeFocusedSubtask(_ subtask: TaskSubtask, in task: FocusTask) -> Bool {
+        do {
+            let completedParent = try linkedTaskSettlementCoordinator.completeSubtask(
+                taskID: task.id,
+                subtaskID: subtask.id,
+                completedAt: now(),
+                calendar: calendar
+            )
+            load()
+            onTasksChanged?()
+            return completedParent
+        } catch {
+            errorMessage = "Unable to update task."
+            return false
+        }
+    }
+
+    func moveTask(_ sourceID: UUID, to targetID: UUID) {
+        guard sourceID != targetID else {
+            return
+        }
+        guard
+            let sourceTask = tasks.first(where: { $0.id == sourceID }),
+            let targetTask = tasks.first(where: { $0.id == targetID }),
+            sourceTask.priority == targetTask.priority,
+            sourceTask.isCompleted == false,
+            targetTask.isCompleted == false
+        else {
+            return
+        }
+
+        var orderedTasks = sortTasks(
+            tasks.filter { $0.priority == sourceTask.priority && $0.isCompleted == false }
+        )
+        guard
+            let sourceIndex = orderedTasks.firstIndex(where: { $0.id == sourceID }),
+            let targetIndex = orderedTasks.firstIndex(where: { $0.id == targetID })
+        else {
+            return
+        }
+
+        let movedTask = orderedTasks.remove(at: sourceIndex)
+        orderedTasks.insert(movedTask, at: targetIndex)
+
+        do {
+            try persistDisplayOrder(for: orderedTasks)
+            load()
+            onTasksChanged?()
+        } catch {
+            errorMessage = "Unable to reorder tasks."
+        }
     }
 
     private func resetComposer() {
@@ -394,6 +520,7 @@ final class TasksViewModel: ObservableObject {
         newTaskDetails = ""
         newEstimatedMinutes = 25
         newTaskPriority = .none
+        taskSubtasksDraft = []
         newTaskRepeatRule = .none
         newTaskRepeatWeekday = .monday
         newTaskRepeatCountText = ""
@@ -435,6 +562,16 @@ final class TasksViewModel: ObservableObject {
             if lhs.isCompleted != rhs.isCompleted {
                 return lhs.isCompleted == false
             }
+            if lhs.isCompleted == false {
+                let lhsHasDisplayOrder = lhs.displayOrder >= 0
+                let rhsHasDisplayOrder = rhs.displayOrder >= 0
+                if lhsHasDisplayOrder != rhsHasDisplayOrder {
+                    return lhsHasDisplayOrder
+                }
+                if lhsHasDisplayOrder, rhsHasDisplayOrder, lhs.displayOrder != rhs.displayOrder {
+                    return lhs.displayOrder < rhs.displayOrder
+                }
+            }
 
             let lhsDate = lhs.isCompleted ? (lhs.completedAt ?? lhs.createdAt) : lhs.createdAt
             let rhsDate = rhs.isCompleted ? (rhs.completedAt ?? rhs.createdAt) : rhs.createdAt
@@ -455,5 +592,52 @@ final class TasksViewModel: ObservableObject {
         }
 
         return value.formatted(.number.precision(.fractionLength(0 ... 2)))
+    }
+
+    private static func sanitizedSubtask(from subtask: TaskSubtask) -> TaskSubtask? {
+        let trimmedTitle = subtask.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedTitle.isEmpty == false else {
+            return nil
+        }
+
+        return TaskSubtask(id: subtask.id, title: trimmedTitle, isCompleted: subtask.isCompleted)
+    }
+
+    private func pinTaskToTop(taskID: UUID, in priority: TaskPriority, excluding excludedIDs: Set<UUID>) throws {
+        guard var pinnedTask = try repository.task(id: taskID) else {
+            return
+        }
+
+        let orderedTasks = sortTasks(
+            tasks.filter {
+                $0.priority == priority && $0.isCompleted == false && $0.id != taskID && !excludedIDs.contains($0.id)
+            }
+        )
+
+        pinnedTask.displayOrder = 0
+        try repository.update(pinnedTask)
+
+        for (index, task) in orderedTasks.enumerated() {
+            var updatedTask = task
+            updatedTask.displayOrder = index + 1
+            try repository.update(updatedTask)
+        }
+    }
+
+    private func reindexPriority(_ priority: TaskPriority, excluding excludedIDs: Set<UUID> = []) throws {
+        let orderedTasks = sortTasks(
+            tasks.filter {
+                $0.priority == priority && $0.isCompleted == false && !excludedIDs.contains($0.id)
+            }
+        )
+        try persistDisplayOrder(for: orderedTasks)
+    }
+
+    private func persistDisplayOrder(for orderedTasks: [FocusTask]) throws {
+        for (index, task) in orderedTasks.enumerated() {
+            var updatedTask = task
+            updatedTask.displayOrder = index
+            try repository.update(updatedTask)
+        }
     }
 }

@@ -1,6 +1,8 @@
-import AppKit
 import Charts
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 struct PlanDashboardView: View {
     @ObservedObject private var viewModel: PlanViewModel
@@ -90,7 +92,7 @@ struct PlanDashboardView: View {
 
     private var goalSubtaskGridColumns: [GridItem] {
         [
-            GridItem(.adaptive(minimum: 150, maximum: 180), spacing: 10, alignment: .top)
+            GridItem(.adaptive(minimum: 112, maximum: 132), spacing: 6, alignment: .top)
         ]
     }
 
@@ -108,7 +110,7 @@ struct PlanDashboardView: View {
 
             Spacer(minLength: 20)
 
-            Button("Creat") {
+            Button("Create") {
                 viewModel.presentCreateSheet()
             }
             .buttonStyle(AppAccentButtonStyle())
@@ -117,41 +119,111 @@ struct PlanDashboardView: View {
 
     private var timelineSection: some View {
         VStack(alignment: .leading, spacing: 18) {
-            HStack(alignment: .center, spacing: 14) {
-                Text("Timeline")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundStyle(AppSurfaceTheme.primaryText)
-
-                Spacer(minLength: 20)
-
-                Button {
-                    viewModel.shiftTimeline(by: -1)
-                } label: {
-                    Image(systemName: "chevron.left")
-                }
-                .buttonStyle(AppGlassButtonStyle())
-
-                Text(periodTitle)
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundStyle(AppSurfaceTheme.secondaryText)
-                    .frame(minWidth: 180)
-
-                Button {
-                    viewModel.shiftTimeline(by: 1)
-                } label: {
-                    Image(systemName: "chevron.right")
-                }
-                .buttonStyle(AppGlassButtonStyle())
-
-                Button("Today") {
-                    viewModel.jumpToToday()
-                }
-                .buttonStyle(AppGlassButtonStyle())
+            ViewThatFits(in: .horizontal) {
+                timelineHeaderPrimaryRow
+                timelineHeaderCompactRow
             }
+
+            #if os(iOS)
+            timelineScaleControl
+            #endif
 
             chartCard
         }
     }
+
+    private var timelineHeaderPrimaryRow: some View {
+        HStack(alignment: .center, spacing: 14) {
+            timelineHeaderTitle
+
+            Spacer(minLength: 20)
+
+            timelineHeaderControls
+        }
+    }
+
+    private var timelineHeaderCompactRow: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            timelineHeaderTitle
+            timelineHeaderControls
+        }
+    }
+
+    private var timelineHeaderTitle: some View {
+        Text("Timeline")
+            .font(.system(size: 22, weight: .bold, design: .rounded))
+            .foregroundStyle(AppSurfaceTheme.primaryText)
+            .fixedSize(horizontal: true, vertical: false)
+    }
+
+    private var timelineHeaderControls: some View {
+        HStack(alignment: .center, spacing: 12) {
+            Button {
+                viewModel.shiftTimeline(by: -1)
+            } label: {
+                Image(systemName: "chevron.left")
+            }
+            .buttonStyle(AppGlassButtonStyle())
+
+            Text(periodTitle)
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .foregroundStyle(AppSurfaceTheme.secondaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.9)
+                .frame(maxWidth: .infinity)
+
+            Button {
+                viewModel.shiftTimeline(by: 1)
+            } label: {
+                Image(systemName: "chevron.right")
+            }
+            .buttonStyle(AppGlassButtonStyle())
+
+            Button("Today") {
+                viewModel.jumpToToday()
+            }
+            .buttonStyle(AppGlassButtonStyle())
+        }
+    }
+
+    #if os(iOS)
+    private var timelineScaleControl: some View {
+        HStack(spacing: 10) {
+            ForEach([1, 3, 6, 12], id: \.self) { monthSpan in
+                let isSelected = viewModel.visibleMonthSpanForPresentation == monthSpan
+
+                Button {
+                    viewModel.setTimelineMonthSpan(monthSpan)
+                } label: {
+                    Text("\(monthSpan)M")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundStyle(
+                            isSelected
+                                ? AppSurfaceTheme.primaryText
+                                : AppSurfaceTheme.secondaryText
+                        )
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(
+                            Group {
+                                if isSelected {
+                                    AppGlassRoundedSurface(
+                                        cornerRadius: 16,
+                                        tint: Color(red: 0.90, green: 0.33, blue: 0.35)
+                                    )
+                                } else {
+                                    AppCardSurface(style: .soft, cornerRadius: 16)
+                                }
+                            }
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+    #endif
 
     private var chartCard: some View {
         GeometryReader { geometry in
@@ -675,7 +747,15 @@ struct PlanDashboardView: View {
         chartHeight
             + PlanTimelinePresentation.timelineCardTopPadding
             + PlanTimelinePresentation.timelineCardBottomPadding
-            + NSScroller.scrollerWidth(for: .regular, scrollerStyle: .legacy)
+            + timelineScrollerAllowance
+    }
+
+    private var timelineScrollerAllowance: CGFloat {
+#if os(macOS)
+        NSScroller.scrollerWidth(for: .regular, scrollerStyle: .legacy)
+#else
+        12
+#endif
     }
 
     private var chartAxisDetailLevel: PlanTimelineAxisDetailLevel {
@@ -796,7 +876,7 @@ struct PlanDashboardView: View {
     }
 
     private func goalSubtasksExpansionPanel(for goal: PlanGoal) -> some View {
-        LazyVGrid(columns: goalSubtaskGridColumns, alignment: .leading, spacing: 10) {
+        LazyVGrid(columns: goalSubtaskGridColumns, alignment: .leading, spacing: 6) {
             ForEach(goal.subtasks, id: \.id) { subtask in
                 goalSubtaskCard(for: goal, subtask: subtask)
             }
@@ -807,7 +887,7 @@ struct PlanDashboardView: View {
                 Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .frame(minHeight: 64)
+            .frame(minHeight: 40)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .transition(
@@ -820,34 +900,34 @@ struct PlanDashboardView: View {
         let linkedTaskCount = viewModel.linkedTaskCount(for: subtask)
         let tint = statusColor(for: goal.status)
 
-        return VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .top, spacing: 8) {
+        return VStack(alignment: .leading, spacing: 5) {
+            HStack(alignment: .top, spacing: 6) {
                 Text(subtask.title)
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundStyle(AppSurfaceTheme.primaryText)
                     .lineLimit(1)
 
-                Spacer(minLength: 8)
+                Spacer(minLength: 6)
 
                 Text("\(progressPercent)%")
-                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .font(.system(size: 8, weight: .bold, design: .rounded))
                     .foregroundStyle(tint.opacity(0.86))
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
                     .background(
                         Capsule(style: .continuous)
                             .fill(tint.opacity(0.08))
                     )
             }
 
-            HStack(alignment: .center, spacing: 8) {
+            HStack(alignment: .center, spacing: 6) {
                 ZStack {
                     Circle()
                         .fill(tint.opacity(0.10))
-                        .frame(width: 20, height: 20)
+                        .frame(width: 16, height: 16)
 
                     Image(systemName: progressPercent >= 100 ? "star.fill" : "sparkles")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: 8, weight: .bold))
                         .foregroundStyle(
                             progressPercent >= 100
                                 ? Color(red: 0.98, green: 0.86, blue: 0.45)
@@ -855,13 +935,13 @@ struct PlanDashboardView: View {
                         )
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 3) {
                     goalSubtaskMetricBlock(for: subtask)
 
                     goalSubtaskSecondaryBlock(for: subtask, linkedTaskCount: linkedTaskCount)
                 }
 
-                Spacer(minLength: 8)
+                Spacer(minLength: 6)
 
                 Button {
                     if subtask.trackingMode == .quantified {
@@ -870,8 +950,8 @@ struct PlanDashboardView: View {
                         viewModel.presentEditSubtaskSheet(for: goal, subtask: subtask)
                     }
                 } label: {
-                    opticallyCenteredPlusIcon(size: 10, tint: tint)
-                        .frame(width: 22, height: 22)
+                    opticallyCenteredPlusIcon(size: 8, tint: tint)
+                        .frame(width: 18, height: 18)
                         .background(
                             Circle()
                                 .fill(tint.opacity(0.10))
@@ -885,18 +965,18 @@ struct PlanDashboardView: View {
                 .help(subtask.trackingMode == .quantified ? "Add 1 to current value" : "Edit subtask and manage linked tasks")
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
-        .padding(8)
+        .frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)
+        .padding(5)
         .background(
             subtaskCardProgressSurface(progress: Double(progressPercent) / 100, tint: tint)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(tint.opacity(0.18), lineWidth: 1)
         )
-        .shadow(color: tint.opacity(0.08), radius: 6, x: 0, y: 3)
+        .shadow(color: tint.opacity(0.08), radius: 4, x: 0, y: 2)
         .background(subtaskCardFrameReader(for: subtask))
-        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .onTapGesture {
             viewModel.presentEditSubtaskSheet(for: goal, subtask: subtask)
         }
@@ -950,18 +1030,18 @@ struct PlanDashboardView: View {
 
     private func goalSubtaskMetricBlock(for subtask: PlanGoalSubtask) -> some View {
         Text(goalSubtaskMetricText(for: subtask))
-            .font(.system(size: 12, weight: .bold, design: .rounded))
+            .font(.system(size: 10, weight: .bold, design: .rounded))
             .foregroundStyle(AppSurfaceTheme.primaryText)
             .lineLimit(2)
-            .frame(maxWidth: .infinity, minHeight: 30, alignment: .topLeading)
+            .frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24, alignment: .topLeading)
     }
 
     private func goalSubtaskSecondaryBlock(for subtask: PlanGoalSubtask, linkedTaskCount: Int) -> some View {
         Text(goalSubtaskSecondaryText(for: subtask, linkedTaskCount: linkedTaskCount))
-            .font(.system(size: 8, weight: .semibold, design: .rounded))
+            .font(.system(size: 7, weight: .semibold, design: .rounded))
             .foregroundStyle(AppSurfaceTheme.tertiaryText)
             .lineLimit(2)
-            .frame(maxWidth: .infinity, minHeight: 18, alignment: .topLeading)
+            .frame(maxWidth: .infinity, minHeight: 16, maxHeight: 16, alignment: .topLeading)
     }
 
     private func goalAddSubtaskButton(for goal: PlanGoal) -> some View {
@@ -1881,6 +1961,7 @@ private struct DraggableGoalProgressBar: View {
     }
 }
 
+#if os(macOS)
 private struct TimelineZoomTrackingSurface: NSViewRepresentable {
     let onScroll: (CGFloat, CGFloat, CGPoint) -> Void
 
@@ -1951,7 +2032,32 @@ private struct TimelineHorizontalScrollContainer<Content: View>: NSViewRepresent
         }
     }
 }
+#else
+private struct TimelineZoomTrackingSurface: View {
+    let onScroll: (CGFloat, CGFloat, CGPoint) -> Void
 
+    var body: some View {
+        Color.clear
+            .allowsHitTesting(false)
+    }
+}
+
+private struct TimelineHorizontalScrollContainer<Content: View>: View {
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: true) {
+            content
+        }
+    }
+}
+#endif
+
+#if os(macOS)
 struct TimelineZoomInteractionGate {
     private(set) var isActive = false
 
@@ -2091,6 +2197,7 @@ private final class TimelineZoomTrackingView: NSView {
         }
     }
 }
+#endif
 
 private struct GoalRowFramePreferenceKey: PreferenceKey {
     static let defaultValue: [UUID: CGRect] = [:]

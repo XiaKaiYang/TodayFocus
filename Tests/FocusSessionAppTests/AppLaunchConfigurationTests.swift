@@ -17,4 +17,18 @@ final class AppLaunchConfigurationTests: XCTestCase {
         XCTAssertEqual(configuration.initialSection, .blocker)
         XCTAssertTrue(configuration.usesBlockerDemo)
     }
+
+    func testInitialSectionSupportsCamelCaseSectionNames() {
+        let currentSessionConfiguration = AppLaunchConfiguration(
+            environment: ["FOCUSSESSION_INITIAL_SECTION": "currentSession"]
+        )
+        let whiteNoiseConfiguration = AppLaunchConfiguration(
+            environment: ["FOCUSSESSION_INITIAL_SECTION": "whiteNoise"]
+        )
+
+        XCTAssertEqual(currentSessionConfiguration.initialSection, .currentSession)
+        XCTAssertEqual(whiteNoiseConfiguration.initialSection, .whiteNoise)
+        XCTAssertFalse(currentSessionConfiguration.usesBlockerDemo)
+        XCTAssertFalse(whiteNoiseConfiguration.usesBlockerDemo)
+    }
 }

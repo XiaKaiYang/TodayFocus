@@ -12,8 +12,10 @@ struct AppLaunchConfiguration {
             return
         }
 
-        if let rawSection = environment["FOCUSSESSION_INITIAL_SECTION"]?.lowercased() {
-            initialSection = AppSection(rawValue: rawSection)
+        if let rawSection = environment["FOCUSSESSION_INITIAL_SECTION"] {
+            initialSection = AppSection.allCases.first {
+                $0.rawValue.caseInsensitiveCompare(rawSection) == .orderedSame
+            }
         } else {
             initialSection = nil
         }

@@ -210,6 +210,32 @@
 | App tests | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' test` | Full app suite stays green after the Create and Blocker prompt/label color fix | 69 tests passed | pass |
 | App build | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionApp -destination 'platform=macOS' build` | Main app builds with custom dark prompt text in the Create and Blocker forms | Build succeeded | pass |
 
+## Session: 2026-03-14
+
+### Phase 4: Implementation
+- **Status:** in_progress
+- Actions taken:
+  - Reviewed the current dirty task/subtask worktree before editing the Today-task focus flow.
+  - Added red tests for flattened session selections, subtask-only reflection completion, selector source coverage, and parent-task `Select` popover behavior.
+  - Introduced `CurrentSessionTaskSelection` so `Current Session` can distinguish plain tasks from specific subtasks.
+  - Flattened the session selector into standalone tasks plus each unfinished subtask under parent tasks.
+  - Updated reflection submission so subtask sessions complete only the chosen subtask, while parent completion still waits for all subtasks.
+  - Added a shared coordinator path for completing a specific subtask and reused it from both `CurrentSessionViewModel` and `TasksViewModel`.
+  - Updated the `Today` dashboard `Select` button so multi-subtask parents open a popover and single-remaining-subtask parents launch directly.
+  - Added targeted tests for parent-task subtask launch callbacks and for keeping parent tasks active when a non-final subtask completes.
+- Files created/modified:
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/CurrentSessionViewModel.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/CurrentSessionView.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/TasksViewModel.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Tasks/TasksDashboardView.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/Repositories/TasksRepository.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/AppShellView.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/CurrentSessionViewModelTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/CurrentSessionViewSourceTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/TasksViewModelTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/TasksDashboardViewFormattingTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/TextContrastAuditTests.swift`
+
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
 |-----------|-------|---------|------------|
@@ -228,3 +254,75 @@
 | What's the goal? | Build a clean-room macOS focus app inspired by Session with a near-complete local experience |
 | What have I learned? | The scaffold works, the core package is in place, and app-layer persistence needs explicit domain type qualification to avoid `Category` naming collisions |
 | What have I done? | Finished discovery/design/planning, built the interactive current-session slice, wired runtime snapshot syncing into the app flow, established the main app shell, and shipped real `Projects` and `Analytics` dashboard slices |
+
+## Session: 2026-03-14 Verification
+
+### Test Results
+| Test | Input | Expected | Actual | Status |
+|------|-------|----------|--------|--------|
+| App targeted tests | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' -only-testing:FocusSessionAppTests/CurrentSessionViewModelTests test` | New subtask-aware session selection and completion flow passes its focused regression suite | 27 tests passed | pass |
+| App targeted tests | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' -only-testing:FocusSessionAppTests/TasksViewModelTests -only-testing:FocusSessionAppTests/CurrentSessionViewSourceTests -only-testing:FocusSessionAppTests/TasksDashboardViewFormattingTests -only-testing:FocusSessionAppTests/TextContrastAuditTests test` | Task-page subtask selection UI, source audits, and task-view-model regressions stay green | 53 tests passed | pass |
+| App tests | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' test` | Full app suite stays green after subtask-aware Today-task focus selection lands | 241 tests passed | pass |
+| App build | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionApp -destination 'platform=macOS' build` | Main app builds with the new subtask selection and completion pipeline | Build succeeded | pass |
+
+### Error Log
+| Timestamp | Error | Attempt | Resolution |
+|-----------|-------|---------|------------|
+| 2026-03-14 | Parallel `xcodebuild` verification commands contended on Xcode's `build.db` lock | 1 | Re-ran the verification commands sequentially and both completed successfully |
+
+## Session: 2026-03-15
+
+### Phase 4: Implementation
+- **Status:** in_progress
+- Actions taken:
+  - Re-read the existing plan files and regenerated `FocusSession.xcodeproj` after the mobile-target changes.
+  - Added iOS platform helpers to `AppSection` and introduced `MobilePrimaryTab` plus mobile shell-routing helpers for iPhone/iPad launch resolution.
+  - Added a dedicated iOS app target, iOS test target, mobile app entry point, mobile app shell, and separate iOS CloudKit entitlements in `project.yml`.
+  - Added a new `Apps/FocusSessionMobileApp` source tree with a tab-based iPhone shell and split-view iPad shell that reuse the shared dashboard/view-model layer.
+  - Refactored `FocusSessionModelContainer` to bootstrap a CloudKit-backed shared store, fall back to the legacy local store when needed, and import legacy content into the synced store when the synced store is empty.
+  - Kept `AppPreferencesStore` device-local and updated launch-section resolution so unsupported iOS destinations fall back safely.
+  - Added a UIKit-backed `AppPromptedTextEditor` implementation while preserving the existing AppKit-backed editor for macOS.
+  - Added iOS-safe timeline support in `PlanDashboardView` with explicit month-span controls and a horizontal `ScrollView` fallback instead of the macOS-only zoom/`NSScrollView` path.
+  - Updated `SettingsDashboardView` so blocker controls/actions are hidden on iOS and destructive data copy is framed as synced-data behavior.
+  - Added mobile routing/source tests and refreshed older source-audit tests so they validate the new cross-platform structure instead of the previous mac-only source shape.
+  - Performed a static AppKit audit across the shared/mobile source tree and confirmed that the remaining `AppKit`/`NSViewRepresentable` usage is either excluded from the iOS target or wrapped in `#if os(macOS)`.
+- Files created/modified:
+  - `/Users/xiakaiyang/Documents/New project/project.yml`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/AppSection.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/MobileShellRouting.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/Data/FocusSessionModelContainer.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppSurfaceTheme.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Plan/PlanDashboardView.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/PlanViewModel.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/ViewModels/SettingsViewModel.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/AppShell/AppShellView.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Settings/SettingsDashboardView.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionMobileApp/FocusSessionMobileApp.swift`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionMobileApp/Info.plist`
+  - `/Users/xiakaiyang/Documents/New project/Apps/FocusSessionMobileApp/UI/MobileAppShellView.swift`
+  - `/Users/xiakaiyang/Documents/New project/Config/Entitlements/FocusSessionApp.entitlements`
+  - `/Users/xiakaiyang/Documents/New project/Config/Entitlements/FocusSessionMobileApp.entitlements`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/AppShellViewModelTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/AudioResourceImportSourceTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/FocusSessionModelContainerSyncTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/MobileShellRoutingTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/MobileSupportSourceTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionAppTests/PlanDashboardViewSourceTests.swift`
+  - `/Users/xiakaiyang/Documents/New project/Tests/FocusSessionMobileAppTests/MobileShellSupportTests.swift`
+
+### Verification
+| Test | Input | Expected | Actual | Status |
+|------|-------|----------|--------|--------|
+| Project generation | `xcodegen generate` | Project regenerates cleanly after adding the iOS target and tests | `FocusSession.xcodeproj` regenerated successfully | pass |
+| App targeted tests | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' -only-testing:FocusSessionAppTests/MobileShellRoutingTests -only-testing:FocusSessionAppTests/FocusSessionModelContainerSyncTests -only-testing:FocusSessionAppTests/MobileSupportSourceTests test` | New mobile routing, store bootstrap, and source-audit tests pass on macOS | 10 tests passed | pass |
+| App targeted tests | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' -only-testing:FocusSessionAppTests/AppShellViewModelTests/testSettingsLaunchDestinationIncludesPlan -only-testing:FocusSessionAppTests/AudioResourceImportSourceTests/testProjectCopiesAudioFolderIntoAppResources -only-testing:FocusSessionAppTests/PlanDashboardViewSourceTests/testMonthTimelineUsesMonthlyAxisMarksAndTodayRuleUsesGold test` | Updated legacy source-audit tests align with the new mobile-aware project shape | 3 tests passed | pass |
+| App targeted tests | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' -only-testing:FocusSessionAppTests/MobileSupportSourceTests/testMobileSpecificSourcesAvoidAppKitOnlyAPIs test` | Mobile-specific source files avoid `AppKit` and `NSViewRepresentable` | 1 test passed | pass |
+| App tests | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' test` | Full macOS app suite remains green after the iPhone+iPad refactor | 255 tests passed | pass |
+| App build | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionApp -destination 'platform=macOS' build` | Main macOS app still builds cleanly | Build succeeded | pass |
+| iOS destination discovery | `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionMobileApp -showdestinations` | iOS simulator destinations should be available for build/test | Failed because Xcode reports `iOS 26.2 is not installed` | blocked |
+
+### Error Log
+| Timestamp | Error | Attempt | Resolution |
+|-----------|-------|---------|------------|
+| 2026-03-15 | `FocusSessionMobileApp` could not be built because `xcodebuild -showdestinations` reported `iOS 26.2 is not installed` | 1 | Completed static source audits and macOS-side regression verification, and left simulator verification pending until the local iOS platform is installed |
+| 2026-03-15 | A new mobile source-audit test initially failed because it expected the exact token `#if os(iOS)` while the file used `#elseif os(iOS)` | 1 | Relaxed the test to check for `os(iOS)` while keeping the UIKit and `UIViewRepresentable` assertions intact |

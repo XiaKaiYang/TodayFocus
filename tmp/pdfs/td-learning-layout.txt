@@ -1,0 +1,1335 @@
+Lecture 7: Temporal-Difference Learning
+
+               Shiyu Zhao
+Outline
+
+
+
+
+Shiyu Zhao   1 / 60
+Introduction
+
+
+
+
+        • This lecture introduces temporal-difference (TD) learning, which is one
+             of the most well-known methods in reinforcement learning (RL).
+        • Monte Carlo (MC) learning is the first model-free method. TD learning
+             is the second model-free method. TD has some advantages compared
+             to MC.
+        • We will see how the stochastic approximation methods studied in the
+             last lecture are useful.
+
+
+
+
+Shiyu Zhao                                                                          2 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    3 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    4 / 60
+Motivating example: stochastic algorithms
+
+        We next consider some stochastic problems and show how to use the RM
+        algorithm to solve them.
+        First, consider the simple mean estimation problem: calculate
+
+                                         w = E[X],
+
+        based on some iid samples {x} of X.
+        • By writing g(w) = w − E[X], we can reformulate the problem to a
+             root-finding problem
+                                           g(w) = 0.
+        • Since we can only obtain samples {x} of X, the noisy observation is
+                                                             .
+                g̃(w, η) = w − x = (w − E[X]) + (E[X] − x) = g(w) + η.
+
+        • Then, according to the last lecture, we know the RM algorithm for
+             solving g(w) = 0 is
+                        wk+1 = wk − αk g̃(wk , ηk ) = wk − αk (wk − xk )
+Shiyu Zhao                                                                      5 / 60
+Motivating example: stochastic algorithms
+
+        Second, consider a little more complex problem. That is to estimate
+        the mean of a function v(X),
+
+                                       w = E[v(X)],
+
+        based on some iid random samples {x} of X.
+
+        • To solve this problem, we define
+
+               g(w) = w − E[v(X)]
+                                                                    .
+             g̃(w, η) = w − v(x) = (w − E[v(X)]) + (E[v(X)] − v(x)) = g(w) + η.
+
+        • Then, the problem becomes a root-finding problem: g(w) = 0. The
+             corresponding RM algorithm is
+
+                      wk+1 = wk − αk g̃(wk , ηk ) = wk − αk [wk − v(xk )]
+
+Shiyu Zhao                                                                        6 / 60
+Motivating example: stochastic algorithms
+
+        Third, consider an even more complex problem: calculate
+
+                                    w = E[R + γv(X)],
+
+        where R, X are random variables, γ is a constant, and v(·) is a function.
+        • Suppose we can obtain samples {x} and {r} of X and R. we define
+
+                  g(w) = w − E[R + γv(X)],
+                g̃(w, η) = w − [r + γv(x)]
+                       = (w − E[R + γv(X)]) + (E[R + γv(X)] − [r + γv(x)])
+                       .
+                       = g(w) + η.
+
+        • Then, the problem becomes a root-finding problem: g(w) = 0. The
+             corresponding RM algorithm is
+
+                  wk+1 = wk − αk g̃(wk , ηk ) = wk − αk [wk − (rk + γv(xk ))]
+Shiyu Zhao                                                                          7 / 60
+Motivating example: stochastic algorithms
+
+
+
+
+        Quick summary:
+        • The above three examples are more and more complex.
+        • They can all be solved by the RM algorithm.
+        • We will see that the TD algorithms have similar expressions.
+
+
+
+
+Shiyu Zhao                                                               8 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    9 / 60
+TD learning of state values
+
+
+
+
+        Note that
+        • TD learning often refers to a broad class of RL algorithms.
+        • TD learning also refers to a specific algorithm for estimating state
+             values as introduced below.
+
+
+
+
+Shiyu Zhao                                                                       10 / 60
+TD learning of state values – Algorithm description
+
+        The data/experience required by the algorithm:
+        • (s0 , r1 , s1 , . . . , st , rt+1 , st+1 , . . . ) or {(st , rt+1 , st+1 )}t generated
+             following the given policy π.
+        The TD learning algorithm is
+                                                   h                               i
+                   vt+1 (st ) = vt (st ) − αt (st ) vt (st ) − [rt+1 + γvt (st+1 )] ,              (1)
+
+                    vt+1 (s) = vt (s),       ∀s 6= st ,                                            (2)
+
+         where t = 0, 1, 2, . . . . Here, vt (st ) is the estimated state value of vπ (st );
+        αt (st ) is the learning rate of st at time t.
+        • At time t, only the value of the visited state st is updated whereas the
+             values of the unvisited states s 6= st remain unchanged.
+        • The update in (2) will be omitted when the context is clear.
+
+Shiyu Zhao                                                                                               11 / 60
+TD learning of state values – Algorithm properties
+
+        The TD algorithm can be annotated as
+                                                                     TD error δt
+                                                         z              }|             {
+             vt+1 (st ) =        vt (st )       −αt (st ) vt (st ) − [rt+1 + γvt (st+1 )] ,   (3)
+             | {z }              | {z }                               |      {z       }
+             new estimate    current estimate                            TD target v̄t
+
+
+
+        Here,
+                                                .
+                                            v̄t = rt+1 + γv(st+1 )
+
+        is called the TD target.
+                               .
+                            δt = v(st ) − [rt+1 + γv(st+1 )] = v(st ) − v̄t
+
+        is called the TD error.
+        It is clear that the new estimate vt+1 (st ) is a combination of the current
+        estimate vt (st ) and the TD error.
+Shiyu Zhao                                                                                          12 / 60
+TD learning of state values – Algorithm properties
+
+        First, why is v̄t called the TD target?
+        That is because the algorithm drives v(st ) towards v̄t .
+        To see that,
+                                                                         
+                          vt+1 (st ) = vt (st ) − αt (st ) vt (st ) − v̄t
+                                                                                 
+                     =⇒   vt+1 (st )−v̄t = vt (st )−v̄t − αt (st ) vt (st ) − v̄t
+                     =⇒   vt+1 (st )−v̄t = [1 − αt (st )][vt (st )−v̄t ]
+                     =⇒   |vt+1 (st )−v̄t | = |1 − αt (st )||vt (st )−v̄t |
+
+        Since αt (st ) is a small positive number, we have
+
+                                       0 < 1 − αt (st ) < 1
+
+             Therefore,
+
+                                 |vt+1 (st )−v̄t | ≤ |vt (st )−v̄t |
+
+        which means v(st ) is driven towards v̄t !
+Shiyu Zhao                                                                            13 / 60
+TD learning of state values – Algorithm properties
+
+        Second, what is the interpretation of the TD error?
+
+                                 δt = v(st ) − [rt+1 + γv(st+1 )]
+
+        • It is a difference between two consequent time steps.
+        • It reflects the deficiency between vt and vπ . To see that, denote
+                                     .
+                                δπ,t = vπ (st ) − [rt+1 + γvπ (st+1 )]
+
+             Note that
+                                                                           
+                 E[δπ,t |St = st ] = vπ (st ) − E Rt+1 + γvπ (St+1 )|St = st = 0.
+
+             • If vt = vπ , then δt should be zero (in the expectation sense).
+             • Hence, if δt is not zero, then vt is not equal to vπ .
+        • The TD error can be interpreted as innovation, which means new
+             information obtained from the experience (st , rt+1 , st+1 ).
+Shiyu Zhao                                                                          14 / 60
+TD learning of state values – Algorithm properties
+
+
+
+        Other properties:
+        • The TD algorithm in (3) only estimates the state value of a given
+             policy.
+             • It does not estimate the action values.
+             • It does not search for optimal policies.
+        • Later, we will see how to estimate action values and then search for
+             optimal policies.
+        • Nonetheless, the TD algorithm in (3) is fundamental for understanding
+             the core idea.
+
+
+
+
+Shiyu Zhao                                                                        15 / 60
+TD learning of state values – The idea of the algorithm
+
+
+
+
+        Q: What does this TD algorithm do mathematically?
+        A: It solves the Bellman equation of a given policy π.
+
+
+
+
+Shiyu Zhao                                                       16 / 60
+TD learning of state values – The idea of the algorithm
+
+        First, a new expression of the Bellman equation.
+        The definition of state value of π is
+                                                  
+                            vπ (s) = E R + γG|S = s ,           s∈S                        (4)
+
+        where G is discounted return. Since
+                            X             X
+             E[G|S = s] =        π(a|s)        p(s0 |s, a)vπ (s0 ) = E[vπ (S 0 )|S = s],
+                             a            s0
+
+        where S 0 is the next state, we can rewrite (4) as
+
+                        vπ (s) = E R + γvπ (S 0 )|S = s ,
+                                                      
+                                                                   s ∈ S.                  (5)
+
+        Equation (5) is another expression of the Bellman equation. It is
+        sometimes called the Bellman expectation equation, an important tool to
+        design and analyze TD algorithms.
+Shiyu Zhao                                                                                       17 / 60
+TD learning of state values – The idea of the algorithm
+
+        Second, solve the Bellman equation in (5) using the RM algorithm.
+        In particular, by defining
+
+                           g(v(s)) = v(s) − E R + γvπ (S 0 )|s ,
+                                                             
+
+
+        we can rewrite (5) as
+                                       g(v(s)) = 0.
+
+        Since we can only obtain the samples r and s0 of R and S 0 , the noisy
+        observation we have is
+
+        g̃(v(s)) = v(s) − r + γvπ (s0 )
+                                      
+                                                                            
+                 = v(s) − E R + γvπ (S 0 )|s + E R + γvπ (S 0 )|s − r + γvπ (s0 ) .
+                                                                 
+                   |           {z            } |                {z                }
+                             g(v(s))                           η
+
+
+
+
+Shiyu Zhao                                                                            18 / 60
+TD learning of state values – The idea of the algorithm
+
+
+        Therefore, the RM algorithm for solving g(v(s)) = 0 is
+
+             vk+1 (s) = vk (s) − αk g̃(vk (s))
+                                                           
+                      = vk (s) − αk vk (s) − rk + γvπ (s0k ) ,
+                                               
+                                                                  k = 1, 2, 3, . . . (6)
+
+        where vk (s) is the estimate of vπ (s) at the kth step; rk , s0k are the
+        samples of R, S 0 obtained at the kth step.
+
+        The RM algorithm in (6) has two assumptions that deserve special
+        attention.
+        • We must have the experience set {(s, r, s0 )} for k = 1, 2, 3, . . . .
+        • We assume that vπ (s0 ) is already known for any s0 .
+
+
+Shiyu Zhao                                                                                 19 / 60
+TD learning of state values – The idea of the algorithm
+
+        Therefore, the RM algorithm for solving g(v(s)) = 0 is
+
+              vk+1 (s) = vk (s) − αk g̃(vk (s))
+                                                            
+                       = vk (s) − αk vk (s) − rk + γvπ (s0k ) ,
+                                                
+                                                                    k = 1, 2, 3, . . .
+
+        where vk (s) is the estimate of vπ (s) at the kth step; rk , s0k are the
+        samples of R, S 0 obtained at the kth step.
+
+        To remove the two assumptions in the RM algorithm, we can modify it.
+        • One modification is that {(s, r, s0 )} is changed to {(st , rt+1 , st+1 )} so
+             that the algorithm can utilize the sequential samples in an episode.
+        • Another modification is that vπ (s0 ) is replaced by an estimate of it
+             because we don’t know it in advance.
+
+Shiyu Zhao                                                                                20 / 60
+TD learning of state values – Algorithm convergence
+
+        Theorem (Convergence of TD Learning)
+
+        By the TD algorithm (1), vt (s) converges with probability 1 to vπ (s) for all
+        s ∈ S as t → ∞ if t αt (s) = ∞ and t αt2 (s) < ∞ for all s ∈ S.
+                          P                   P
+
+
+        Remarks:
+        • This theorem says the state value can be found by the TD algorithm for a
+          given a policy π.
+          P                   P 2
+        •    t αt (s) = ∞ and  t αt (s) < ∞ must be valid for all s ∈ S. At time step
+             t, if s = st which means that s is visited at time t, then αt (s) > 0;
+             otherwise, αt (s) = 0 for all the other s 6= st . That requires every state must
+             be visited an infinite (or sufficiently many) number of times.
+        • The learning rate α is often selected as a small constant. In this case, the
+          condition that t αt2 (s) < ∞ is invalid anymore. When α is constant, it can
+                         P
+
+             still be shown that the algorithm converges in the sense of expectation sense.
+        For the proof of the theorem, see my book.
+Shiyu Zhao                                                                                      21 / 60
+TD learning of state values – Algorithm properties
+
+        While TD learning and MC learning are both model-free, what are the
+        advantages and disadvantages of TD learning compared to MC
+        learning?
+
+
+             TD/Sarsa learning                        MC learning
+
+             Online: TD learning is online. It can    Offline: MC learning is offline.     It
+             update the state/action values imme-     has to wait until an episode has been
+             diately after receiving a reward.        completely collected.
+
+             Continuing tasks: Since TD learning      Episodic tasks: Since MC learning
+             is online, it can handle both episodic   is offline, it can only handle episodic
+             and continuing tasks.                    tasks that has terminate states.
+
+                        Table: Comparison between TD learning and MC learning.
+
+
+Shiyu Zhao                                                                                      22 / 60
+TD learning of state values – Algorithm properties
+
+        While TD learning and MC learning are both model-free, what are the
+        advantages and disadvantages of TD learning compared to MC
+        learning?
+
+             TD/Sarsa learning                        MC learning
+
+             Bootstrapping: TD bootstraps be-         Non-bootstrapping:       MC is not
+             cause the update of a value relies on    bootstrapping, because it can directly
+             the previous estimate of this value.     estimate state/action values without
+             Hence, it requires initial guesses.      any initial guess.
+
+             Low estimation variance: TD has          High estimation variance: To esti-
+             lower than MC because there are few-     mate qπ (st , at ), we need samples of
+             er random variables.     For instance,   Rt+1 + γRt+2 + γ 2 Rt+3 + . . . . Sup-
+             Sarsa requires Rt+1 , St+1 , At+1 .      pose the length of each episode is L.
+                                                      There are |A|L possible episodes.
+
+                  Table: Comparison between TD learning and MC learning (continued).
+Shiyu Zhao                                                                                     23 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    24 / 60
+TD learning of action values – Sarsa
+
+
+
+
+        • The TD algorithm introduced in the last section can only estimate
+             state values.
+        • Next, we introduce, Sarsa, an algorithm that can directly estimate
+             action values.
+        • We will also see how to use Sarsa to find optimal policies.
+
+
+
+
+Shiyu Zhao                                                                     25 / 60
+Sarsa – Algorithm
+
+
+        First, our aim is to estimate the action values of a given policy π.
+        Suppose we have some experience {(st , at , rt+1 , st+1 , at+1 )}t .
+        We can use the following Sarsa algorithm to estimate the action values:
+                                                       h                                           i
+        qt+1 (st , at ) = qt (st , at ) − αt (st , at ) qt (st , at ) − [rt+1 + γqt (st+1 , at+1 )] ,
+
+             qt+1 (s, a) = qt (s, a),   ∀(s, a) 6= (st , at ),
+
+         where t = 0, 1, 2, . . . .
+        • qt (st , at ) is an estimate of qπ (st , at );
+        • αt (st , at ) is the learning rate depending on st , at .
+
+
+
+
+Shiyu Zhao                                                                                              26 / 60
+Sarsa – Algorithm
+
+        • Why is this algorithm called Sarsa? That is because each step of the
+             algorithm involves (st , at , rt+1 , st+1 , at+1 ). Sarsa is the abbreviation of
+             state-action-reward-state-action.
+
+        • What is the relationship between Sarsa and the previous TD learning
+             algorithm? We can obtain Sarsa by replacing the state value estimate v(s)
+             in the TD algorithm with the action value estimate q(s, a). As a result,
+             Sarsa is an action-value version of the TD algorithm.
+
+        • What does the Sarsa algorithm do mathematically? The expression of
+             Sarsa suggests that it is a stochastic approximation algorithm solving the
+             following equation:
+
+                               qπ (s, a) = E R + γqπ (S 0 , A0 )|s, a ,
+                                                                    
+                                                                           ∀s, a.
+
+             This is another expression of the Bellman equation expressed in terms of
+             action values. The proof is given in my book.
+Shiyu Zhao                                                                                      27 / 60
+Sarsa – Algorithm
+
+
+
+        Theorem (Convergence of Sarsa learning)
+
+        By the Sarsa algorithm, qt (s, a) converges with probability 1 to the action
+        value qπ (s, a) as t → ∞ for all (s, a) if t αt (s, a) = ∞ and t αt2 (s, a) < ∞
+                                                  P                     P
+
+        for all (s, a).
+
+        Remarks:
+
+        • This theorem says the action value can be found by Sarsa for a given a
+             policy π.
+
+
+
+
+Shiyu Zhao                                                                                28 / 60
+Sarsa – Implementation
+
+        The ultimate goal of RL is to find optimal policies.
+        To do that, we can combine Sarsa with a policy improvement step.
+        The combined algorithm is also called Sarsa.
+
+             Pseudocode: Policy searching by Sarsa
+
+             For each episode, do
+                 If the current st is not the target state, do
+                      Collect the experience (st , at , rt+1 , st+1 , at+1 ): In particular, take ac-
+                      tion at following πt (st ), generate rt+1 , st+1 , and then take action at+1
+                      following πt (st+1 ).
+                      Update q-value:                                          h
+                           qt+1 (st , at )    =   qt (st , at ) − αt (st , at ) qt (st , at ) − [rt+1 +
+                                              i
+                           γqt (st+1 , at+1 )]
+                      Update policy:
+                                               
+                           πt+1 (a|st ) = 1 − |A| (|A| − 1) if a = arg maxa qt+1 (st , a)
+                                           
+                           πt+1 (a|st ) = |A| otherwise
+
+Shiyu Zhao                                                                                                29 / 60
+Sarsa – Implementation
+
+
+        Remarks about this algorithm:
+        • The policy of st is updated immediately after q(st , at ) is updated.
+             This is based on the idea of generalized policy iteration.
+        • The policy is -greedy instead of greedy to well balance exploitation
+             and exploration.
+        Be clear about the core idea and complication:
+        • The core idea is simple: that is to use an algorithm to solve the
+             Bellman equation of a given policy.
+        • The complication emerges when we try to find optimal policies and
+             work efficiently.
+
+
+
+Shiyu Zhao                                                                        30 / 60
+Sarsa – Examples
+
+
+        Task description:
+        • The task is to find a good path from a specific starting state to the
+             target state.
+             • This task is different from all the previous tasks where we need to
+               find out the optimal policy for every state!
+             • Each episode starts from the top-left state and end in the target
+               state.
+             • In the future, pay attention to what the task is.
+        • rtarget = 0, rforbidden = rboundary = −10, and rother = −1. The
+             learning rate is α = 0.1 and the value of  is 0.1.
+
+
+
+Shiyu Zhao                                                                           31 / 60
+Sarsa – Examples
+
+        Results:
+
+        • The left figures above show the final policy obtained by Sarsa.
+
+             • Not all states have the optimal policy.
+
+        • The right figures show the total reward and length of every episode.
+
+             • The metric of total reward per episode will be frequently used.
+
+                    1   2     3    4    5
+
+
+
+
+                                                 Total rewards
+                                                                        0
+                1
+                                                                 -200
+
+                2                                                -400
+
+                                                                            0   100    200    300     400   500
+                3
+
+
+
+
+                                                     Episode length
+                                                                      200
+
+                4                                                     100
+
+                                                                        0
+                5                                                           0   100    200    300     400   500
+                                                                                      Episode index
+
+
+Shiyu Zhao                                                                                                        32 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    33 / 60
+TD learning of action values: Expected Sarsa
+
+        A variant of Sarsa is the Expected Sarsa algorithm:
+                                                         h                                          i
+          qt+1 (st , at ) = qt (st , at ) − αt (st , at ) qt (st , at ) − (rt+1 + γE[qt (st+1 , A)]) ,
+
+              qt+1 (s, a) = qt (s, a),      ∀(s, a) 6= (st , at ),
+
+         where
+                                                 X                              .
+                         E[qt (st+1 , A)]) =          πt (a|st+1 )qt (st+1 , a) = vt (st+1 )
+                                                  a
+
+        is the expected value of qt (st+1 , a) under policy πt .
+        Compared to Sarsa:
+
+        • The TD target is changed from rt+1 + γqt (st+1 , at+1 ) as in Sarsa to
+             rt+1 + γE[qt (st+1 , A)] as in Expected Sarsa.
+
+        • Need more computation. But it is beneficial in the sense that it reduces the
+             estimation variances because it reduces random variables in Sarsa from
+             {st , at , rt+1 , st+1 , at+1 } to {st , at , rt+1 , st+1 }.
+Shiyu Zhao                                                                                               34 / 60
+TD learning of action values: Expected Sarsa
+
+        What does the algorithm do mathematically? Expected Sarsa is a stochastic
+        approximation algorithm for solving the following equation:
+                     h                                                         i
+        qπ (s, a) = E Rt+1 + γEAt+1∼π(St+1 ) [qπ (St+1 , At+1 )] St = s, At = a ,                               ∀s, a.
+
+        The above equation is another expression of the Bellman equation:
+                                  h                                 i
+                     qπ (s, a) = E Rt+1 + γvπ (St+1 )|St = s, At = a ,
+
+        Illustrative example:
+                   1    2       3   4   5
+
+
+
+
+                                               Total rewards
+                                                                      0
+               1
+                                                               -200
+
+               2
+                                                               -400
+                                                                          0   100    200    300     400   500
+
+
+
+
+                                                   Episode length
+               3
+                                                                    200
+
+
+               4                                                    100
+
+                                                                      0
+               5                                                          0   100    200    300     400   500
+                                                                                    Episode index
+
+Shiyu Zhao                                                                                                               35 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    36 / 60
+TD learning of action values: n-step Sarsa
+
+        n-step Sarsa: can unify Sarsa and Monte Carlo learning
+        The definition of action value is
+
+                                 qπ (s, a) = E[Gt |St = s, At = a].
+        The discounted return Gt can be written in different forms as
+                                       (1)
+                      Sarsa ←−     Gt             = Rt+1 + γqπ (St+1 , At+1 ),
+                                    (2)
+                                   Gt = Rt+1 + γRt+2 + γ 2 qπ (St+2 , At+2 ),
+                                             ..
+                                              .
+                                     (n)
+               n-step Sarsa ←−     Gt             = Rt+1 + γRt+2 + · · · + γ n qπ (St+n , At+n ),
+                                             ..
+                                              .
+                                    (∞)
+                      MC ←−       Gt              = Rt+1 + γRt+2 + γ 2 Rt+3 + . . .
+                                                        (1)      (2)      (n)      (∞)
+             It should be noted that Gt = Gt                  = Gt     = Gt     = Gt     , where the
+        superscripts merely indicate the different decomposition structures of Gt .
+Shiyu Zhao                                                                                             37 / 60
+TD learning of action values: n-step Sarsa
+
+        • Sarsa aims to solve
+                                              (1)
+                      qπ (s, a) = E[Gt |s, a] = E[Rt+1 + γqπ (St+1 , At+1 )|s, a].
+
+        • MC learning aims to solve
+                                        (∞)
+                 qπ (s, a) = E[Gt             |s, a] = E[Rt+1 + γRt+2 + γ 2 Rt+3 + . . . |s, a].
+
+        • An intermediate algorithm called n-step Sarsa aims to solve
+                                  (n)
+             qπ (s, a) = E[Gt |s, a] = E[Rt+1 + γRt+2 + · · · + γ n qπ (St+n , At+n )|s, a].
+
+        • The algorithm of n-step Sarsa is
+             qt+1 (st , at ) = qt (st , at )
+                                                 h                                                              i
+                                  − αt (st , at ) qt (st , at ) − [rt+1 + γrt+2 + · · · + γ n qt (st+n , at+n )] .
+
+              n-step Sarsa is more general because it becomes the (one-step) Sarsa
+             algorithm when n = 1 and the MC learning algorithm when n = ∞.
+Shiyu Zhao                                                                                                  38 / 60
+TD learning of action values: n-step Sarsa
+
+        • n-step Sarsa needs (st , at , rt+1 , st+1 , at+1 , . . . , rt+n , st+n , at+n ).
+        • Since (rt+n , st+n , at+n ) has not been collected at time t, we are not able to
+             implement n-step Sarsa at step t. However, we can wait until time t + n to
+             update the q-value of (st , at ):
+
+             qt+n (st , at ) = qt+n−1 (st , at )
+                                  h                                                                    i
+             − αt+n−1 (st , at ) qt+n−1 (st , at ) − [rt+1 + γrt+2 + · · · + γ n qt+n−1 (st+n , at+n )]
+
+        • Since n-step Sarsa includes Sarsa and MC learning as two extreme cases, its
+             performance is a blend of Sarsa and MC learning:
+             • If n is large, its performance is close to MC learning and hence has a large
+               variance but a small bias.
+             • If n is small, its performance is close to Sarsa and hence has a relatively
+               large bias due to the initial guess and relatively low variance.
+        • Finally, n-step Sarsa is also for policy evaluation. It can be combined with
+             the policy improvement step to search for optimal policies.
+Shiyu Zhao                                                                                          39 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    40 / 60
+TD learning of optimal action values: Q-learning
+
+
+
+
+        • Next, we introduce Q-learning, one of the most widely used RL
+             algorithms.
+        • Sarsa can estimate the action values of a given policy. It must be
+             combined with a policy improvement step to find optimal policies.
+        • Q-learning can directly estimate optimal action values and hence
+             optimal policies.
+
+
+
+
+Shiyu Zhao                                                                       41 / 60
+Q-learning – Algorithm
+
+
+        The Q-learning algorithm is
+                                                                                                        
+             qt+1 (st , at ) = qt (st , at ) − αt (st , at ) qt (st , at ) − [rt+1 + γ max qt (st+1 , a)] ,
+                                                                                     a∈A
+
+               qt+1 (s, a) = qt (s, a),    ∀(s, a) 6= (st , at ),
+
+
+
+        Q-learning is very similar to Sarsa. They are different only in terms of the
+        TD target:
+        • The TD target in Q-learning is rt+1 + γ maxa∈A qt (st+1 , a)
+        • The TD target in Sarsa is rt+1 + γqt (st+1 , at+1 ).
+
+
+
+
+Shiyu Zhao                                                                                                    42 / 60
+Q-learning – Algorithm
+
+
+
+
+        What does Q-learning do mathematically?
+        It aims to solve
+                        h                                       i
+             q(s, a) = E Rt+1 + γ max q(St+1 , a) St = s, At = a ,    ∀s, a.
+                                     a
+
+        This is the Bellman optimality equation expressed in terms of action
+        values. See the proof in my book.
+
+
+
+
+Shiyu Zhao                                                                     43 / 60
+Off-policy vs on-policy
+
+
+        Before further studying Q-learning, we first introduce two important
+        concepts: on-policy learning and off-policy learning.
+        There exist two policies in a TD learning task:
+        • The behavior policy is used to generate experience samples.
+        • The target policy is constantly updated toward an optimal policy.
+        On-policy vs off-policy:
+        • When the behavior policy is the same as the target policy, such kind of
+             learning is called on-policy.
+        • When they are different, the learning is called off-policy.
+
+
+
+
+Shiyu Zhao                                                                          44 / 60
+Off-policy vs on-policy
+
+
+
+        Advantages of off-policy learning:
+
+        • It can search for optimal policies based on the experience samples
+             generated by any other policies.
+             • As an important special case, the behavior policy can be selected to
+               be exploratory. For example, if we would like to estimate the action
+               values of all state-action pairs, we can use a exploratory policy to
+               generate episodes visiting every state-action pair sufficiently many
+               times.
+
+
+
+
+Shiyu Zhao                                                                            45 / 60
+Off-policy vs on-policy
+
+
+
+
+        How to judge if a TD algorithm is on-policy or off-policy?
+        • First, check what the algorithm does mathematically.
+        • Second, check what things are required to implement the algorithm.
+        It deserves special attention because it is one of the most confusing
+        problems to beginners.
+
+
+
+
+Shiyu Zhao                                                                      46 / 60
+Off-policy vs on-policy
+
+        Sarsa is on-policy.
+        • First, Sarsa aims to solve the Bellman equation of a given policy π:
+
+                              qπ (s, a) = E [R + γqπ (S 0 , A0 )|s, a] ,      ∀s, a.
+
+             where R ∼ p(R|s, a), S 0 ∼ p(S 0 |s, a), A0 ∼ π(A0 |S 0 ).
+        • Second, the algorithm is
+                                                            h                                           i
+             qt+1 (st , at ) = qt (st , at ) − αt (st , at ) qt (st , at ) − [rt+1 + γqt (st+1 , at+1 )] ,
+
+             which requires (st , at , rt+1 , st+1 , at+1 ):
+             • If (st , at ) is given, then rt+1 and st+1 do not depend on any policy!
+             • at+1 is generated following πt (st+1 )!
+        • πt is both the target and behavior policy.
+Shiyu Zhao                                                                                              47 / 60
+Off-policy vs on-policy
+
+
+        Monte Carlo learning is on-policy.
+
+        • First, the MC method aims to solve
+
+                  qπ (s, a) = E [Rt+1 + γRt+2 + . . . |St = s, At = a] ,   ∀s, a.
+
+             where the sample is generated following a given policy π.
+        • Second, the implementation of the MC method is
+
+                                   q(s, a) ≈ rt+1 + γrt+2 + . . .
+
+        • A policy is used to generate samples, which is further used to estimate
+             the action values of the policy. Based on the action values, we can
+             improve the policy.
+
+
+Shiyu Zhao                                                                          48 / 60
+Off-policy vs on-policy
+
+        Q-learning is off-policy.
+
+        • First, Q-learning aims to solve the Bellman optimality equation
+                          h                                        i
+              q(s, a) = E Rt+1 + γ max q(St+1 , a) St = s, At = a , ∀s, a.
+                                               a
+
+        • Second, the algorithm is
+                                                                                                        
+             qt+1 (st , at ) = qt (st , at ) − αt (st , at ) qt (st , at ) − [rt+1 + γ max qt (st+1 , a)]
+                                                                                     a∈A
+
+
+             which requires (st , at , rt+1 , st+1 ).
+             • If (st , at ) is given, then rt+1 and st+1 do not depend on any policy!
+        • The behavior policy to generate at from st can be anything. The
+             target policy will converge to the optimal policy.
+
+Shiyu Zhao                                                                                           49 / 60
+Q-learning – Implementation
+
+        Since Q-learning is off-policy, it can be implemented in an either off-policy or
+        on-policy fashion.
+
+             Pseudocode: Policy searching by Q-learning (on-policy version)
+
+             For each episode, do
+                 If the current st is not the target state, do
+                      Collect the experience (st , at , rt+1 , st+1 ): In particular, take action at
+                      following πt (st ), generate rt+1 , st+1 .
+                      Update q-value:                                        h
+                           qt+1 (st , at )   =  qt (st , at ) − αt (st , at ) qt (st , at ) − [rt+1 +
+                                                i
+                           γ maxa qt (st+1 , a)]
+                      Update policy:
+                                               
+                           πt+1 (a|st ) = 1 − |A| (|A| − 1) if a = arg maxa qt+1 (st , a)
+                                           
+                           πt+1 (a|st ) = |A| otherwise
+
+
+        See the book for more detailed pseudocode.
+Shiyu Zhao                                                                                              50 / 60
+Q-learning – Algorithm
+
+
+
+             Pseudocode: Optimal policy search by Q-learning (off-policy version)
+
+             For each episode {s0 , a0 , r1 , s1 , a1 , r2 , . . . } generated by πb , do
+                  For each step t = 0, 1, 2, . . . of the episode, do
+                        Update q-value:                                      h
+                              qt+1 (st , at ) = qt (st , at ) − αt (st , at ) q(st , at ) − [rt+1 +
+                                                    i
+                              γ maxa qt (st+1 , a)]
+                        Update target policy:
+                              πT,t+1 (a|st ) = 1 if a = arg maxa qt+1 (st , a)
+                              πT,t+1 (a|st ) = 0 otherwise
+
+
+        See the book for more detailed pseudocode.
+
+
+Shiyu Zhao                                                                                            51 / 60
+Q-learning – Examples
+
+        Task description:
+        • The task in these examples is to find an optimal policy for all the
+             states.
+        • The reward setting is rboundary = rforbidden = −1, and rtarget = 1.
+             The discount rate is γ = 0.9. The learning rate is α = 0.1.
+        Ground truth: an optimal policy and the corresponding optimal state
+        values.
+                           1   2    3   4       5         1     2      3      4      5
+
+
+                       1                            1    5.8   5.6    6.2    6.5    5.8
+
+
+                       2                            2    6.5   7.2    8.0    7.2    6.5
+
+
+                       3                            3    7.2   8.0    10.0   8.0    7.2
+
+
+                       4                            4    8.0   10.0   10.0   10.0   8.0
+
+
+                       5                            5    7.2   9.0    10.0   9.0    8.1
+
+
+                           (a) Optimal policy           (b) Optimal state value
+Shiyu Zhao                                                                                52 / 60
+Q-learning – Examples
+
+        The behavior policy and the generated experience (105 steps):
+                             1       2       3       4       5
+
+
+                     1
+
+
+
+                     2
+
+
+
+                     3
+
+
+
+                     4
+
+
+
+                     5
+
+
+
+
+                         (a) Behavior policy                                                     (b) Generated episode
+        The policy found by off-policy Q-learning:
+                                 1       2       3       4       5
+                                                                                         8
+                         1
+
+
+                                                                                         6
+
+
+
+
+                                                                     State value error
+                         2
+
+
+                                                                                         4
+                         3
+
+
+                                                                                         2
+                         4
+
+
+                                                                                         0
+                         5                                                                   0     2       4        6        8    10
+                                                                                                       Step in the episode       104
+
+
+
+Shiyu Zhao
+                         (a) Estimated policy                                            (b) State value error                         53 / 60
+Q-learning – Examples
+
+
+        The importance of exploration: episodes of 105 steps
+        If the policy is not sufficiently exploratory, the samples are not good.
+
+                 1   2   3   4   5
+
+
+             1                                                                   8
+
+
+                                                                                 6
+
+
+
+
+                                                             State value error
+             2
+
+
+
+             3                                                                   4
+
+
+                                                                                 2
+             4
+
+
+                                                                                 0
+             5                                                                       0   2       4        6        8    10
+                                                                                             Step in the episode       104
+
+
+        (a) Behavior policy          (b) Generated episode                           (c) Q-learning result
+         = 0.5
+
+
+
+
+Shiyu Zhao                                                                                                                   54 / 60
+Q-learning – Examples
+                  1    2   3   4   5
+
+
+              1
+
+                                                                                   6
+
+
+
+
+                                                               State value error
+              2
+
+
+                                                                                   4
+              3
+
+
+                                                                                   2
+              4
+
+
+                                                                                   0
+              5                                                                        0   2       4        6        8    10
+                                                                                               Step in the episode       104
+
+
+             (a) Behavior policy       (b) Generated episode                       (c) Q-learning result
+              = 0.1
+
+                  1    2   3   4   5
+
+
+              1
+
+
+                                                                                   6
+
+
+
+
+                                                               State value error
+              2
+
+
+                                                                                   4
+              3
+
+
+                                                                                   2
+              4
+
+
+                                                                                   0
+              5                                                                        0   2       4        6        8    10
+                                                                                               Step in the episode       104
+
+
+             (a) Behavior policy       (b) Generated episode                       (c) Q-learning result
+              = 0.1
+Shiyu Zhao                                                                                                                     55 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    56 / 60
+A unified point of view
+
+        All the algorithms we introduced in this lecture can be expressed in a unified
+        expression:
+
+                          qt+1 (st , at ) = qt (st , at ) − αt (st , at )[qt (st , at ) − q̄t ],
+
+         where q̄t is the TD target.
+        Different TD algorithms have different q̄t .
+
+             Algorithm                      Expression of q̄t
+             Sarsa                          q̄t = rt+1 + γqt (st+1 , at+1 )
+             n-step Sarsa                   q̄t = rt+1 + γrt+2 + · · · + γ n qt (st+n , at+n )
+                                                          P
+             Expected Sarsa                 q̄t = rt+1 + γ a πt (a|st+1 )qt (st+1 , a)
+             Q-learning                     q̄t = rt+1 + γ maxa qt (st+1 , a)
+             Monte Carlo                    q̄t = rt+1 + γrt+2 + . . .
+
+        The MC method can also be expressed in this unified expression by setting
+        αt (st , at ) = 1 and hence qt+1 (st , at ) = q̄t .
+Shiyu Zhao                                                                                         57 / 60
+A unified point of view
+
+
+        All the algorithms can be viewed as stochastic approximation algorithms
+        solving the Bellman equation or Bellman optimality equation:
+
+             Algorithm    Equation aimed to solve
+             Sarsa        BE: qπ (s, a) = E [Rt+1 + γqπ (St+1 , At+1 )|St = s, At = a]
+             n-step       BE: qπ (s, a) = E[Rt+1 + γRt+2 + · · · + γ n qπ (st+n , at+n )|St =
+             Sarsa        s, At = a]
+                                                                                           
+             Expected     BE: qπ (s, a) = E Rt+1 + γEAt+1 [qπ (St+1 , At+1 )] St = s, At = a
+             Sarsa
+                                                                                
+             Q-learning   BOE: q(s, a) = E Rt+1 + maxa q(St+1 , a) St = s, At = a
+             Monte Car-   BE: qπ (s, a) = E[Rt+1 + γRt+2 + . . . |St = s, At = a]
+             lo
+
+
+
+
+Shiyu Zhao                                                                                      58 / 60
+Outline
+
+
+         1 Motivating examples
+
+         2 TD learning of state values
+
+         3 TD learning of action values: Sarsa
+
+         4 TD learning of action values: Expected Sarsa
+
+         5 TD learning of action values: n-step Sarsa
+
+         6 TD learning of optimal action values: Q-learning
+
+         7 A unified point of view
+
+         8 Summary
+
+
+Shiyu Zhao                                                    59 / 60
+Summary
+
+
+
+
+        • Introduced various TD learning algorithms
+        • Their expressions, math interpretations, implementation, relationship,
+             examples
+        • Unified point of view
+
+
+
+
+Shiyu Zhao                                                                         60 / 60
+

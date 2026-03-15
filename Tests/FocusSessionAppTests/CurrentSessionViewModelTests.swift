@@ -265,6 +265,41 @@ final class CurrentSessionViewModelTests: XCTestCase {
         XCTAssertEqual(harness.viewModel.durationMinutes, 35)
     }
 
+    func testAvailableTaskSelectionsFlattenParentTaskIntoRemainingSubtasks() throws {
+        let harness = try makeHarness()
+        let parentTask = FocusTask(
+            title: "Practice Listening",
+            estimatedMinutes: 45,
+            subtasks: [
+                TaskSubtask(title: "Stairs"),
+                TaskSubtask(title: "Sentence shadowing")
+            ],
+            createdAt: Date(timeIntervalSince1970: 2_000)
+        )
+        let standaloneTask = FocusTask(
+            title: "Write notes",
+            estimatedMinutes: 20,
+            createdAt: Date(timeIntervalSince1970: 1_000)
+        )
+        try harness.tasksRepository.save(parentTask)
+        try harness.tasksRepository.save(standaloneTask)
+
+        harness.viewModel.reloadData()
+
+        XCTAssertEqual(
+            harness.viewModel.availableTaskSelections.map(\.selectorTitle),
+            [
+                "Practice Listening / Stairs",
+                "Practice Listening / Sentence shadowing",
+                "Write notes"
+            ]
+        )
+        XCTAssertEqual(
+            harness.viewModel.availableTaskSelections.map(\.activeTitle),
+            ["Stairs", "Sentence shadowing", "Write notes"]
+        )
+    }
+
     func testAvailableTasksOnlyIncludeTodayVisibleTasks() throws {
         let now = Date(timeIntervalSince1970: 3_000)
         let harness = try makeHarness(now: { now })
@@ -298,6 +333,30 @@ final class CurrentSessionViewModelTests: XCTestCase {
 
         XCTAssertNil(harness.viewModel.selectedTaskID)
         XCTAssertTrue(harness.viewModel.availableTasks.isEmpty)
+    }
+
+    func testSelectTaskSubtaskUsesCombinedSelectorTitleAndSubtaskSessionTitle() throws {
+        let harness = try makeHarness()
+        let task = FocusTask(
+            title: "Practice Listening",
+            estimatedMinutes: 45,
+            subtasks: [
+                TaskSubtask(title: "Stairs"),
+                TaskSubtask(title: "Sentence shadowing")
+            ]
+        )
+        try harness.tasksRepository.save(task)
+        let selectedSubtask = try XCTUnwrap(task.subtasks.last)
+
+        harness.viewModel.selectTask(task, subtask: selectedSubtask)
+
+        XCTAssertEqual(harness.viewModel.selectedTaskTitle, "Practice Listening / Sentence shadowing")
+        XCTAssertEqual(harness.viewModel.durationMinutes, 45)
+
+        harness.viewModel.startSession()
+
+        XCTAssertEqual(harness.viewModel.currentIntention, "Sentence shadowing")
+        XCTAssertEqual(harness.viewModel.menuBarTitle, "Sentence shadowing")
     }
 
     func testRemainingTimeCountsDownAndPausesCleanly() throws {
@@ -403,6 +462,109 @@ final class CurrentSessionViewModelTests: XCTestCase {
         XCTAssertEqual(harness.viewModel.availableTasks, [])
     }
 
+    func testSubmitReflectionCompletesOnlySelectedSubtaskAndClearsSelection() throws {
+        var currentDate = Date(timeIntervalSince1970: 8_000)
+        let harness = try makeHarness(now: { currentDate })
+        let task = FocusTask(
+            title: "Practice Listening",
+            estimatedMinutes: 45,
+            subtasks: [
+                TaskSubtask(title: "Stairs"),
+                TaskSubtask(title: "Sentence shadowing")
+            ]
+        )
+        try harness.tasksRepository.save(task)
+        let selectedSubtask = try XCTUnwrap(task.subtasks.first)
+
+        harness.viewModel.selectTask(task, subtask: selectedSubtask)
+        harness.viewModel.startSession()
+        currentDate.addTimeInterval(45 * 60)
+        harness.viewModel.finishSession()
+        harness.viewModel.selectReflectionMood(.focused)
+        harness.viewModel.submitReflection()
+
+        let storedTask = try XCTUnwrap(
+            try harness.tasksRepository.fetchAll().first(where: { $0.id == task.id })
+        )
+        XCTAssertFalse(storedTask.isCompleted)
+        XCTAssertEqual(storedTask.subtasks.map(\.isCompleted), [true, false])
+        XCTAssertNil(harness.viewModel.selectedTaskSelection)
+        XCTAssertEqual(
+            harness.viewModel.availableTaskSelections.map(\.selectorTitle),
+            ["Practice Listening / Sentence shadowing"]
+        )
+    }
+
+    func testSubmittingReflectionForLastRemainingSubtaskCompletesParentTaskAndSettlesLinkedContribution() throws {
+        var currentDate = Date(timeIntervalSince1970: 8_000)
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let modelContext = ModelContext(container)
+        let focusRepository = FocusSessionRepository(modelContext: modelContext)
+        let tasksRepository = TasksRepository(modelContext: modelContext)
+        let planRepository = PlanGoalsRepository(modelContext: modelContext)
+        let linkedPlanSubtask = PlanGoalSubtask(
+            id: UUID(),
+            title: "Listening total",
+            baselineValue: 0,
+            targetValue: 4,
+            unitLabel: "次",
+            trackingMode: .quantified,
+            goalSharePercent: 100
+        )
+        try planRepository.save(
+            PlanGoal(
+                title: "English",
+                status: .inProgress,
+                startAt: Date(timeIntervalSince1970: 1_000),
+                endAt: Date(timeIntervalSince1970: 2_000),
+                subtasks: [linkedPlanSubtask]
+            )
+        )
+        let task = FocusTask(
+            title: "Practice Listening",
+            estimatedMinutes: 45,
+            subtasks: [
+                TaskSubtask(title: "Stairs", isCompleted: true),
+                TaskSubtask(title: "Sentence shadowing")
+            ],
+            linkedSubtaskID: linkedPlanSubtask.id,
+            contributionValue: 1
+        )
+        try tasksRepository.save(task)
+        let coordinator = LinkedTaskSettlementCoordinator(
+            tasksRepository: tasksRepository,
+            planGoalsRepository: planRepository
+        )
+        let viewModel = CurrentSessionViewModel(
+            snapshotStore: nil,
+            focusSessionRepository: focusRepository,
+            tasksRepository: tasksRepository,
+            linkedTaskSettlementCoordinator: coordinator,
+            now: { currentDate }
+        )
+        let selectedSubtask = try XCTUnwrap(task.subtasks.last)
+
+        viewModel.selectTask(task, subtask: selectedSubtask)
+        viewModel.startSession()
+        currentDate.addTimeInterval(45 * 60)
+        viewModel.finishSession()
+        viewModel.selectReflectionMood(.focused)
+        viewModel.submitReflection()
+
+        let storedTask = try XCTUnwrap(
+            try tasksRepository.fetchAll().first(where: { $0.id == task.id })
+        )
+        XCTAssertTrue(storedTask.isCompleted)
+        XCTAssertEqual(storedTask.subtasks.map(\.isCompleted), [true, true])
+        XCTAssertNil(storedTask.linkedSubtaskID)
+        XCTAssertEqual(storedTask.settledLinkedSubtaskID, linkedPlanSubtask.id)
+        XCTAssertNil(viewModel.selectedTaskSelection)
+        XCTAssertEqual(viewModel.availableTaskSelections, [])
+
+        let refreshedGoal = try XCTUnwrap(try planRepository.fetchAll().first)
+        XCTAssertEqual(refreshedGoal.subtasks.first?.baselineValue, 1)
+    }
+
     func testSubmitReflectionSettlesLinkedTaskContributionIntoSubtaskAndUnlinksTask() throws {
         var currentDate = Date(timeIntervalSince1970: 8_000)
         let container = try FocusSessionModelContainer.makeInMemory()
@@ -463,6 +625,122 @@ final class CurrentSessionViewModelTests: XCTestCase {
 
         let refreshedGoal = try XCTUnwrap(try planRepository.fetchAll().first)
         XCTAssertEqual(refreshedGoal.subtasks.first?.baselineValue, 1)
+    }
+
+    func testSubmitReflectionAndContinueEpisodeRestartsSameTaskWithoutCompletingIt() throws {
+        var currentDate = Date(timeIntervalSince1970: 8_000)
+        let harness = try makeHarness(now: { currentDate })
+        let task = try saveTask(
+            title: "Study policy iteration",
+            estimatedMinutes: 25,
+            in: harness.tasksRepository
+        )
+        harness.viewModel.selectTask(task)
+        harness.viewModel.sessionNotes = "Need one more block."
+
+        harness.viewModel.startSession()
+        currentDate.addTimeInterval(15 * 60)
+        harness.viewModel.finishSession()
+        harness.viewModel.selectReflectionMood(.focused)
+        harness.viewModel.submitReflectionAndContinueEpisode()
+
+        let records = try harness.focusRepository.fetchAll()
+        XCTAssertEqual(records.count, 1)
+        XCTAssertEqual(records.first?.notes, "Need one more block.")
+        XCTAssertEqual(records.first?.mood, .focused)
+        XCTAssertEqual(harness.viewModel.phaseText, "Focusing")
+        XCTAssertEqual(harness.viewModel.remainingMinutesText, "25 min")
+        XCTAssertEqual(harness.viewModel.selectedTaskID, task.id)
+        XCTAssertEqual(harness.viewModel.currentIntention, "Study policy iteration")
+        XCTAssertTrue(try XCTUnwrap(harness.tasksRepository.task(id: task.id)).isCompleted == false)
+        XCTAssertEqual(harness.viewModel.sessionNotes, "")
+        XCTAssertNil(harness.viewModel.selectedReflectionMood)
+    }
+
+    func testSubmitReflectionAndContinueEpisodeKeepsLinkedContributionUnsettled() throws {
+        var currentDate = Date(timeIntervalSince1970: 8_000)
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let modelContext = ModelContext(container)
+        let focusRepository = FocusSessionRepository(modelContext: modelContext)
+        let tasksRepository = TasksRepository(modelContext: modelContext)
+        let planRepository = PlanGoalsRepository(modelContext: modelContext)
+        let subtask = PlanGoalSubtask(
+            id: UUID(),
+            title: "A",
+            baselineValue: 0,
+            targetValue: 4,
+            unitLabel: "次",
+            trackingMode: .quantified,
+            goalSharePercent: 100
+        )
+        try planRepository.save(
+            PlanGoal(
+                title: "RL",
+                status: .inProgress,
+                startAt: Date(timeIntervalSince1970: 1_000),
+                endAt: Date(timeIntervalSince1970: 2_000),
+                subtasks: [subtask]
+            )
+        )
+        let task = FocusTask(
+            title: "Linked focus block",
+            estimatedMinutes: 25,
+            linkedSubtaskID: subtask.id,
+            contributionValue: 1
+        )
+        try tasksRepository.save(task)
+        let coordinator = LinkedTaskSettlementCoordinator(
+            tasksRepository: tasksRepository,
+            planGoalsRepository: planRepository
+        )
+        let viewModel = CurrentSessionViewModel(
+            snapshotStore: nil,
+            focusSessionRepository: focusRepository,
+            tasksRepository: tasksRepository,
+            linkedTaskSettlementCoordinator: coordinator,
+            now: { currentDate }
+        )
+        viewModel.selectTask(task)
+
+        viewModel.startSession()
+        currentDate.addTimeInterval(25 * 60)
+        viewModel.finishSession()
+        viewModel.selectReflectionMood(.focused)
+        viewModel.submitReflectionAndContinueEpisode()
+
+        let storedTask = try XCTUnwrap(try tasksRepository.task(id: task.id))
+        XCTAssertFalse(storedTask.isCompleted)
+        XCTAssertEqual(storedTask.linkedSubtaskID, subtask.id)
+        XCTAssertNil(storedTask.settledLinkedSubtaskID)
+        XCTAssertEqual(viewModel.phaseText, "Focusing")
+
+        let refreshedGoal = try XCTUnwrap(try planRepository.fetchAll().first)
+        XCTAssertEqual(refreshedGoal.subtasks.first?.baselineValue, 0)
+    }
+
+    func testSubmitReflectionAndContinueEpisodeStaysCompletedWhenSelectionDisappears() throws {
+        var currentDate = Date(timeIntervalSince1970: 8_000)
+        let harness = try makeHarness(now: { currentDate })
+        let task = try saveTask(
+            title: "Temporary block",
+            estimatedMinutes: 25,
+            in: harness.tasksRepository
+        )
+        harness.viewModel.selectTask(task)
+
+        harness.viewModel.startSession()
+        currentDate.addTimeInterval(15 * 60)
+        harness.viewModel.finishSession()
+        harness.viewModel.selectReflectionMood(.focused)
+        try harness.tasksRepository.completeTask(id: task.id, completedAt: currentDate)
+
+        harness.viewModel.submitReflectionAndContinueEpisode()
+
+        XCTAssertEqual(harness.viewModel.phaseText, "Completed")
+        XCTAssertFalse(harness.viewModel.showReflectionComposer)
+        XCTAssertEqual(harness.viewModel.errorMessage, "Unable to continue because the selected Today task is no longer available.")
+        XCTAssertNil(harness.viewModel.selectedTaskSelection)
+        XCTAssertEqual(try harness.focusRepository.fetchAll().count, 1)
     }
 
     func testPrepareNextSessionReturnsToIdleAndClearsCompletedDraft() throws {

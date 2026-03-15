@@ -14,6 +14,19 @@ final class PlanDashboardViewSourceTests: XCTestCase {
         XCTAssertFalse(source.contains("options: PlanGoalStatus.allCases"))
     }
 
+    func testPlanTimelineHeaderUsesAdaptiveLayoutAndFullCreateCopy() throws {
+        let source = try String(
+            contentsOfFile: "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Plan/PlanDashboardView.swift",
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(source.contains("Button(\"Create\")"))
+        XCTAssertTrue(source.contains("ViewThatFits(in: .horizontal)"))
+        XCTAssertTrue(source.contains("timelineHeaderPrimaryRow"))
+        XCTAssertTrue(source.contains("timelineHeaderCompactRow"))
+        XCTAssertFalse(source.contains("\"Creat\""))
+    }
+
     func testMonthTimelineUsesMonthlyAxisMarksAndTodayRuleUsesGold() throws {
         let source = try String(
             contentsOfFile: "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Plan/PlanDashboardView.swift",
@@ -97,7 +110,7 @@ final class PlanDashboardViewSourceTests: XCTestCase {
         XCTAssertTrue(source.contains("handleSubtaskDragEnded"))
         XCTAssertTrue(source.contains("subtaskDragOffset"))
         XCTAssertTrue(source.contains("viewModel.moveSubtask("))
-        XCTAssertTrue(source.contains("VStack(spacing: 0) {\n                Spacer(minLength: 0)\n                goalAddSubtaskButton(for: goal)\n                Spacer(minLength: 0)\n            }\n            .frame(maxWidth: .infinity, maxHeight: .infinity)\n            .frame(minHeight: 64)"))
+        XCTAssertTrue(source.contains("VStack(spacing: 0) {\n                Spacer(minLength: 0)\n                goalAddSubtaskButton(for: goal)\n                Spacer(minLength: 0)\n            }\n            .frame(maxWidth: .infinity, maxHeight: .infinity)\n            .frame(minHeight: 40)"))
         XCTAssertTrue(source.contains("goalSubtaskMetricText(for: subtask)"))
         XCTAssertTrue(source.contains("goalSubtaskMetricBlock"))
         XCTAssertTrue(source.contains("goalSubtaskSecondaryBlock"))
@@ -111,8 +124,8 @@ final class PlanDashboardViewSourceTests: XCTestCase {
         XCTAssertTrue(source.contains("goal.status == .unfinished"))
         XCTAssertTrue(source.contains(".frame(width: 30, height: 30)"))
         XCTAssertTrue(source.contains(".stroke(tint.opacity(0.22), lineWidth: 1)"))
-        XCTAssertTrue(source.contains(".frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)"))
-        XCTAssertTrue(source.contains(".padding(8)"))
+        XCTAssertTrue(source.contains(".frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)"))
+        XCTAssertTrue(source.contains(".padding(5)"))
         XCTAssertTrue(source.contains("contextMenu"))
         XCTAssertTrue(source.contains("plus"))
         XCTAssertTrue(source.contains("viewModel.progressPercent(for: goal)"))
@@ -122,7 +135,7 @@ final class PlanDashboardViewSourceTests: XCTestCase {
         XCTAssertTrue(source.contains("viewModel.presentEditSubtaskSheet(for: goal, subtask: subtask)"))
         XCTAssertTrue(source.contains("private func opticallyCenteredPlusIcon(size: CGFloat, tint: Color)"))
         XCTAssertTrue(source.contains(".offset(y: 0.5)"))
-        XCTAssertTrue(source.contains("opticallyCenteredPlusIcon(size: 10, tint: tint)"))
+        XCTAssertTrue(source.contains("opticallyCenteredPlusIcon(size: 8, tint: tint)"))
         XCTAssertTrue(source.contains("opticallyCenteredPlusIcon(size: 13, tint: tint)"))
         XCTAssertTrue(source.contains("NewT"))
         XCTAssertTrue(source.contains("LinkT"))
@@ -196,7 +209,7 @@ final class PlanDashboardViewSourceTests: XCTestCase {
             )
         )
         XCTAssertFalse(source.contains("TimelineZoomTrackingSurface { deltaY, location in"))
-        XCTAssertFalse(source.contains("ScrollView(.horizontal, showsIndicators: true)"))
+        XCTAssertTrue(source.contains("ScrollView(.horizontal, showsIndicators: true)"))
         XCTAssertFalse(source.contains(".padding(.bottom, 22)"))
         XCTAssertFalse(source.contains(".padding(.bottom, 18)"))
         XCTAssertFalse(source.contains(".padding(.bottom, 34)"))
@@ -236,5 +249,24 @@ final class PlanDashboardViewSourceTests: XCTestCase {
                 ".help(subtask.trackingMode == .quantified ? \"Add 1 to current value\" : \"Edit subtask and manage linked tasks\")"
             )
         )
+    }
+
+    func testGoalSubtaskCardsUseCompactSizing() throws {
+        let source = try String(
+            contentsOfFile: "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/Plan/PlanDashboardView.swift",
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(source.contains("GridItem(.adaptive(minimum: 112, maximum: 132), spacing: 6, alignment: .top)"))
+        XCTAssertTrue(source.contains(".frame(minHeight: 40)"))
+        XCTAssertTrue(source.contains(".frame(maxWidth: .infinity, minHeight: 40, alignment: .leading)"))
+        XCTAssertTrue(source.contains(".padding(5)"))
+        XCTAssertTrue(source.contains(".font(.system(size: 11, weight: .bold, design: .rounded))"))
+        XCTAssertTrue(source.contains(".font(.system(size: 10, weight: .bold, design: .rounded))"))
+        XCTAssertTrue(source.contains(".frame(width: 16, height: 16)"))
+        XCTAssertTrue(source.contains("opticallyCenteredPlusIcon(size: 8, tint: tint)"))
+        XCTAssertTrue(source.contains(".frame(width: 18, height: 18)"))
+        XCTAssertTrue(source.contains(".frame(maxWidth: .infinity, minHeight: 24, maxHeight: 24, alignment: .topLeading)"))
+        XCTAssertTrue(source.contains(".frame(maxWidth: .infinity, minHeight: 16, maxHeight: 16, alignment: .topLeading)"))
     }
 }

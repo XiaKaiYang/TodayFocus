@@ -8,9 +8,11 @@ final class AppShellViewModel: ObservableObject {
         configuration: AppLaunchConfiguration = .current,
         preferencesStore: AppPreferencesStore? = nil
     ) {
-        selectedSection = configuration.initialSection
-            ?? preferencesStore?.preferences.launchSection
-            ?? .tasks
+        selectedSection = AppSection.resolvedLaunchSection(
+            preferredSection: configuration.initialSection
+                ?? preferencesStore?.preferences.launchSection,
+            on: .macOS
+        )
     }
 }
 
@@ -55,8 +57,8 @@ struct AppShellView: View {
         let resolvedBlockerViewModel = blockerViewModel
             ?? (configuration.usesBlockerDemo ? BlockerViewModel.demo() : BlockerViewModel())
         let resolvedTasksViewModel = tasksViewModel ?? TasksViewModel(
-            onStartTask: { task in
-                resolvedCurrentSessionViewModel.selectTask(task)
+            onStartTask: { task, subtask in
+                resolvedCurrentSessionViewModel.selectTask(task, subtask: subtask)
             },
             onTasksChanged: {
                 resolvedCurrentSessionViewModel.reloadData()

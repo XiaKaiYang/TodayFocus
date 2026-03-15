@@ -69,6 +69,7 @@
 | Configure the macOS window title bar through AppKit instead of relying only on default SwiftUI chrome | This gives us reliable transparent title-bar behavior and removes the dark strip at the top of the app window. |
 | Ban readable white text across app pages and avoid system segmented controls on the light UI | The light-surface visual direction breaks immediately when selected system segments or accent buttons render white text, so the shared theme now enforces dark ink and the blocker composer uses a custom segmented control. |
 | Replace system prompt and toggle label styling in guarded forms with explicit dark components | The Create sheet and Blocker composer still leaked low-contrast system placeholder and label colors, so they now use custom prompted fields and explicit dark text labels. |
+| Model the session picker as a dedicated focus-target layer instead of a bare task ID | Flattening Today-task choices into either plain tasks or unfinished subtasks lets the selector show `父任务 / 子任务` while the active session, history, and completion pipeline can still operate on the child task name and only complete that one subtask. |
 
 ## Issues Encountered
 | Issue | Resolution |
@@ -105,3 +106,18 @@
 
 ## Visual/Browser Findings
 - No browser inspection yet.
+
+## Session: 2026-03-15 Mobile Expansion
+
+- `project.yml` now defines an iOS application target `FocusSessionMobileApp` and an iOS unit-test target `FocusSessionMobileAppTests`, while the macOS app target remains intact.
+- The mobile app entry point lives under `Apps/FocusSessionMobileApp` and reuses the shared app-layer models, repositories, and view models from `Apps/FocusSessionApp`.
+- `AppSection` is now the shared canonical destination enum across platforms, with `AppPlatform` availability helpers and mobile launch-resolution logic that automatically filters out `.blocker` on iOS.
+- iPhone navigation is organized around a new `MobilePrimaryTab` model with `Today`, `Session`, `Plan`, `Notes`, and `More`; the `More` stack hosts `White Noise`, `Analytics`, `Trash`, and `Settings`.
+- iPad navigation is implemented as a `NavigationSplitView` that surfaces all non-blocker sections directly in the sidebar.
+- `FocusSessionModelContainer` now attempts a CloudKit-backed shared SwiftData store first, falls back to the legacy local persistent store if needed, and can import legacy content into the synced store the first time the synced container is empty.
+- `AppPreferencesStore` remains local-device state via `UserDefaults`; the mobile work does not move startup destination or UI defaults into CloudKit.
+- `AppPromptedTextEditor` is now backed by `NSTextView` on macOS and `UITextView` on iOS under a shared SwiftUI API.
+- `PlanDashboardView` now has an iOS-safe horizontal timeline container and explicit month-span controls in place of the macOS wheel-zoom interaction path.
+- `SettingsDashboardView` now hides blocker automation on iOS, exposes startup destinations through `AppSection.launchDestinationSections`, and relabels destructive data actions with synced-data wording on mobile.
+- Local verification succeeded for macOS after the mobile refactor: `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionAppTests -destination 'platform=macOS' test` passed with 255 tests, and `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionApp -destination 'platform=macOS' build` succeeded.
+- Local iOS simulator verification is currently blocked by the machine configuration: `xcodebuild -project FocusSession.xcodeproj -scheme FocusSessionMobileApp -showdestinations` reports that `iOS 26.2 is not installed`.

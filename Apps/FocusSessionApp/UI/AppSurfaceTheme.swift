@@ -1,5 +1,9 @@
-import AppKit
 import SwiftUI
+#if os(macOS)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
 
 enum AppSurfaceTheme {
     static let primaryTextOpacity = 0.82
@@ -964,6 +968,7 @@ struct AppPromptedTextEditor: View {
     }
 }
 
+#if os(macOS)
 private final class AppFixedInkTextView: NSTextView {
     var fixedTypingAttributes: [NSAttributedString.Key: Any] = [:] {
         didSet {
@@ -1136,6 +1141,99 @@ private struct AppPromptedTextEditorRepresentable: NSViewRepresentable {
         }
     }
 }
+#elseif os(iOS)
+private final class AppFixedInkTextView: UITextView {}
+
+private struct AppPromptedTextEditorRepresentable: UIViewRepresentable {
+    @Binding var text: String
+    let fontSize: CGFloat
+    let horizontalInset: CGFloat
+    let verticalInset: CGFloat
+    let focus: Binding<Bool>?
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = AppFixedInkTextView()
+        textView.delegate = context.coordinator
+        textView.backgroundColor = .clear
+        textView.text = text
+        textView.font = editorFont
+        textView.textColor = editorTextColor
+        textView.tintColor = .systemBlue
+        textView.textContainerInset = UIEdgeInsets(
+            top: verticalInset,
+            left: horizontalInset,
+            bottom: verticalInset,
+            right: horizontalInset
+        )
+        textView.textContainer.lineFragmentPadding = 0
+        textView.keyboardDismissMode = .interactive
+        return textView
+    }
+
+    func updateUIView(_ textView: UITextView, context: Context) {
+        context.coordinator.parent = self
+
+        if textView.text != text {
+            textView.text = text
+        }
+
+        textView.font = editorFont
+        textView.textColor = editorTextColor
+        textView.textContainerInset = UIEdgeInsets(
+            top: verticalInset,
+            left: horizontalInset,
+            bottom: verticalInset,
+            right: horizontalInset
+        )
+        textView.textContainer.lineFragmentPadding = 0
+
+        if let focus {
+            if focus.wrappedValue, !textView.isFirstResponder {
+                textView.becomeFirstResponder()
+            } else if !focus.wrappedValue, textView.isFirstResponder {
+                textView.resignFirstResponder()
+            }
+        }
+    }
+
+    private var editorFont: UIFont {
+        UIFont.systemFont(ofSize: fontSize, weight: .medium)
+    }
+
+    private var editorTextColor: UIColor {
+        UIColor(
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: AppSurfaceTheme.primaryTextOpacity
+        )
+    }
+
+    final class Coordinator: NSObject, UITextViewDelegate {
+        var parent: AppPromptedTextEditorRepresentable
+
+        init(_ parent: AppPromptedTextEditorRepresentable) {
+            self.parent = parent
+        }
+
+        func textViewDidChange(_ textView: UITextView) {
+            parent.text = textView.text ?? ""
+        }
+
+        func textViewDidBeginEditing(_ textView: UITextView) {
+            parent.focus?.wrappedValue = true
+        }
+
+        func textViewDidEndEditing(_ textView: UITextView) {
+            parent.focus?.wrappedValue = false
+        }
+    }
+}
+#endif
 
 struct AppInlineStepper: View {
     let title: String

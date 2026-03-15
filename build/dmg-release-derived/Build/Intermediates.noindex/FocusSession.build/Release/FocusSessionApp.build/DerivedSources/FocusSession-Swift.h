@@ -310,6 +310,11 @@ SWIFT_CLASS("_TtC12FocusSession34CurrentSessionStatusItemController")
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
+SWIFT_CLASS("_TtC12FocusSession11SoundCenter")
+@interface SoundCenter : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
 #endif
 #if __has_attribute(external_source_symbol)
 # pragma clang attribute pop
