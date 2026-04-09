@@ -2,6 +2,16 @@
 
 TodayFocus is a SwiftUI focus planner for macOS and iOS. It combines daily task capture, longer-horizon planning, active focus sessions, white noise, notes, analytics, distraction blocking, and widget support in one codebase.
 
+## Screenshots
+
+| Current Session | Plan |
+| --- | --- |
+| ![Current session](docs/readme/current-session.jpg) | ![Plan dashboard](docs/readme/plan-dashboard.jpg) |
+
+| Blocker | Analytics |
+| --- | --- |
+| ![Blocker dashboard](docs/readme/blocker-dashboard.jpg) | ![Analytics dashboard](docs/readme/analytics-dashboard.jpg) |
+
 ## Highlights
 
 - Daily task dashboard for planning and reviewing today's work
