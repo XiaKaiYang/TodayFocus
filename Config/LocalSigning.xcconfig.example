@@ -1,0 +1,8 @@
+// Copy this file to LocalSigning.xcconfig and fill in your Apple development team.
+// This file is optional and intended for local machine settings only.
+
+FOCUSSESSION_CODE_SIGNING_ALLOWED = YES
+FOCUSSESSION_CODE_SIGNING_REQUIRED = YES
+FOCUSSESSION_CODE_SIGN_STYLE = Automatic
+FOCUSSESSION_CODE_SIGN_IDENTITY = Apple Development
+FOCUSSESSION_DEVELOPMENT_TEAM = YOUR_TEAM_ID

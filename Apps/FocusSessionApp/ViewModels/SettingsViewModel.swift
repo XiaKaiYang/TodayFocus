@@ -57,7 +57,12 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func updateLaunchSection(_ section: AppSection) {
-        preferencesStore.updateLaunchSection(section)
+        preferencesStore.updateLaunchSection(
+            AppSection.resolvedLaunchSection(
+                preferredSection: section,
+                on: AppPlatform.current
+            )
+        )
     }
 
     func updatePlanGoalLaunchExpansion(_ expansion: PlanGoalLaunchExpansion) {

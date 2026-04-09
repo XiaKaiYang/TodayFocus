@@ -6,6 +6,7 @@ options:
   groupSortPosition: top
   deploymentTarget:
     macOS: "15.0"
+    iOS: "18.0"
 
 configs:
   Debug: debug
@@ -22,8 +23,11 @@ settings:
     MARKETING_VERSION: 0.1.0
     MACOSX_DEPLOYMENT_TARGET: 15.0
     SWIFT_VERSION: 6.0
-    CODE_SIGNING_ALLOWED: NO
-    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGNING_ALLOWED: $(FOCUSSESSION_CODE_SIGNING_ALLOWED)
+    CODE_SIGNING_REQUIRED: $(FOCUSSESSION_CODE_SIGNING_REQUIRED)
+    CODE_SIGN_STYLE: $(FOCUSSESSION_CODE_SIGN_STYLE)
+    CODE_SIGN_IDENTITY: $(FOCUSSESSION_CODE_SIGN_IDENTITY)
+    DEVELOPMENT_TEAM: $(FOCUSSESSION_DEVELOPMENT_TEAM)
     ENABLE_HARDENED_RUNTIME: NO
     GENERATE_INFOPLIST_FILE: YES
 
@@ -39,10 +43,16 @@ targets:
       - path: Apps/FocusSessionApp
     dependencies:
       - package: FocusSessionCore
+      - target: FocusSessionWidget
+        embed: true
     info:
       path: Apps/FocusSessionApp/Info.plist
       properties:
         CFBundleDisplayName: TodayFocus
+        CFBundleURLTypes:
+          - CFBundleURLName: TodayFocus
+            CFBundleURLSchemes:
+              - todayfocus
         LSMinimumSystemVersion: "15.0"
         NSPrincipalClass: NSApplication
         NSSupportsAutomaticTermination: true
@@ -53,11 +63,66 @@ targets:
         com.apple.security.app-sandbox: true
         com.apple.security.application-groups:
           - group.com.example.FocusSession
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.example.FocusSession
+        com.apple.developer.icloud-services:
+          - CloudKit
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession
         PRODUCT_NAME: TodayFocus
         PRODUCT_MODULE_NAME: FocusSession
+
+  FocusSessionMobileApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: Apps/FocusSessionApp
+        excludes:
+          - Info.plist
+          - FocusSessionApp.swift
+          - Blocking/**
+          - DevTools/**
+          - UI/AppShell/AppShellView.swift
+          - UI/AppShell/AppMenuTitleSynchronizer.swift
+          - UI/AppShell/CurrentSessionStatusItemController.swift
+          - UI/AppShell/WindowChromeConfigurator.swift
+          - UI/Blocker/**
+          - ViewModels/BlockerViewModel.swift
+      - path: Apps/FocusSessionMobileApp
+        excludes:
+          - Info.plist
+    dependencies:
+      - package: FocusSessionCore
+    info:
+      path: Apps/FocusSessionMobileApp/Info.plist
+      properties:
+        CFBundleDisplayName: TodayFocus
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    entitlements:
+      path: Config/Entitlements/FocusSessionMobileApp.entitlements
+      properties:
+        com.apple.developer.icloud-container-identifiers:
+          - iCloud.com.example.FocusSession
+        com.apple.developer.icloud-services:
+          - CloudKit
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIconMobile
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Mobile
+        PRODUCT_NAME: TodayFocusMobile
+        PRODUCT_MODULE_NAME: FocusSessionMobile
 
   FocusSessionHelper:
     type: application
@@ -180,6 +245,21 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.AppTests
         PRODUCT_NAME: FocusSessionAppTests
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/TodayFocus.app/Contents/MacOS/TodayFocus
+        BUNDLE_LOADER: $(TEST_HOST)
+
+  FocusSessionMobileAppTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/FocusSessionMobileAppTests
+    dependencies:
+      - target: FocusSessionMobileApp
+      - package: FocusSessionCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.MobileAppTests
+        PRODUCT_NAME: FocusSessionMobileAppTests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/TodayFocusMobile.app/TodayFocusMobile
         BUNDLE_LOADER: $(TEST_HOST)
 
 schemes:

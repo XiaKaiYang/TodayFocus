@@ -100,13 +100,46 @@ final class TasksViewModelTests: XCTestCase {
         var startedTask: FocusTask?
         let viewModel = TasksViewModel(
             repository: repository,
-            onStartTask: { startedTask = $0 }
+            onStartTask: { task, _ in
+                startedTask = task
+            }
         )
 
         viewModel.startFocus(for: task)
 
         XCTAssertEqual(startedTask?.id, task.id)
         XCTAssertEqual(startedTask?.title, "Review policy iteration")
+    }
+
+    func testStartFocusUsesTaskAndSubtaskCallbackForParentSelection() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        let task = FocusTask(
+            title: "Practice listening",
+            estimatedMinutes: 45,
+            subtasks: [
+                TaskSubtask(title: "Stairs"),
+                TaskSubtask(title: "Sentence shadowing")
+            ]
+        )
+        try repository.save(task)
+
+        var startedTask: FocusTask?
+        var startedSubtask: TaskSubtask?
+        let viewModel = TasksViewModel(
+            repository: repository,
+            onStartTask: { task, subtask in
+                startedTask = task
+                startedSubtask = subtask
+            }
+        )
+        let selectedSubtask = try XCTUnwrap(task.subtasks.last)
+
+        viewModel.startFocus(for: task, subtask: selectedSubtask)
+
+        XCTAssertEqual(startedTask?.id, task.id)
+        XCTAssertEqual(startedSubtask?.id, selectedSubtask.id)
+        XCTAssertEqual(startedSubtask?.title, "Sentence shadowing")
     }
 
     func testTasksAreGroupedByPriorityWhileCompletedTasksMoveToTrash() throws {
@@ -928,7 +961,350 @@ final class TasksViewModelTests: XCTestCase {
         )
         let refreshedSubtask = try XCTUnwrap(planViewModel.goals.first?.subtasks.first)
         XCTAssertEqual(planViewModel.currentValue(for: refreshedSubtask), 2)
-        XCTAssertEqual(planViewModel.linkedTaskCount(for: refreshedSubtask), 1)
+        XCTAssertEqual(planViewModel.linkedTaskCount(for: refreshedSubtask), 0)
+    }
+
+    func testEditSheetLoadsTaskSubtasksAndSavePersistsSubtaskChanges() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        let originalTask = FocusTask(
+            title: "Listening practice",
+            estimatedMinutes: 30,
+            priority: .high,
+            subtasks: [
+                TaskSubtask(title: "Part A"),
+                TaskSubtask(title: "Part B")
+            ]
+        )
+        try repository.save(originalTask)
+
+        let viewModel = TasksViewModel(repository: repository)
+        viewModel.presentEditSheet(for: originalTask)
+
+        XCTAssertEqual(viewModel.taskSubtasksDraft.map(\.title), ["Part A", "Part B"])
+
+        let firstID = try XCTUnwrap(viewModel.taskSubtasksDraft.first?.id)
+        let secondID = try XCTUnwrap(viewModel.taskSubtasksDraft.last?.id)
+        viewModel.updateTaskSubtaskDraftTitle("Part A revised", id: firstID)
+        viewModel.removeTaskSubtaskDraft(id: secondID)
+        viewModel.addTaskSubtaskDraft()
+        let thirdID = try XCTUnwrap(viewModel.taskSubtasksDraft.last?.id)
+        viewModel.updateTaskSubtaskDraftTitle("Part C", id: thirdID)
+
+        XCTAssertTrue(viewModel.saveTask())
+
+        let reloadedTask = try XCTUnwrap(try repository.fetchAll().first)
+        XCTAssertEqual(reloadedTask.subtasks.map(\.title), ["Part A revised", "Part C"])
+        XCTAssertEqual(reloadedTask.subtasks.map(\.isCompleted), [false, false])
+    }
+
+    func testEditingLinkedRecurringTaskSubtasksCollapsesDuplicateActiveSeriesTasksAndKeepsSinglePlanLink() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let modelContext = ModelContext(container)
+        let repository = TasksRepository(modelContext: modelContext)
+        let planRepository = PlanGoalsRepository(modelContext: modelContext)
+        let linkedSubtask = PlanGoalSubtask(
+            id: UUID(),
+            title: "Listening card",
+            baselineValue: 0,
+            targetValue: 10,
+            unitLabel: "次",
+            trackingMode: .quantified,
+            goalSharePercent: 100
+        )
+        try planRepository.save(
+            PlanGoal(
+                title: "English",
+                status: .inProgress,
+                startAt: Date(timeIntervalSince1970: 1_000),
+                endAt: Date(timeIntervalSince1970: 2_000),
+                subtasks: [linkedSubtask]
+            )
+        )
+
+        let seriesID = UUID()
+        let currentTask = FocusTask(
+            title: "Listening",
+            estimatedMinutes: 30,
+            priority: .high,
+            subtasks: [TaskSubtask(title: "ladder Training")],
+            createdAt: Date(timeIntervalSince1970: 10_000),
+            linkedSubtaskID: linkedSubtask.id,
+            contributionValue: 1,
+            repeatRule: .daily,
+            recurrenceSeriesID: seriesID
+        )
+        let duplicateTask = FocusTask(
+            title: "Listening",
+            estimatedMinutes: 30,
+            priority: .high,
+            subtasks: [TaskSubtask(title: "ladder Training")],
+            createdAt: Date(timeIntervalSince1970: 20_000),
+            linkedSubtaskID: linkedSubtask.id,
+            contributionValue: 1,
+            repeatRule: .daily,
+            visibleFrom: Date(timeIntervalSince1970: 20_000),
+            recurrenceSeriesID: seriesID
+        )
+        try repository.save(currentTask)
+        try repository.save(duplicateTask)
+
+        let viewModel = TasksViewModel(repository: repository)
+        viewModel.presentEditSheet(for: currentTask)
+        viewModel.addTaskSubtaskDraft()
+        let reviewID = try XCTUnwrap(viewModel.taskSubtasksDraft.last?.id)
+        viewModel.updateTaskSubtaskDraftTitle("Review", id: reviewID)
+
+        XCTAssertTrue(viewModel.saveTask())
+
+        let activeTasks = try repository.fetchAll().filter { !$0.isCompleted }
+        XCTAssertEqual(activeTasks.count, 1)
+
+        let refreshedTask = try XCTUnwrap(activeTasks.first(where: { $0.id == currentTask.id }))
+        XCTAssertEqual(refreshedTask.recurrenceSeriesID, seriesID)
+        XCTAssertEqual(refreshedTask.subtasks.map { $0.title }, ["ladder Training", "Review"])
+
+        let planViewModel = PlanViewModel(
+            repository: planRepository,
+            tasksRepository: repository,
+            now: { Date(timeIntervalSince1970: 10_000) }
+        )
+        let refreshedLinkedSubtask = try XCTUnwrap(planViewModel.goals.first?.subtasks.first)
+        XCTAssertEqual(planViewModel.linkedTaskCount(for: refreshedLinkedSubtask), 1)
+    }
+
+    func testCompletingEditedRecurringTaskProducesSingleSuccessorWithUpdatedSubtasks() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Shanghai") ?? .current
+
+        let seriesID = UUID()
+        let currentTask = FocusTask(
+            title: "Listening",
+            estimatedMinutes: 30,
+            priority: .high,
+            subtasks: [TaskSubtask(title: "ladder Training")],
+            createdAt: Date(timeIntervalSince1970: 10_000),
+            repeatRule: .daily,
+            recurrenceSeriesID: seriesID
+        )
+        let duplicateTask = FocusTask(
+            title: "Listening",
+            estimatedMinutes: 30,
+            priority: .high,
+            subtasks: [TaskSubtask(title: "ladder Training")],
+            createdAt: Date(timeIntervalSince1970: 20_000),
+            repeatRule: .daily,
+            visibleFrom: Date(timeIntervalSince1970: 20_000),
+            recurrenceSeriesID: seriesID
+        )
+        try repository.save(currentTask)
+        try repository.save(duplicateTask)
+
+        let viewModel = TasksViewModel(repository: repository)
+        viewModel.presentEditSheet(for: currentTask)
+        viewModel.addTaskSubtaskDraft()
+        let reviewID = try XCTUnwrap(viewModel.taskSubtasksDraft.last?.id)
+        viewModel.updateTaskSubtaskDraftTitle("Review", id: reviewID)
+        XCTAssertTrue(viewModel.saveTask())
+
+        let completedAt = makeDate(year: 2026, month: 3, day: 15, hour: 21, minute: 0, calendar: calendar)
+        try repository.completeTask(id: currentTask.id, completedAt: completedAt, calendar: calendar)
+
+        let storedTasks = try repository.fetchAll()
+        XCTAssertEqual(storedTasks.filter { !$0.isCompleted }.count, 1)
+        let successor = try XCTUnwrap(storedTasks.first(where: { $0.isCompleted == false }))
+        XCTAssertEqual(successor.subtasks.map { $0.title }, ["ladder Training", "Review"])
+        XCTAssertEqual(successor.recurrenceSeriesID, seriesID)
+    }
+
+    func testMarkTaskCompletedDoesNothingWhenTaskHasSubtasks() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        let task = FocusTask(
+            title: "English drills",
+            estimatedMinutes: 25,
+            priority: .high,
+            subtasks: [TaskSubtask(title: "Part A")]
+        )
+        try repository.save(task)
+
+        let viewModel = TasksViewModel(repository: repository)
+        viewModel.markTaskCompleted(task)
+
+        let storedTask = try XCTUnwrap(try repository.fetchAll().first)
+        XCTAssertFalse(storedTask.isCompleted)
+        XCTAssertEqual(viewModel.prioritySections.first?.tasks.map(\.title), ["English drills"])
+    }
+
+    func testCompletingLastSubtaskAutomaticallyCompletesParentTaskAndMovesItToTrash() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        let task = FocusTask(
+            title: "Writing drill",
+            estimatedMinutes: 25,
+            priority: .medium,
+            subtasks: [
+                TaskSubtask(title: "Draft", isCompleted: true),
+                TaskSubtask(title: "Polish")
+            ]
+        )
+        try repository.save(task)
+
+        let viewModel = TasksViewModel(
+            repository: repository,
+            now: { Date(timeIntervalSince1970: 12_000) }
+        )
+
+        let remainingSubtask = try XCTUnwrap(task.subtasks.last)
+        viewModel.toggleTaskSubtaskCompletion(remainingSubtask, in: task)
+
+        XCTAssertEqual(viewModel.prioritySections.flatMap(\.tasks), [])
+        XCTAssertEqual(viewModel.trashedTasks.map(\.title), ["Writing drill"])
+        let storedTask = try XCTUnwrap(try repository.fetchAll().first)
+        XCTAssertTrue(storedTask.isCompleted)
+        XCTAssertEqual(storedTask.completedAt, Date(timeIntervalSince1970: 12_000))
+    }
+
+    func testCompletingNonFinalSubtaskKeepsParentTaskActive() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        let task = FocusTask(
+            title: "Listening drill",
+            estimatedMinutes: 25,
+            priority: .medium,
+            subtasks: [
+                TaskSubtask(title: "Part A"),
+                TaskSubtask(title: "Part B")
+            ]
+        )
+        try repository.save(task)
+
+        let viewModel = TasksViewModel(
+            repository: repository,
+            now: { Date(timeIntervalSince1970: 12_000) }
+        )
+        let firstSubtask = try XCTUnwrap(task.subtasks.first)
+
+        viewModel.toggleTaskSubtaskCompletion(firstSubtask, in: task)
+
+        XCTAssertEqual(viewModel.prioritySections.flatMap(\.tasks).map(\.title), ["Listening drill"])
+        XCTAssertEqual(viewModel.trashedTasks, [])
+
+        let storedTask = try XCTUnwrap(try repository.fetchAll().first)
+        XCTAssertFalse(storedTask.isCompleted)
+        XCTAssertEqual(storedTask.subtasks.map(\.isCompleted), [true, false])
+    }
+
+    func testRestoreTaskWithSubtasksResetsAllSubtasksToIncomplete() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        let task = FocusTask(
+            title: "Recover checklist",
+            estimatedMinutes: 25,
+            priority: .medium,
+            subtasks: [
+                TaskSubtask(title: "One", isCompleted: true),
+                TaskSubtask(title: "Two", isCompleted: true)
+            ],
+            isCompleted: true,
+            completedAt: Date(timeIntervalSince1970: 2_000)
+        )
+        try repository.save(task)
+
+        let viewModel = TasksViewModel(repository: repository)
+        viewModel.restoreTask(task)
+
+        let storedTask = try XCTUnwrap(try repository.fetchAll().first)
+        XCTAssertFalse(storedTask.isCompleted)
+        XCTAssertEqual(storedTask.subtasks.map(\.isCompleted), [false, false])
+    }
+
+    func testMoveTaskReordersWithinSamePriorityAndPersistsDisplayOrder() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        let first = FocusTask(
+            title: "First",
+            estimatedMinutes: 25,
+            priority: .high,
+            displayOrder: 0
+        )
+        let second = FocusTask(
+            title: "Second",
+            estimatedMinutes: 25,
+            priority: .high,
+            displayOrder: 1
+        )
+        let third = FocusTask(
+            title: "Third",
+            estimatedMinutes: 25,
+            priority: .high,
+            displayOrder: 2
+        )
+        try repository.save(first)
+        try repository.save(second)
+        try repository.save(third)
+
+        let viewModel = TasksViewModel(repository: repository)
+        viewModel.moveTask(second.id, to: first.id)
+
+        XCTAssertEqual(viewModel.prioritySections.first?.tasks.map(\.title), ["Second", "First", "Third"])
+
+        let storedTasks = try repository.fetchAll()
+        XCTAssertEqual(storedTasks.first(where: { $0.id == second.id })?.displayOrder, 0)
+        XCTAssertEqual(storedTasks.first(where: { $0.id == first.id })?.displayOrder, 1)
+        XCTAssertEqual(storedTasks.first(where: { $0.id == third.id })?.displayOrder, 2)
+    }
+
+    func testMoveTaskIgnoresDifferentPriorityTarget() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        let highTask = FocusTask(
+            title: "High",
+            estimatedMinutes: 25,
+            priority: .high,
+            displayOrder: 0
+        )
+        let mediumTask = FocusTask(
+            title: "Medium",
+            estimatedMinutes: 25,
+            priority: .medium,
+            displayOrder: 0
+        )
+        try repository.save(highTask)
+        try repository.save(mediumTask)
+
+        let viewModel = TasksViewModel(repository: repository)
+        viewModel.moveTask(highTask.id, to: mediumTask.id)
+
+        XCTAssertEqual(viewModel.prioritySections.map(\.priority), [.high, .medium])
+        XCTAssertEqual(viewModel.prioritySections[0].tasks.map(\.title), ["High"])
+        XCTAssertEqual(viewModel.prioritySections[1].tasks.map(\.title), ["Medium"])
+    }
+
+    func testCreateTaskInsertsNewTaskAtTopOfPrioritySection() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let repository = TasksRepository(modelContext: ModelContext(container))
+        try repository.save(
+            FocusTask(
+                title: "Existing high",
+                estimatedMinutes: 25,
+                priority: .high,
+                createdAt: Date(timeIntervalSince1970: 10_000)
+            )
+        )
+
+        let viewModel = TasksViewModel(
+            repository: repository,
+            now: { Date(timeIntervalSince1970: 5_000) }
+        )
+        viewModel.presentCreateSheet()
+        viewModel.newTaskTitle = "New high"
+        viewModel.newTaskPriority = .high
+
+        XCTAssertTrue(viewModel.saveTask())
+        XCTAssertEqual(viewModel.prioritySections.first?.tasks.map(\.title), ["New high", "Existing high"])
     }
 
     private func makeDate(

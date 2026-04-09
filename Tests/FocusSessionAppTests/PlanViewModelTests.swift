@@ -251,7 +251,7 @@ final class PlanViewModelTests: XCTestCase {
         let storedGoal = try XCTUnwrap(viewModel.goals.first)
         XCTAssertEqual(viewModel.currentValue(for: draftSubtask), 50)
         XCTAssertEqual(viewModel.progressPercent(for: draftSubtask), 50)
-        XCTAssertEqual(viewModel.linkedTaskCount(for: draftSubtask), 2)
+        XCTAssertEqual(viewModel.linkedTaskCount(for: draftSubtask), 1)
         XCTAssertEqual(viewModel.currentValue(for: experimentSubtask), 3)
         XCTAssertEqual(viewModel.progressPercent(for: experimentSubtask), 60)
         XCTAssertEqual(viewModel.progressPercent(for: storedGoal), 58)
@@ -1175,6 +1175,82 @@ final class PlanViewModelTests: XCTestCase {
         )
 
         XCTAssertEqual(viewModel.linkedTaskCount(for: subtask), 2)
+    }
+
+    func testRecurringLinkedTaskSeriesCountsAsSingleActiveLinkAndUnlinkKeepsCompletedContributionHistory() throws {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let modelContext = ModelContext(container)
+        let repository = PlanGoalsRepository(modelContext: modelContext)
+        let tasksRepository = TasksRepository(modelContext: modelContext)
+        let subtask = PlanGoalSubtask(
+            id: UUID(),
+            title: "Listening",
+            baselineValue: 0,
+            targetValue: 10,
+            unitLabel: "次",
+            trackingMode: .quantified,
+            goalSharePercent: 100
+        )
+        try repository.save(
+            PlanGoal(
+                title: "English",
+                status: .inProgress,
+                startAt: Date(timeIntervalSince1970: 10_000),
+                endAt: Date(timeIntervalSince1970: 20_000),
+                subtasks: [subtask]
+            )
+        )
+
+        let seriesID = UUID()
+        let completedHistory = FocusTask(
+            title: "Listening history",
+            estimatedMinutes: 25,
+            priority: .high,
+            isCompleted: true,
+            completedAt: Date(timeIntervalSince1970: 15_000),
+            linkedSubtaskID: subtask.id,
+            contributionValue: 2,
+            repeatRule: .daily,
+            recurrenceSeriesID: seriesID
+        )
+        let activeTask = FocusTask(
+            title: "Listening",
+            estimatedMinutes: 25,
+            priority: .high,
+            linkedSubtaskID: subtask.id,
+            contributionValue: 1,
+            repeatRule: .daily,
+            recurrenceSeriesID: seriesID
+        )
+        let duplicateActiveTask = FocusTask(
+            title: "Listening",
+            estimatedMinutes: 25,
+            priority: .high,
+            linkedSubtaskID: subtask.id,
+            contributionValue: 1,
+            repeatRule: .daily,
+            visibleFrom: Date(timeIntervalSince1970: 30_000),
+            recurrenceSeriesID: seriesID
+        )
+        try tasksRepository.save(completedHistory)
+        try tasksRepository.save(activeTask)
+        try tasksRepository.save(duplicateActiveTask)
+
+        let viewModel = PlanViewModel(
+            repository: repository,
+            tasksRepository: tasksRepository,
+            now: { Date(timeIntervalSince1970: 12_000) }
+        )
+
+        XCTAssertEqual(viewModel.linkedTaskCount(for: subtask), 1)
+        XCTAssertEqual(viewModel.linkedTasks(for: subtask).map(\.id), [activeTask.id])
+        XCTAssertEqual(viewModel.currentValue(for: subtask), 2)
+
+        viewModel.unlinkTask(activeTask)
+
+        XCTAssertEqual(viewModel.linkedTaskCount(for: subtask), 0)
+        XCTAssertEqual(viewModel.linkedTasks(for: subtask), [])
+        XCTAssertEqual(viewModel.currentValue(for: subtask), 2)
     }
 
     private func date(

@@ -34,13 +34,59 @@ private struct PendingReflectionSession: Equatable {
     let endedAt: Date
 }
 
+private enum ReflectionSubmissionBehavior {
+    case completeTask
+    case continueEpisode
+}
+
+struct CurrentSessionTaskSelection: Identifiable, Hashable {
+    let taskID: UUID
+    let subtaskID: UUID?
+    let selectorTitle: String
+    let activeTitle: String
+    let estimatedMinutes: Int
+
+    var id: SelectionID {
+        SelectionID(taskID: taskID, subtaskID: subtaskID)
+    }
+
+    init(task: FocusTask, subtask: TaskSubtask? = nil) {
+        taskID = task.id
+        subtaskID = subtask?.id
+        estimatedMinutes = task.estimatedMinutes
+
+        if let subtask {
+            selectorTitle = "\(task.title) / \(subtask.title)"
+            activeTitle = subtask.title
+        } else {
+            selectorTitle = task.title
+            activeTitle = task.title
+        }
+    }
+
+    static func == (lhs: CurrentSessionTaskSelection, rhs: CurrentSessionTaskSelection) -> Bool {
+        lhs.taskID == rhs.taskID && lhs.subtaskID == rhs.subtaskID
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(taskID)
+        hasher.combine(subtaskID)
+    }
+
+    struct SelectionID: Hashable {
+        let taskID: UUID
+        let subtaskID: UUID?
+    }
+}
+
 @MainActor
 final class CurrentSessionViewModel: ObservableObject {
     @Published var intention = ""
     @Published var sessionNotes = ""
     @Published var durationMinutes = 25
     @Published private(set) var availableTasks: [FocusTask] = []
-    @Published private(set) var selectedTaskID: UUID?
+    @Published private(set) var availableTaskSelections: [CurrentSessionTaskSelection] = []
+    @Published private(set) var selectedTaskSelection: CurrentSessionTaskSelection?
     @Published private(set) var sessionState = SessionState.idle
     @Published private(set) var recentSessions: [RecentSessionSummary] = []
     @Published private(set) var selectedReflectionMood: SessionReflectionMood?
@@ -56,6 +102,7 @@ final class CurrentSessionViewModel: ObservableObject {
     private var activeSegmentStartedAt: Date?
     private var accumulatedFocusSeconds = 0
     private var pendingReflectionSession: PendingReflectionSession?
+    private var reflectionSubmissionBehavior: ReflectionSubmissionBehavior = .completeTask
     private var cancellables = Set<AnyCancellable>()
 
     init(
@@ -132,19 +179,20 @@ final class CurrentSessionViewModel: ObservableObject {
         return "\(title) · \(remainingTimeText(at: currentDate))"
     }
 
-    private var selectedTodayTask: FocusTask? {
-        guard let selectedTaskID else {
-            return nil
-        }
-        return availableTasks.first(where: { $0.id == selectedTaskID })
+    var selectedTaskID: UUID? {
+        selectedTaskSelection?.taskID
+    }
+
+    var selectedTaskSubtaskID: UUID? {
+        selectedTaskSelection?.subtaskID
     }
 
     var selectedTaskTitle: String? {
-        selectedTodayTask?.title
+        selectedTaskSelection?.selectorTitle
     }
 
     var canStartSelectedTaskSession: Bool {
-        canConfigureSession && selectedTodayTask != nil && durationMinutes > 0
+        canConfigureSession && selectedTaskSelection != nil && durationMinutes > 0
     }
 
     var showReflectionComposer: Bool {
@@ -264,8 +312,8 @@ final class CurrentSessionViewModel: ObservableObject {
     }
 
     func startSession() {
-        guard let selectedTodayTask else {
-            errorMessage = availableTasks.isEmpty
+        guard let selectedTaskSelection else {
+            errorMessage = availableTaskSelections.isEmpty
                 ? "Create a task in Today first."
                 : "Select a Today task first."
             return
@@ -277,7 +325,7 @@ final class CurrentSessionViewModel: ObservableObject {
         }
 
         let plannedMinutes = clampedDurationMinutes(durationMinutes)
-        let trimmedIntention = selectedTodayTask.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedIntention = selectedTaskSelection.activeTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         intention = trimmedIntention
         durationMinutes = plannedMinutes
 
@@ -301,12 +349,12 @@ final class CurrentSessionViewModel: ObservableObject {
             return
         }
 
-        errorMessage = availableTasks.isEmpty
+        errorMessage = availableTaskSelections.isEmpty
             ? "Create a task in Today first."
             : "Select a Today task first."
     }
 
-    func selectTask(_ task: FocusTask) {
+    func selectTask(_ task: FocusTask, subtask: TaskSubtask? = nil) {
         guard canConfigureSession else {
             return
         }
@@ -314,19 +362,42 @@ final class CurrentSessionViewModel: ObservableObject {
         guard !task.isCompleted && task.isVisibleInToday(at: now()) else {
             return
         }
-        reloadAvailableTasks()
-        if !availableTasks.contains(where: { $0.id == task.id }) {
-            availableTasks.append(task)
-            availableTasks.sort { lhs, rhs in
-                if lhs.createdAt != rhs.createdAt {
-                    return lhs.createdAt > rhs.createdAt
-                }
-                return lhs.title < rhs.title
-            }
+
+        if let subtask {
+            selectTask(
+                CurrentSessionTaskSelection(task: task, subtask: subtask)
+            )
+            return
         }
-        selectedTaskID = task.id
-        intention = task.title
-        durationMinutes = clampedDurationMinutes(task.estimatedMinutes)
+
+        let remainingSubtasks = task.subtasks.filter { !$0.isCompleted }
+        if task.hasSubtasks {
+            guard remainingSubtasks.count == 1, let remainingSubtask = remainingSubtasks.first else {
+                return
+            }
+
+            selectTask(
+                CurrentSessionTaskSelection(task: task, subtask: remainingSubtask)
+            )
+            return
+        }
+
+        selectTask(CurrentSessionTaskSelection(task: task))
+    }
+
+    func selectTask(_ selection: CurrentSessionTaskSelection) {
+        guard canConfigureSession else {
+            return
+        }
+
+        reloadAvailableTasks()
+        guard let refreshedSelection = availableTaskSelections.first(where: { $0 == selection }) else {
+            return
+        }
+
+        selectedTaskSelection = refreshedSelection
+        intention = refreshedSelection.activeTitle
+        durationMinutes = clampedDurationMinutes(refreshedSelection.estimatedMinutes)
         errorMessage = nil
     }
 
@@ -364,6 +435,31 @@ final class CurrentSessionViewModel: ObservableObject {
     }
 
     func submitReflection() {
+        submitReflection(using: .completeTask)
+    }
+
+    func submitReflectionAndContinueEpisode() {
+        let selectedTaskSelectionBeforeSubmit = selectedTaskSelection
+        submitReflection(using: .continueEpisode)
+
+        guard errorMessage == nil else {
+            return
+        }
+        guard sessionState.phase == .completed else {
+            return
+        }
+        guard
+            let selectedTaskSelection,
+            selectedTaskSelection == selectedTaskSelectionBeforeSubmit
+        else {
+            errorMessage = "Unable to continue because the selected Today task is no longer available."
+            return
+        }
+
+        startSession()
+    }
+
+    private func submitReflection(using behavior: ReflectionSubmissionBehavior) {
         guard showReflectionComposer else {
             errorMessage = "Finish a session before submitting reflection."
             return
@@ -377,7 +473,9 @@ final class CurrentSessionViewModel: ObservableObject {
             return
         }
 
+        reflectionSubmissionBehavior = behavior
         dispatch(.submitReflection, fallbackMessage: "Unable to submit reflection.")
+        reflectionSubmissionBehavior = .completeTask
     }
 
     func handleTimelineTick(at currentDate: Date) {
@@ -397,7 +495,7 @@ final class CurrentSessionViewModel: ObservableObject {
         }
 
         sessionState = .idle
-        selectedTaskID = nil
+        selectedTaskSelection = nil
         intention = ""
         sessionNotes = ""
         selectedReflectionMood = nil
@@ -435,6 +533,7 @@ final class CurrentSessionViewModel: ObservableObject {
         let previousPendingReflectionSession = pendingReflectionSession
         let previousReflectionMood = selectedReflectionMood
         let previousSessionNotes = sessionNotes
+        let previousReflectionSubmissionBehavior = reflectionSubmissionBehavior
         do {
             let previousSnapshot = previousState.snapshot
             let eventDate = eventDateOverride ?? now()
@@ -454,6 +553,7 @@ final class CurrentSessionViewModel: ObservableObject {
             pendingReflectionSession = previousPendingReflectionSession
             selectedReflectionMood = previousReflectionMood
             sessionNotes = previousSessionNotes
+            reflectionSubmissionBehavior = previousReflectionSubmissionBehavior
             errorMessage = fallbackMessage
         }
     }
@@ -520,9 +620,10 @@ final class CurrentSessionViewModel: ObservableObject {
             else {
                 break
             }
-            try persistCompletedReflection(
+            try persistSubmittedReflection(
                 pendingReflectionSession,
-                mood: selectedReflectionMood
+                mood: selectedReflectionMood,
+                shouldCompleteSelectedTask: reflectionSubmissionBehavior == .completeTask
             )
             self.pendingReflectionSession = nil
 
@@ -643,9 +744,10 @@ final class CurrentSessionViewModel: ObservableObject {
         )
     }
 
-    private func persistCompletedReflection(
+    private func persistSubmittedReflection(
         _ reflection: PendingReflectionSession,
-        mood: SessionReflectionMood
+        mood: SessionReflectionMood,
+        shouldCompleteSelectedTask: Bool
     ) throws {
         let normalizedNotes = sessionNotes.trimmingCharacters(in: .whitespacesAndNewlines)
         try focusSessionRepository.save(
@@ -658,7 +760,9 @@ final class CurrentSessionViewModel: ObservableObject {
                 wasCompleted: true
             )
         )
-        try completeSelectedTaskIfNeeded(at: reflection.endedAt)
+        if shouldCompleteSelectedTask {
+            try completeSelectedTaskIfNeeded(at: reflection.endedAt)
+        }
         sessionNotes = ""
         selectedReflectionMood = nil
         reloadAvailableTasks()
@@ -667,10 +771,23 @@ final class CurrentSessionViewModel: ObservableObject {
     }
 
     private func completeSelectedTaskIfNeeded(at completedAt: Date) throws {
-        guard let selectedTaskID else {
+        guard let selectedTaskSelection else {
             return
         }
-        try linkedTaskSettlementCoordinator.completeTask(id: selectedTaskID, completedAt: completedAt)
+
+        if let subtaskID = selectedTaskSelection.subtaskID {
+            try linkedTaskSettlementCoordinator.completeSubtask(
+                taskID: selectedTaskSelection.taskID,
+                subtaskID: subtaskID,
+                completedAt: completedAt
+            )
+            return
+        }
+
+        try linkedTaskSettlementCoordinator.completeTask(
+            id: selectedTaskSelection.taskID,
+            completedAt: completedAt
+        )
     }
 
     private func focusedDurationSeconds(
@@ -694,7 +811,7 @@ final class CurrentSessionViewModel: ObservableObject {
     }
 
     private func playSessionEndSoundIfNeeded() {
-        guard selectedTaskID != nil else {
+        guard selectedTaskSelection != nil else {
             return
         }
 
@@ -724,15 +841,18 @@ final class CurrentSessionViewModel: ObservableObject {
                     }
                     return lhs.title < rhs.title
                 }
+            availableTaskSelections = availableTasks.flatMap(Self.taskSelections(for:))
 
-            if let selectedTaskID,
-               !availableTasks.contains(where: { $0.id == selectedTaskID }),
-               canConfigureSession {
-                self.selectedTaskID = nil
+            if let selectedTaskSelection,
+               let refreshedSelection = availableTaskSelections.first(where: { $0 == selectedTaskSelection }) {
+                self.selectedTaskSelection = refreshedSelection
+            } else if selectedTaskSelection != nil && canConfigureSession {
+                self.selectedTaskSelection = nil
                 intention = ""
             }
         } catch {
             availableTasks = []
+            availableTaskSelections = []
         }
     }
 
@@ -750,5 +870,15 @@ final class CurrentSessionViewModel: ObservableObject {
         } catch {
             recentSessions = []
         }
+    }
+
+    private static func taskSelections(for task: FocusTask) -> [CurrentSessionTaskSelection] {
+        guard task.hasSubtasks else {
+            return [CurrentSessionTaskSelection(task: task)]
+        }
+
+        return task.subtasks
+            .filter { !$0.isCompleted }
+            .map { CurrentSessionTaskSelection(task: task, subtask: $0) }
     }
 }

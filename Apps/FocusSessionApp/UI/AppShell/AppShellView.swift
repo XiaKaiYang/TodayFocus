@@ -1,3 +1,4 @@
+import FocusSessionCore
 import SwiftUI
 
 @MainActor
@@ -8,9 +9,22 @@ final class AppShellViewModel: ObservableObject {
         configuration: AppLaunchConfiguration = .current,
         preferencesStore: AppPreferencesStore? = nil
     ) {
-        selectedSection = configuration.initialSection
-            ?? preferencesStore?.preferences.launchSection
-            ?? .tasks
+        selectedSection = AppSection.resolvedLaunchSection(
+            preferredSection: configuration.initialSection
+                ?? preferencesStore?.preferences.launchSection,
+            on: .macOS
+        )
+    }
+
+    func handleIncomingURL(_ url: URL) {
+        guard let destination = FocusSessionDeepLink.destination(for: url) else {
+            return
+        }
+
+        switch destination {
+        case .plan:
+            selectedSection = .plan
+        }
     }
 }
 
@@ -55,8 +69,8 @@ struct AppShellView: View {
         let resolvedBlockerViewModel = blockerViewModel
             ?? (configuration.usesBlockerDemo ? BlockerViewModel.demo() : BlockerViewModel())
         let resolvedTasksViewModel = tasksViewModel ?? TasksViewModel(
-            onStartTask: { task in
-                resolvedCurrentSessionViewModel.selectTask(task)
+            onStartTask: { task, subtask in
+                resolvedCurrentSessionViewModel.selectTask(task, subtask: subtask)
             },
             onTasksChanged: {
                 resolvedCurrentSessionViewModel.reloadData()
@@ -160,6 +174,9 @@ struct AppShellView: View {
         .onAppear {
             syncBlockerWithSession()
             syncBackgroundSound()
+        }
+        .onOpenURL { url in
+            viewModel.handleIncomingURL(url)
         }
         .onChange(of: currentSessionViewModel.sessionState.phase) { _, _ in
             syncBlockerWithSession()

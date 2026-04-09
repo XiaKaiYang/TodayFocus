@@ -1,5 +1,6 @@
 import XCTest
 @testable import FocusSession
+import FocusSessionCore
 
 @MainActor
 final class AppShellViewModelTests: XCTestCase {
@@ -34,6 +35,26 @@ final class AppShellViewModelTests: XCTestCase {
             ),
             preferencesStore: preferencesStore
         )
+
+        XCTAssertEqual(viewModel.selectedSection, .analytics)
+    }
+
+    func testIncomingPlanDeepLinkSelectsPlanSection() {
+        let viewModel = AppShellViewModel()
+
+        viewModel.handleIncomingURL(FocusSessionDeepLink.planURL)
+
+        XCTAssertEqual(viewModel.selectedSection, .plan)
+    }
+
+    func testIncomingUnknownDeepLinkKeepsCurrentSelection() {
+        let viewModel = AppShellViewModel(
+            configuration: AppLaunchConfiguration(
+                environment: ["FOCUSSESSION_INITIAL_SECTION": "analytics"]
+            )
+        )
+
+        viewModel.handleIncomingURL(URL(string: "todayfocus://notes")!)
 
         XCTAssertEqual(viewModel.selectedSection, .analytics)
     }
@@ -183,6 +204,23 @@ final class AppShellViewModelTests: XCTestCase {
         )
     }
 
+    func testAppShellListensForOpenURLAndProjectDeclaresTodayFocusScheme() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let appShellFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/AppShell/AppShellView.swift")
+        let projectFileURL = root.appendingPathComponent("project.yml")
+        let appShellContents = try String(contentsOf: appShellFileURL, encoding: .utf8)
+        let projectContents = try String(contentsOf: projectFileURL, encoding: .utf8)
+
+        XCTAssertTrue(appShellContents.contains(".onOpenURL { url in"))
+        XCTAssertTrue(appShellContents.contains("viewModel.handleIncomingURL(url)"))
+        XCTAssertTrue(projectContents.contains("CFBundleURLTypes"))
+        XCTAssertTrue(projectContents.contains("CFBundleURLSchemes"))
+        XCTAssertTrue(projectContents.contains("- todayfocus"))
+    }
+
     func testAppShellSharesAnalyticsViewModelAndRefreshesHistoryConsumersAfterSessionSubmit() throws {
         let root = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
@@ -209,17 +247,14 @@ final class AppShellViewModelTests: XCTestCase {
         )
     }
 
-    func testSettingsLaunchDestinationIncludesPlan() throws {
-        let root = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-        let settingsFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/Settings/SettingsDashboardView.swift")
-        let settingsContents = try String(contentsOf: settingsFileURL, encoding: .utf8)
-
+    func testSettingsLaunchDestinationIncludesPlan() {
         XCTAssertTrue(
-            settingsContents.contains("AppDropdownOption(value: .plan"),
-            "Startup settings should allow launching straight into Plan."
+            AppSection.launchDestinationSections(on: .macOS).contains(.plan),
+            "Startup settings should allow launching straight into Plan on macOS."
+        )
+        XCTAssertTrue(
+            AppSection.launchDestinationSections(on: .iOS).contains(.plan),
+            "Startup settings should allow launching straight into Plan on iOS."
         )
     }
 

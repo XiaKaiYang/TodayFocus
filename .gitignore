@@ -9,6 +9,7 @@ findings.md
 progress.md
 task_plan.md
 quadrotor_control_presentation_work.html
+Config/LocalSigning.xcconfig
 
 Packages/FocusSessionCore/.build/
 Packages/FocusSessionCore/.swiftpm/

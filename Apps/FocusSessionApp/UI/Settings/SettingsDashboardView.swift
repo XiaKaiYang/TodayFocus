@@ -15,7 +15,9 @@ struct SettingsDashboardView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     header
                     FocusDefaultsSection(viewModel: viewModel)
-                    BlockerAutomationSection(viewModel: viewModel)
+                    if AppPlatform.current == .macOS {
+                        BlockerAutomationSection(viewModel: viewModel)
+                    }
                     StartupSection(viewModel: viewModel)
                     LocalDataSection(viewModel: viewModel)
                 }
@@ -30,7 +32,11 @@ struct SettingsDashboardView: View {
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
-            Text("Tune the default focus flow, blocker automation, startup destination, and local data lifecycle.")
+            Text(
+                AppPlatform.current == .macOS
+                    ? "Tune the default focus flow, blocker automation, startup destination, and local data lifecycle."
+                    : "Tune the default focus flow, synced data behavior, and startup destination on this device."
+            )
                 .font(.title3)
                 .foregroundStyle(AppSurfaceTheme.secondaryText)
 
@@ -105,14 +111,9 @@ private struct StartupSection: View {
     @ObservedObject var viewModel: SettingsViewModel
 
     private var launchDestinationOptions: [AppDropdownOption<AppSection>] {
-        [
-            AppDropdownOption(value: .tasks, title: AppSection.tasks.title),
-            AppDropdownOption(value: .plan, title: AppSection.plan.title),
-            AppDropdownOption(value: .currentSession, title: AppSection.currentSession.title),
-            AppDropdownOption(value: .notes, title: AppSection.notes.title),
-            AppDropdownOption(value: .analytics, title: AppSection.analytics.title),
-            AppDropdownOption(value: .blocker, title: AppSection.blocker.title)
-        ]
+        AppSection.launchDestinationSections(on: AppPlatform.current).map { section in
+            AppDropdownOption(value: section, title: section.title)
+        }
     }
 
     private var planGoalLaunchExpansionOptions: [AppDropdownOption<PlanGoalLaunchExpansion>] {
@@ -203,42 +204,48 @@ private struct LocalDataSection: View {
 
     var body: some View {
         SettingsSectionCard(
-            title: "Local Data",
-            subtitle: "Clear specific slices without touching the rest, or wipe the full local workspace."
+            title: AppPlatform.current == .macOS ? "Local Data" : "Synced Data",
+            subtitle: AppPlatform.current == .macOS
+                ? "Clear specific slices without touching the rest, or wipe the full local workspace."
+                : "Clear specific slices from the shared CloudKit-backed data set without changing your local display preferences."
         ) {
             VStack(alignment: .leading, spacing: 18) {
                 HStack(spacing: 16) {
                     DataMetricTile(title: "Focus", value: "\(viewModel.dataSummary.focusSessionsCount)")
                     DataMetricTile(title: "Tasks", value: "\(viewModel.dataSummary.tasksCount)")
                     DataMetricTile(title: "Goals", value: "\(viewModel.dataSummary.goalsCount)")
-                    DataMetricTile(title: "Rules", value: "\(viewModel.dataSummary.blockerRulesCount)")
-                    DataMetricTile(title: "Blocked Hits", value: "\(viewModel.dataSummary.blockedEventsCount)")
+                    if AppPlatform.current == .macOS {
+                        DataMetricTile(title: "Rules", value: "\(viewModel.dataSummary.blockerRulesCount)")
+                        DataMetricTile(title: "Blocked Hits", value: "\(viewModel.dataSummary.blockedEventsCount)")
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: 12) {
                     SettingsActionButton(
-                        title: "Clear Focus History",
+                        title: AppPlatform.current == .macOS ? "Clear Focus History" : "Clear Synced Focus History",
                         tint: nil,
                         foregroundColor: AppSurfaceTheme.primaryText
                     ) {
                         viewModel.clearFocusHistory()
                     }
                     SettingsActionButton(
-                        title: "Clear Completed Tasks",
+                        title: AppPlatform.current == .macOS ? "Clear Completed Tasks" : "Clear Synced Completed Tasks",
                         tint: nil,
                         foregroundColor: AppSurfaceTheme.primaryText
                     ) {
                         viewModel.clearCompletedTasks()
                     }
-                    SettingsActionButton(
-                        title: "Clear Blocker Activity",
-                        tint: nil,
-                        foregroundColor: AppSurfaceTheme.primaryText
-                    ) {
-                        viewModel.clearBlockerActivity()
+                    if AppPlatform.current == .macOS {
+                        SettingsActionButton(
+                            title: "Clear Blocker Activity",
+                            tint: nil,
+                            foregroundColor: AppSurfaceTheme.primaryText
+                        ) {
+                            viewModel.clearBlockerActivity()
+                        }
                     }
                     SettingsActionButton(
-                        title: "Reset All Local Data",
+                        title: AppPlatform.current == .macOS ? "Reset All Local Data" : "Reset All Synced Data",
                         tint: Color(red: 0.80, green: 0.25, blue: 0.26),
                         foregroundColor: .white
                     ) {

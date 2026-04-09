@@ -4,7 +4,15 @@ struct TasksDashboardView: View {
     @ObservedObject private var viewModel: TasksViewModel
     @State private var collapsedPriorities: Set<TaskPriority> = []
     @State private var selectedScope: TasksDashboardScope = .today
+    @State private var expandedParentTaskIDs: Set<UUID> = []
+    @State private var seenParentTaskIDs: Set<UUID> = []
+    @State private var draggedTaskID: UUID?
+    @State private var draggedTaskTranslation: CGFloat = 0
+    @State private var taskRowFrames: [UUID: CGRect] = [:]
+    @State private var taskDragStartFrames: [UUID: CGRect] = [:]
+    @State private var focusedParentTaskID: UUID?
     private let onTaskStarted: () -> Void
+    private let taskListCoordinateSpace = "tasks-list"
 
     init(
         viewModel: TasksViewModel = TasksViewModel(),
@@ -38,6 +46,12 @@ struct TasksDashboardView: View {
                 .padding(.top, 28)
                 .padding(.bottom, 112)
             }
+            .scrollDisabled(draggedTaskID != nil)
+            .coordinateSpace(name: taskListCoordinateSpace)
+            .onPreferenceChange(TaskRowFramePreferenceKey.self) { updatedFrames in
+                guard draggedTaskID == nil else { return }
+                taskRowFrames = updatedFrames
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .overlay(alignment: .bottom) {
@@ -45,6 +59,10 @@ struct TasksDashboardView: View {
         }
         .onAppear {
             selectedScope = .today
+            syncExpandedParentTaskIDs()
+        }
+        .onChange(of: viewModel.prioritySections(in: .today).flatMap(\.tasks).map(\.id)) { _, _ in
+            syncExpandedParentTaskIDs()
         }
     }
 
@@ -57,7 +75,7 @@ struct TasksDashboardView: View {
             Spacer(minLength: 20)
 
             if selectedScope == .today {
-                Button("Creat") {
+                Button("Create") {
                     viewModel.presentCreateSheet()
                 }
                 .buttonStyle(AppAccentButtonStyle())
@@ -146,11 +164,11 @@ struct TasksDashboardView: View {
                 } else {
                     VStack(spacing: 0) {
                         ForEach(Array(section.tasks.enumerated()), id: \.element.id) { index, task in
-                            taskRow(task, scope: scope)
+                            taskRow(task, section: section, scope: scope)
 
                             if index < section.tasks.count - 1 {
                                 Divider()
-                                    .padding(.leading, scope == .today ? 44 : 20)
+                                    .padding(.leading, scope == .today ? 52 : 20)
                             }
                         }
                     }
@@ -162,27 +180,64 @@ struct TasksDashboardView: View {
 
     private func taskRow(
         _ task: FocusTask,
+        section: TaskPrioritySection,
         scope: TasksDashboardScope
     ) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            taskParentRow(task: task, scope: scope)
+
+            if scope == .today, task.hasSubtasks, expandedParentTaskIDs.contains(task.id) {
+                VStack(spacing: 0) {
+                    ForEach(Array(task.subtasks.enumerated()), id: \.element.id) { index, subtask in
+                        taskSubtaskRow(task: task, subtask: subtask)
+
+                        if index < task.subtasks.count - 1 {
+                            Divider()
+                                .padding(.leading, 72)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(.vertical, 16)
+        .padding(.leading, 20)
+        .padding(.trailing, 4)
+        .background(taskRowFrameReader(for: task))
+        .offset(y: dragOffset(for: task))
+        .zIndex(draggedTaskID == task.id ? 1 : 0)
+        .opacity(draggedTaskID == task.id ? 0.94 : 1)
+        .shadow(
+            color: draggedTaskID == task.id ? Color.black.opacity(0.12) : .clear,
+            radius: draggedTaskID == task.id ? 16 : 0,
+            x: 0,
+            y: draggedTaskID == task.id ? 10 : 0
+        )
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 4, coordinateSpace: .named(taskListCoordinateSpace))
+                .onChanged { value in
+                    guard scope == .today else { return }
+                    handleTaskDragChanged(for: task, translation: value.translation.height)
+                }
+                .onEnded { _ in
+                    guard scope == .today else { return }
+                    handleTaskDragEnded(for: task, in: section)
+                }
+        )
+    }
+
+    private func taskParentRow(task: FocusTask, scope: TasksDashboardScope) -> some View {
         ViewThatFits(in: .horizontal) {
             HStack(alignment: .top, spacing: 14) {
-                if scope == .today {
-                    completionToggle(for: task)
-                }
-
+                taskLeadingControl(for: task, scope: scope)
                 taskDescriptionBlock(task: task)
                     .frame(maxWidth: .infinity, alignment: .leading)
-
                 taskActionRow(task: task, scope: scope)
                     .layoutPriority(1)
             }
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top, spacing: 14) {
-                    if scope == .today {
-                        completionToggle(for: task)
-                    }
-
+                    taskLeadingControl(for: task, scope: scope)
                     taskDescriptionBlock(task: task)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -191,9 +246,17 @@ struct TasksDashboardView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.vertical, 16)
-        .padding(.leading, scope == .today ? 28 : 20)
-        .padding(.trailing, 4)
+    }
+
+    @ViewBuilder
+    private func taskLeadingControl(for task: FocusTask, scope: TasksDashboardScope) -> some View {
+        if scope == .today {
+            if task.hasSubtasks {
+                parentHierarchyToggle(for: task)
+            } else {
+                completionToggle(for: task)
+            }
+        }
     }
 
     private func completionToggle(for task: FocusTask) -> some View {
@@ -221,6 +284,67 @@ struct TasksDashboardView: View {
         .padding(.top, 2)
     }
 
+    private func parentHierarchyToggle(for task: FocusTask) -> some View {
+        Button {
+            toggleParentExpansion(for: task)
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: expandedParentTaskIDs.contains(task.id) ? "chevron.down" : "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AppSurfaceTheme.secondaryText)
+
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .stroke(priorityTint(for: task.priority), lineWidth: 2)
+                        .frame(width: 28, height: 28)
+
+                    Image(systemName: "list.bullet.indent")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(priorityTint(for: task.priority))
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 2)
+    }
+
+    private func taskSubtaskRow(task: FocusTask, subtask: TaskSubtask) -> some View {
+        HStack(alignment: .center, spacing: 14) {
+            subtaskCompletionToggle(task: task, subtask: subtask)
+
+            Text(subtask.title)
+                .font(.system(size: 17, weight: .medium, design: .rounded))
+                .foregroundStyle(subtask.isCompleted ? AppSurfaceTheme.secondaryText : AppSurfaceTheme.primaryText)
+                .strikethrough(subtask.isCompleted, color: AppSurfaceTheme.tertiaryText)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.leading, 44)
+        .padding(.trailing, 12)
+        .padding(.vertical, 10)
+    }
+
+    private func subtaskCompletionToggle(task: FocusTask, subtask: TaskSubtask) -> some View {
+        Button {
+            viewModel.toggleTaskSubtaskCompletion(subtask, in: task)
+        } label: {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(priorityTint(for: task.priority), lineWidth: 2)
+                    .frame(width: 28, height: 28)
+
+                if subtask.isCompleted {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(priorityTint(for: task.priority))
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
     private func taskActionRowContent(task: FocusTask, scope: TasksDashboardScope) -> some View {
         HStack(spacing: 10) {
             Text("\(task.estimatedMinutes) min")
@@ -237,16 +361,7 @@ struct TasksDashboardView: View {
     ) -> some View {
         HStack(spacing: 10) {
             if scope == .today && !task.isCompleted {
-                Button {
-                    if viewModel.startFocus(for: task) {
-                        onTaskStarted()
-                    }
-                } label: {
-                    Text("Select")
-                        .lineLimit(1)
-                        .frame(minWidth: 78)
-                }
-                .buttonStyle(AppAccentButtonStyle())
+                focusSelectionButton(for: task)
             }
 
             Button("Edit") {
@@ -267,11 +382,212 @@ struct TasksDashboardView: View {
         }
     }
 
+    private func focusSelectionButton(for task: FocusTask) -> some View {
+        let remainingSubtasks = task.subtasks.filter { !$0.isCompleted }
+
+        return Button {
+            handleFocusSelection(for: task, remainingSubtasks: remainingSubtasks)
+        } label: {
+            Text("Select")
+                .lineLimit(1)
+                .frame(minWidth: 78)
+        }
+        .buttonStyle(AppAccentButtonStyle())
+        .popover(
+            isPresented: focusSelectionPopoverBinding(for: task),
+            attachmentAnchor: .rect(.bounds),
+            arrowEdge: .bottom
+        ) {
+            subtaskFocusPopover(for: task)
+        }
+    }
+
+    private func handleFocusSelection(for task: FocusTask, remainingSubtasks: [TaskSubtask]) {
+        guard task.hasSubtasks else {
+            if viewModel.startFocus(for: task) {
+                onTaskStarted()
+            }
+            return
+        }
+
+        guard remainingSubtasks.isEmpty == false else {
+            return
+        }
+
+        if remainingSubtasks.count == 1, let remainingSubtask = remainingSubtasks.first {
+            if viewModel.startFocus(for: task, subtask: remainingSubtask) {
+                onTaskStarted()
+            }
+            return
+        }
+
+        focusedParentTaskID = task.id
+    }
+
+    private func focusSelectionPopoverBinding(for task: FocusTask) -> Binding<Bool> {
+        Binding(
+            get: { focusedParentTaskID == task.id },
+            set: { isPresented in
+                if isPresented {
+                    focusedParentTaskID = task.id
+                } else if focusedParentTaskID == task.id {
+                    focusedParentTaskID = nil
+                }
+            }
+        )
+    }
+
+    private func subtaskFocusPopover(for task: FocusTask) -> some View {
+        let remainingSubtasks = task.subtasks.filter { !$0.isCompleted }
+
+        return VStack(alignment: .leading, spacing: 8) {
+            Text(task.title)
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundStyle(AppSurfaceTheme.secondaryText)
+
+            ForEach(remainingSubtasks) { subtask in
+                Button {
+                    focusedParentTaskID = nil
+                    if viewModel.startFocus(for: task, subtask: subtask) {
+                        onTaskStarted()
+                    }
+                } label: {
+                    HStack(alignment: .center, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(subtask.title)
+                                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                                .foregroundStyle(AppSurfaceTheme.primaryText)
+
+                            Text("\(task.estimatedMinutes) min")
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .foregroundStyle(AppSurfaceTheme.secondaryText)
+                        }
+
+                        Spacer(minLength: 12)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 12)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(AppSurfaceTheme.taskSelectorWarmBorder.opacity(0.10))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(AppSurfaceTheme.taskSelectorWarmBorder.opacity(0.24), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(12)
+        .frame(minWidth: 280, maxWidth: 320, alignment: .leading)
+        .background(
+            AppGlassRoundedSurface(
+                cornerRadius: 22,
+                tint: Color(red: 0.80, green: 0.67, blue: 0.60)
+            )
+        )
+        .padding(8)
+    }
+
     private func toggleSection(_ priority: TaskPriority) {
         if collapsedPriorities.contains(priority) {
             collapsedPriorities.remove(priority)
         } else {
             collapsedPriorities.insert(priority)
+        }
+    }
+
+    private func toggleParentExpansion(for task: FocusTask) {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            if expandedParentTaskIDs.contains(task.id) {
+                expandedParentTaskIDs.remove(task.id)
+            } else {
+                expandedParentTaskIDs.insert(task.id)
+            }
+        }
+    }
+
+    private func syncExpandedParentTaskIDs() {
+        let availableTaskIDs = Set(
+            viewModel.prioritySections(in: .today)
+                .flatMap(\.tasks)
+                .filter(\.hasSubtasks)
+                .map(\.id)
+        )
+        let newTaskIDs = availableTaskIDs.subtracting(seenParentTaskIDs)
+        expandedParentTaskIDs.formUnion(newTaskIDs)
+        expandedParentTaskIDs.formIntersection(availableTaskIDs)
+        seenParentTaskIDs.formUnion(availableTaskIDs)
+    }
+
+    private func taskRowFrameReader(for task: FocusTask) -> some View {
+        GeometryReader { geometry in
+            Color.clear.preference(
+                key: TaskRowFramePreferenceKey.self,
+                value: [task.id: geometry.frame(in: .named(taskListCoordinateSpace))]
+            )
+        }
+    }
+
+    private func dragOffset(for task: FocusTask) -> CGFloat {
+        guard draggedTaskID == task.id else {
+            return 0
+        }
+
+        return draggedTaskTranslation
+    }
+
+    private func handleTaskDragChanged(for task: FocusTask, translation: CGFloat) {
+        guard draggedTaskID == nil || draggedTaskID == task.id else { return }
+
+        if draggedTaskID == nil {
+            draggedTaskID = task.id
+            taskDragStartFrames = taskRowFrames
+        }
+
+        draggedTaskTranslation = translation
+    }
+
+    private func handleTaskDragEnded(for task: FocusTask, in section: TaskPrioritySection) {
+        guard draggedTaskID == task.id else { return }
+
+        let dragTranslation = draggedTaskTranslation
+        let stableFrames = taskDragStartFrames.isEmpty ? taskRowFrames : taskDragStartFrames
+        defer {
+            draggedTaskID = nil
+            draggedTaskTranslation = 0
+            taskDragStartFrames = [:]
+        }
+
+        guard abs(dragTranslation) > 8 else {
+            return
+        }
+
+        guard let sourceFrame = stableFrames[task.id] else {
+            return
+        }
+
+        let draggedMidY = sourceFrame.midY + dragTranslation
+        let candidateTasks = section.tasks.filter { $0.id != task.id }
+        let nearestTask = candidateTasks.min { lhs, rhs in
+            guard
+                let lhsFrame = stableFrames[lhs.id],
+                let rhsFrame = stableFrames[rhs.id]
+            else {
+                return false
+            }
+
+            return abs(lhsFrame.midY - draggedMidY) < abs(rhsFrame.midY - draggedMidY)
+        }
+
+        guard let nearestTask else {
+            return
+        }
+
+        withAnimation(.spring(response: 0.24, dampingFraction: 0.84)) {
+            viewModel.moveTask(task.id, to: nearestTask.id)
         }
     }
 
@@ -458,7 +774,7 @@ struct SharedTaskComposerSheet: View {
 
             VStack(alignment: .leading, spacing: 18) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(viewModel.isEditingTask ? "Edit" : "Creat")
+                    Text(viewModel.isEditingTask ? "Edit" : "Create")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(AppSurfaceTheme.primaryText)
 
@@ -477,6 +793,35 @@ struct SharedTaskComposerSheet: View {
                     axis: .vertical,
                     verticalPadding: 14
                 )
+
+                if viewModel.isEditingTask {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Subtasks")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(AppSurfaceTheme.secondaryText)
+
+                        VStack(spacing: 10) {
+                            ForEach(viewModel.taskSubtasksDraft) { subtask in
+                                HStack(spacing: 10) {
+                                    AppPromptedTextField(
+                                        "Subtask title",
+                                        text: taskSubtaskDraftBinding(for: subtask)
+                                    )
+
+                                    Button("Remove") {
+                                        viewModel.removeTaskSubtaskDraft(id: subtask.id)
+                                    }
+                                    .buttonStyle(AppGlassButtonStyle())
+                                }
+                            }
+                        }
+
+                        Button("Add subtask") {
+                            viewModel.addTaskSubtaskDraft()
+                        }
+                        .buttonStyle(AppGlassButtonStyle())
+                    }
+                }
 
                 if viewModel.linkedSubtaskID != nil {
                     VStack(alignment: .leading, spacing: 10) {
@@ -582,7 +927,7 @@ struct SharedTaskComposerSheet: View {
                     }
                     .buttonStyle(AppGlassButtonStyle())
 
-                    Button(viewModel.isEditingTask ? "Save" : "Creat") {
+                    Button(viewModel.isEditingTask ? "Save" : "Create") {
                         _ = viewModel.saveTask()
                     }
                     .buttonStyle(AppAccentButtonStyle())
@@ -610,5 +955,22 @@ struct SharedTaskComposerSheet: View {
         TaskRepeatWeekday.allCases.map { weekday in
             AppDropdownOption(value: weekday, title: weekday.title)
         }
+    }
+
+    private func taskSubtaskDraftBinding(for subtask: TaskSubtask) -> Binding<String> {
+        Binding(
+            get: {
+                viewModel.taskSubtasksDraft.first(where: { $0.id == subtask.id })?.title ?? ""
+            },
+            set: { viewModel.updateTaskSubtaskDraftTitle($0, id: subtask.id) }
+        )
+    }
+}
+
+private struct TaskRowFramePreferenceKey: PreferenceKey {
+    static let defaultValue: [UUID: CGRect] = [:]
+
+    static func reduce(value: inout [UUID: CGRect], nextValue: () -> [UUID: CGRect]) {
+        value.merge(nextValue(), uniquingKeysWith: { _, new in new })
     }
 }

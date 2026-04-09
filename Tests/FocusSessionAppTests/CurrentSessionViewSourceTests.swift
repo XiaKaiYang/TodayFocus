@@ -13,6 +13,7 @@ final class CurrentSessionViewSourceTests: XCTestCase {
         XCTAssertTrue(source.contains("😐"))
         XCTAssertTrue(source.contains("😞"))
         XCTAssertTrue(source.contains("Submit"))
+        XCTAssertTrue(source.contains("Submit & Continue"))
     }
 
     func testCurrentSessionViewUsesTodayTaskOnlySelectorCopy() throws {
@@ -25,5 +26,16 @@ final class CurrentSessionViewSourceTests: XCTestCase {
         XCTAssertTrue(source.contains("Select a Today task"))
         XCTAssertFalse(source.contains("Create a task in Tasks first"))
         XCTAssertFalse(source.contains("Select a task"))
+    }
+
+    func testCurrentSessionViewRendersFlattenedSubtaskSelectorTitles() throws {
+        let source = try String(
+            contentsOfFile: "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp/UI/CurrentSession/CurrentSessionView.swift",
+            encoding: .utf8
+        )
+
+        XCTAssertTrue(source.contains("availableTaskSelections"))
+        XCTAssertTrue(source.contains("selection.selectorTitle"))
+        XCTAssertTrue(source.contains("viewModel.selectedTaskSelection"))
     }
 }

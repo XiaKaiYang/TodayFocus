@@ -113,6 +113,7 @@ struct CurrentSessionView: View {
         layout: CurrentSessionLayoutMetrics,
         availableWidth: CGFloat
     ) -> some View {
+        let isReflectionActionDisabled = viewModel.selectedReflectionMood == nil
         let cardWidth = min(
             layout.setupHeroMaxWidth + 140,
             max(availableWidth - 64, 320)
@@ -159,12 +160,28 @@ struct CurrentSessionView: View {
                 .frame(width: noteWidth)
                 .frame(minHeight: 150)
 
-                Button("Submit") {
-                    viewModel.submitReflection()
+                HStack(spacing: 12) {
+                    Button("Submit") {
+                        viewModel.submitReflection()
+                    }
+                    .buttonStyle(AppAccentButtonStyle())
+                    .frame(maxWidth: .infinity)
+                    .disabled(isReflectionActionDisabled)
+                    .opacity(isReflectionActionDisabled ? 0.45 : 1)
+
+                    Button("Submit & Continue") {
+                        viewModel.submitReflectionAndContinueEpisode()
+                    }
+                    .buttonStyle(
+                        AppGlassButtonStyle(
+                            cornerRadius: 16,
+                            tint: Color(red: 0.88, green: 0.78, blue: 0.66)
+                        )
+                    )
+                    .frame(maxWidth: .infinity)
+                    .disabled(isReflectionActionDisabled)
+                    .opacity(isReflectionActionDisabled ? 0.45 : 1)
                 }
-                .buttonStyle(AppAccentButtonStyle())
-                .disabled(viewModel.selectedReflectionMood == nil)
-                .opacity(viewModel.selectedReflectionMood == nil ? 0.45 : 1)
             }
             .padding(24)
             .frame(width: cardWidth)
@@ -605,14 +622,14 @@ struct CurrentSessionView: View {
 
     private func taskSelector(layout: CurrentSessionLayoutMetrics) -> some View {
         let selectorTitle = viewModel.selectedTaskTitle
-            ?? (viewModel.availableTasks.isEmpty
+            ?? (viewModel.availableTaskSelections.isEmpty
                 ? "Create a task in Today first"
                 : "Select a Today task")
-        let selectorOptions = viewModel.availableTasks.map { task in
+        let selectorOptions = viewModel.availableTaskSelections.map { selection in
             AppDropdownOption(
-                value: task.id,
-                title: task.title,
-                subtitle: "\(task.estimatedMinutes) min"
+                value: selection,
+                title: selection.selectorTitle,
+                subtitle: "\(selection.estimatedMinutes) min"
             )
         }
 
@@ -623,26 +640,24 @@ struct CurrentSessionView: View {
                 .textCase(.uppercase)
 
             AppDropdownField(
-                selection: viewModel.selectedTaskID,
+                selection: viewModel.selectedTaskSelection,
                 selectedTitle: selectorTitle,
                 options: selectorOptions,
-                isInteractive: viewModel.canConfigureSession && !viewModel.availableTasks.isEmpty,
+                isInteractive: viewModel.canConfigureSession && !viewModel.availableTaskSelections.isEmpty,
                 height: layout.intentionInputHeight,
                 cornerRadius: 20,
                 fillColor: AppSurfaceTheme.taskSelectorWarmBorder.opacity(0.035),
                 strokeColor: AppSurfaceTheme.taskSelectorWarmBorder.opacity(0.42),
-                textColor: viewModel.canConfigureSession && !viewModel.availableTasks.isEmpty
+                textColor: viewModel.canConfigureSession && !viewModel.availableTaskSelections.isEmpty
                     ? AppSurfaceTheme.primaryText
                     : AppSurfaceTheme.taskSelectorWarmText,
-                glyphColor: viewModel.canConfigureSession && !viewModel.availableTasks.isEmpty
+                glyphColor: viewModel.canConfigureSession && !viewModel.availableTaskSelections.isEmpty
                     ? AppSurfaceTheme.taskSelectorWarmGlyph
                     : AppSurfaceTheme.taskSelectorWarmText.opacity(0.82),
                 subtitleColor: AppSurfaceTheme.secondaryText,
                 popoverTint: Color(red: 0.80, green: 0.67, blue: 0.60)
-            ) { taskID in
-                if let task = viewModel.availableTasks.first(where: { $0.id == taskID }) {
-                    viewModel.selectTask(task)
-                }
+            ) { selection in
+                viewModel.selectTask(selection)
             }
         }
         .frame(maxWidth: layout.taskSelectorMaxWidth)

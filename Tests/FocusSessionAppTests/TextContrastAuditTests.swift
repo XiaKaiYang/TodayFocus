@@ -83,11 +83,11 @@ final class TextContrastAuditTests: XCTestCase {
         let contents = try String(contentsOf: fileURL, encoding: .utf8)
 
         XCTAssertFalse(
-            contents.contains(".disabled(!viewModel.canConfigureSession || viewModel.availableTasks.isEmpty)"),
+            contents.contains(".disabled(!viewModel.canConfigureSession || viewModel.availableTaskSelections.isEmpty)"),
             "Task selector should not use disabled styling for the empty-task state because it washes the label into low-contrast text."
         )
         XCTAssertTrue(
-            contents.contains("viewModel.canConfigureSession && !viewModel.availableTasks.isEmpty"),
+            contents.contains("viewModel.canConfigureSession && !viewModel.availableTaskSelections.isEmpty"),
             "Task selector should branch between interactive and non-interactive empty states without relying on disabled tinting."
         )
         XCTAssertTrue(
@@ -249,6 +249,32 @@ final class TextContrastAuditTests: XCTestCase {
         XCTAssertTrue(
             viewContents.contains(#"Text("Repeat day")"#),
             "Weekly repeats should allow picking a weekday."
+        )
+    }
+
+    func testTodayTaskSubtaskParentsUseHierarchySymbolAndEditOnlySubtaskComposer() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let viewFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/Tasks/TasksDashboardView.swift")
+        let viewContents = try String(contentsOf: viewFileURL, encoding: .utf8)
+
+        XCTAssertTrue(
+            viewContents.contains(#""list.bullet.indent""#),
+            "Parent tasks with subtasks should use the hierarchy symbol instead of a normal completion checkbox."
+        )
+        XCTAssertTrue(
+            viewContents.contains("if viewModel.isEditingTask"),
+            "The shared task composer should gate the subtask editor behind edit mode only."
+        )
+        XCTAssertTrue(
+            viewContents.contains(#"Text("Subtasks")"#),
+            "The edit composer should label the embedded checklist editor clearly."
+        )
+        XCTAssertTrue(
+            viewContents.contains(#"Button("Add subtask")"#),
+            "The edit composer should provide an explicit action to append checklist rows."
         )
     }
 }

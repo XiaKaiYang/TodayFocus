@@ -66,6 +66,38 @@ final class LinkedTaskSettlementCoordinator {
         try tasksRepository.update(updatedTask)
     }
 
+    @discardableResult
+    func completeSubtask(
+        taskID: UUID,
+        subtaskID: UUID,
+        completedAt: Date,
+        calendar: Calendar = .autoupdatingCurrent
+    ) throws -> Bool {
+        guard var task = try tasksRepository.task(id: taskID), task.isCompleted == false else {
+            return false
+        }
+        guard let subtaskIndex = task.subtasks.firstIndex(where: { $0.id == subtaskID }) else {
+            return false
+        }
+        guard task.subtasks[subtaskIndex].isCompleted == false else {
+            return false
+        }
+
+        task.subtasks[subtaskIndex].isCompleted = true
+        try tasksRepository.update(task)
+
+        guard task.areAllSubtasksCompleted else {
+            return false
+        }
+
+        try completeTask(
+            id: taskID,
+            completedAt: completedAt,
+            calendar: calendar
+        )
+        return true
+    }
+
     func restoreTask(id: UUID) throws {
         guard let task = try tasksRepository.task(id: id), task.isCompleted else {
             return
@@ -153,6 +185,57 @@ final class TasksRepository {
         }
 
         modelContext.insert(StoredTask(task: task))
+        try modelContext.save()
+    }
+
+    func updateRecurringInstance(
+        _ task: FocusTask,
+        previousSeriesID: UUID? = nil
+    ) throws {
+        let storedTasks = try modelContext.fetch(FetchDescriptor<StoredTask>())
+
+        if let storedTask = storedTasks.first(where: { $0.id == task.id }) {
+            storedTask.update(from: task)
+        } else {
+            modelContext.insert(StoredTask(task: task))
+        }
+
+        let activeSeriesIDs = Set([previousSeriesID, task.recurrenceSeriesID].compactMap { $0 })
+        if !activeSeriesIDs.isEmpty {
+            storedTasks
+                .filter { storedTask in
+                    storedTask.id != task.id &&
+                    storedTask.isCompleted == false &&
+                    activeSeriesIDs.contains(storedTask.recurrenceSeriesID ?? UUID())
+                }
+                .forEach(modelContext.delete)
+        }
+
+        try modelContext.save()
+    }
+
+    func unlinkRecurringSeries(representedBy task: FocusTask) throws {
+        guard let recurrenceSeriesID = task.recurrenceSeriesID else {
+            var updatedTask = task
+            updatedTask.linkedSubtaskID = nil
+            updatedTask.contributionValue = nil
+            try update(updatedTask)
+            return
+        }
+
+        let storedTasks = try modelContext.fetch(FetchDescriptor<StoredTask>())
+        storedTasks
+            .filter { storedTask in
+                storedTask.isCompleted == false &&
+                storedTask.recurrenceSeriesID == recurrenceSeriesID
+            }
+            .forEach { storedTask in
+                var updatedTask = storedTask.domainModel
+                updatedTask.linkedSubtaskID = nil
+                updatedTask.contributionValue = nil
+                storedTask.update(from: updatedTask)
+            }
+
         try modelContext.save()
     }
 
@@ -247,6 +330,7 @@ final class TasksRepository {
             details: task.details,
             estimatedMinutes: task.estimatedMinutes,
             priority: task.priority,
+            subtasks: task.resettingSubtasks(),
             createdAt: visibleFrom,
             linkedSubtaskID: task.linkedSubtaskID,
             contributionValue: task.contributionValue,
@@ -255,7 +339,8 @@ final class TasksRepository {
             repeatTotalCount: task.repeatTotalCount,
             repeatRemainingCount: currentRemainingCount.map { $0 - 1 },
             visibleFrom: visibleFrom,
-            recurrenceSeriesID: task.recurrenceSeriesID ?? UUID()
+            recurrenceSeriesID: task.recurrenceSeriesID ?? UUID(),
+            displayOrder: task.displayOrder
         )
     }
 

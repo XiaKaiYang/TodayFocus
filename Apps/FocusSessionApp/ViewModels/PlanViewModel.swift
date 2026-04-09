@@ -39,6 +39,12 @@ struct SubtaskSiblingShareRow: Equatable, Identifiable {
     let shareText: String
 }
 
+private struct LinkedTaskSeriesProjection: Equatable, Identifiable {
+    let id: UUID
+    let representative: FocusTask
+    let taskIDs: [UUID]
+}
+
 @MainActor
 final class PlanViewModel: ObservableObject {
     @Published private(set) var goals: [PlanGoal] = []
@@ -70,6 +76,7 @@ final class PlanViewModel: ObservableObject {
 
     private let repository: PlanGoalsRepository
     private let tasksRepository: TasksRepository
+    private let widgetSyncer: GoalProgressWidgetSyncer
     private let now: () -> Date
     private let calendar: Calendar
     private let zoomMonthSteps = [1, 3, 6, 12]
@@ -81,6 +88,7 @@ final class PlanViewModel: ObservableObject {
     init(
         repository: PlanGoalsRepository? = nil,
         tasksRepository: TasksRepository? = nil,
+        widgetSyncer: GoalProgressWidgetSyncer? = nil,
         now: @escaping () -> Date = Date.init,
         calendar: Calendar = .autoupdatingCurrent
     ) {
@@ -98,6 +106,11 @@ final class PlanViewModel: ObservableObject {
             self.tasksRepository = TasksRepository(
                 modelContext: ModelContext(FocusSessionModelContainer.shared)
             )
+        }
+        if let widgetSyncer {
+            self.widgetSyncer = widgetSyncer
+        } else {
+            self.widgetSyncer = GoalProgressWidgetSyncer(repository: self.repository)
         }
         self.now = now
         self.calendar = calendar
@@ -176,7 +189,8 @@ final class PlanViewModel: ObservableObject {
             return []
         }
 
-        return linkedTasks(forSubtaskID: subtaskComposerMode.subtaskID)
+        return activeLinkedTaskSeries(forSubtaskID: subtaskComposerMode.subtaskID)
+            .map(\.representative)
     }
 
     var linkableTasks: [FocusTask] {
@@ -189,7 +203,7 @@ final class PlanViewModel: ObservableObject {
             return parsedSubtaskEstimatedProgressPercent ?? currentEditingSubtask?.baselineValue ?? 0
         case .quantified:
             let baselineValue = effectiveQuantifiedDraftBaselineValue ?? currentEditingSubtask?.baselineValue ?? 0
-            let completedContribution = linkedTasksForEditingSubtask
+            let completedContribution = allLinkedTasks(forSubtaskID: subtaskComposerMode?.subtaskID)
                 .filter(\.isCompleted)
                 .reduce(0) { partialResult, task in
                     partialResult + (task.contributionValue ?? 0)
@@ -264,10 +278,12 @@ final class PlanViewModel: ObservableObject {
             let fetchedTasks = try tasksRepository.fetchAll()
             goals = sortGoals(fetchedGoals)
             tasks = sortTasksForLinking(fetchedTasks)
+            try? widgetSyncer.sync(goals: goals)
             errorMessage = nil
         } catch {
             goals = []
             tasks = []
+            widgetSyncer.syncEmptySnapshot()
             errorMessage = "Unable to load goals."
         }
     }
@@ -704,12 +720,15 @@ final class PlanViewModel: ObservableObject {
     }
 
     func unlinkTask(_ task: FocusTask) {
-        var updatedTask = task
-        updatedTask.linkedSubtaskID = nil
-        updatedTask.contributionValue = nil
-
         do {
-            try tasksRepository.update(updatedTask)
+            if task.isRepeating, task.recurrenceSeriesID != nil {
+                try tasksRepository.unlinkRecurringSeries(representedBy: task)
+            } else {
+                var updatedTask = task
+                updatedTask.linkedSubtaskID = nil
+                updatedTask.contributionValue = nil
+                try tasksRepository.update(updatedTask)
+            }
             load()
         } catch {
             errorMessage = "Unable to unlink task."
@@ -721,7 +740,7 @@ final class PlanViewModel: ObservableObject {
             return subtask.baselineValue
         }
 
-        let completedContribution = linkedTasks(for: subtask)
+        let completedContribution = allLinkedTasks(for: subtask)
             .filter(\.isCompleted)
             .reduce(0) { partialResult, task in
                 partialResult + (task.contributionValue ?? 0)
@@ -756,11 +775,11 @@ final class PlanViewModel: ObservableObject {
     }
 
     func linkedTaskCount(for subtask: PlanGoalSubtask) -> Int {
-        linkedTasks(for: subtask).count
+        activeLinkedTaskSeries(forSubtaskID: subtask.id).count
     }
 
     func linkedTasks(for subtask: PlanGoalSubtask) -> [FocusTask] {
-        linkedTasks(forSubtaskID: subtask.id)
+        activeLinkedTaskSeries(forSubtaskID: subtask.id).map(\.representative)
     }
 
     func subtaskTitle(for id: UUID) -> String? {
@@ -800,6 +819,11 @@ final class PlanViewModel: ObservableObject {
         let nextSpan = nextZoomMonthSpan(for: deltaY, currentSpan: currentSpan)
         guard nextSpan != currentSpan else { return }
         timelineDetailMonthSpan = nextSpan
+    }
+
+    func setTimelineMonthSpan(_ monthSpan: Int) {
+        guard zoomMonthSteps.contains(monthSpan) else { return }
+        timelineDetailMonthSpan = monthSpan
     }
 
     static func todayMarkerTitle(referenceDate: Date, calendar: Calendar = .autoupdatingCurrent) -> String {
@@ -1038,10 +1062,69 @@ final class PlanViewModel: ObservableObject {
         }
     }
 
-    private func linkedTasks(forSubtaskID subtaskID: UUID) -> [FocusTask] {
-        sortTasksForLinking(
+    private func allLinkedTasks(for subtask: PlanGoalSubtask) -> [FocusTask] {
+        allLinkedTasks(forSubtaskID: subtask.id)
+    }
+
+    private func allLinkedTasks(forSubtaskID subtaskID: UUID?) -> [FocusTask] {
+        guard let subtaskID else {
+            return []
+        }
+
+        return sortTasksForLinking(
             tasks.filter { $0.linkedSubtaskID == subtaskID }
         )
+    }
+
+    private func activeLinkedTaskSeries(forSubtaskID subtaskID: UUID) -> [LinkedTaskSeriesProjection] {
+        let activeTasks = tasks.filter { task in
+            task.linkedSubtaskID == subtaskID && task.isCompleted == false
+        }
+        let groupedTasks = Dictionary(grouping: activeTasks, by: linkedTaskSeriesProjectionID(for:))
+        return groupedTasks.values
+            .compactMap { seriesTasks in
+                guard let representative = representativeTask(forLinkedTaskSeries: seriesTasks) else {
+                    return nil
+                }
+
+                return LinkedTaskSeriesProjection(
+                    id: linkedTaskSeriesProjectionID(for: representative),
+                    representative: representative,
+                    taskIDs: seriesTasks.map(\.id)
+                )
+            }
+            .sorted { lhs, rhs in
+                linkedTaskSortsBefore(lhs.representative, rhs.representative)
+            }
+    }
+
+    private func representativeTask(forLinkedTaskSeries tasks: [FocusTask]) -> FocusTask? {
+        tasks.sorted { lhs, rhs in
+            let lhsVisibleToday = lhs.isVisibleInToday(at: now())
+            let rhsVisibleToday = rhs.isVisibleInToday(at: now())
+            if lhsVisibleToday != rhsVisibleToday {
+                return lhsVisibleToday
+            }
+
+            return linkedTaskSortsBefore(lhs, rhs)
+        }.first
+    }
+
+    private func linkedTaskSeriesProjectionID(for task: FocusTask) -> UUID {
+        task.recurrenceSeriesID ?? task.id
+    }
+
+    private func linkedTaskSortsBefore(_ lhs: FocusTask, _ rhs: FocusTask) -> Bool {
+        if lhs.isCompleted != rhs.isCompleted {
+            return lhs.isCompleted == false
+        }
+        if lhs.priority.sortOrder != rhs.priority.sortOrder {
+            return lhs.priority.sortOrder < rhs.priority.sortOrder
+        }
+        if lhs.createdAt != rhs.createdAt {
+            return lhs.createdAt > rhs.createdAt
+        }
+        return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
     }
 
     private func populateSubtaskDraft(from subtask: PlanGoalSubtask) {

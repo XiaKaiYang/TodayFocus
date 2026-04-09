@@ -1,5 +1,18 @@
 import Foundation
 
+enum AppPlatform: Equatable {
+    case macOS
+    case iOS
+
+    static var current: AppPlatform {
+        #if os(iOS)
+        .iOS
+        #else
+        .macOS
+        #endif
+    }
+}
+
 enum AppSection: String, CaseIterable, Hashable, Identifiable {
     case tasks
     case plan
@@ -25,6 +38,42 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             .trash,
             .settings
         ]
+    }
+
+    func isAvailable(on platform: AppPlatform) -> Bool {
+        switch platform {
+        case .macOS:
+            true
+        case .iOS:
+            self != .blocker
+        }
+    }
+
+    static func availableSections(on platform: AppPlatform) -> [AppSection] {
+        allCases.filter { $0.isAvailable(on: platform) }
+    }
+
+    static func resolvedLaunchSection(
+        preferredSection: AppSection?,
+        on platform: AppPlatform,
+        fallback: AppSection = .tasks
+    ) -> AppSection {
+        guard let preferredSection, preferredSection.isAvailable(on: platform) else {
+            return fallback
+        }
+
+        return preferredSection
+    }
+
+    static func launchDestinationSections(on platform: AppPlatform) -> [AppSection] {
+        availableSections(on: platform).filter {
+            switch $0 {
+            case .trash, .settings:
+                false
+            case .tasks, .plan, .currentSession, .whiteNoise, .notes, .analytics, .blocker:
+                true
+            }
+        }
     }
 
     var title: String {
