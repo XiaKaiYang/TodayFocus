@@ -86,42 +86,46 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
     var title: String {
         switch self {
         case .tasks:
-            "Today"
+            AppText.tr("app.section.tasks.title")
         case .plan:
-            "Plan"
+            AppText.tr("app.section.plan.title")
         case .currentSession:
-            "Current Session"
+            AppText.tr("app.section.currentSession.title")
         case .whiteNoise:
-            "White Noise"
+            AppText.tr("app.section.whiteNoise.title")
         case .notes:
-            "Notes"
+            AppText.tr("app.section.notes.title")
         case .analytics:
-            "Analytics"
+            AppText.tr("app.section.analytics.title")
         case .pk:
-            "PK Room"
+            AppText.tr("app.section.pk.title")
         case .blocker:
-            "Blocker"
+            AppText.tr("app.section.blocker.title")
         case .trash:
-            "Trash"
+            AppText.tr("app.section.trash.title")
         case .settings:
-            "Settings"
+            AppText.tr("app.section.settings.title")
         }
     }
 
     var sidebarTitle: String {
         switch self {
         case .tasks:
-            "Today"
+            AppText.tr("app.section.tasks.sidebar")
         case .plan:
-            "Plan"
+            AppText.tr("app.section.plan.sidebar")
         case .currentSession:
-            "Session"
+            AppText.tr("app.section.currentSession.sidebar")
         case .whiteNoise:
-            "White Noise"
+            AppText.tr("app.section.whiteNoise.sidebar")
         case .pk:
-            "PK"
+            AppText.tr("app.section.pk.sidebar")
         case .trash:
-            "Trash"
+            AppText.tr("app.section.trash.sidebar")
+        case .analytics:
+            AppText.tr("app.section.analytics.sidebar")
+        case .blocker:
+            AppText.tr("app.section.blocker.sidebar")
         default:
             title
         }
@@ -130,25 +134,25 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
     var subtitle: String {
         switch self {
         case .tasks:
-            "Capture and organize today."
+            AppText.tr("app.section.tasks.subtitle")
         case .plan:
-            "Map goals across time."
+            AppText.tr("app.section.plan.subtitle")
         case .currentSession:
-            "Run the active focus cycle."
+            AppText.tr("app.section.currentSession.subtitle")
         case .whiteNoise:
-            "Shape the soundscape and cues."
+            AppText.tr("app.section.whiteNoise.subtitle")
         case .notes:
-            "Browse previous session notes."
+            AppText.tr("app.section.notes.subtitle")
         case .analytics:
-            "Review momentum and trends."
+            AppText.tr("app.section.analytics.subtitle")
         case .pk:
-            "Compete in supervised focus rooms."
+            AppText.tr("app.section.pk.subtitle")
         case .blocker:
-            "Control distractions and rules."
+            AppText.tr("app.section.blocker.subtitle")
         case .trash:
-            "Review completed tasks."
+            AppText.tr("app.section.trash.subtitle")
         case .settings:
-            "Tune behavior and integrations."
+            AppText.tr("app.section.settings.subtitle")
         }
     }
 

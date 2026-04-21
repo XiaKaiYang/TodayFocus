@@ -12,9 +12,9 @@ enum BlockerTargetKind: String, CaseIterable, Identifiable, Hashable {
     var title: String {
         switch self {
         case .app:
-            "App"
+            AppText.tr("App")
         case .domain:
-            "Website"
+            AppText.tr("Website")
         }
     }
 }
@@ -136,7 +136,7 @@ final class BlockerViewModel: ObservableObject {
             lastBlockedAppName = coordinator.lastBlockedAppName ?? mostRecentBlockedAppName(in: recentEvents)
             errorMessage = nil
         } catch {
-            errorMessage = "Unable to load blocker rules."
+            errorMessage = AppText.tr("Unable to load blocker rules.")
         }
     }
 
@@ -179,7 +179,7 @@ final class BlockerViewModel: ObservableObject {
     func createRule() {
         let trimmedValue = newRuleValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedValue.isEmpty else {
-            errorMessage = "Rule value is required."
+            errorMessage = AppText.tr("Rule value is required.")
             return
         }
 
@@ -205,7 +205,7 @@ final class BlockerViewModel: ObservableObject {
             activeDuringBreak = false
             load()
         } catch {
-            errorMessage = "Unable to save blocker rule."
+            errorMessage = AppText.tr("Unable to save blocker rule.")
         }
     }
 
@@ -214,7 +214,7 @@ final class BlockerViewModel: ObservableObject {
             try rulesRepository.delete(id: rule.id)
             load()
         } catch {
-            errorMessage = "Unable to delete blocker rule."
+            errorMessage = AppText.tr("Unable to delete blocker rule.")
         }
     }
 
@@ -223,7 +223,7 @@ final class BlockerViewModel: ObservableObject {
             try eventRepository.deleteAll()
             load()
         } catch {
-            errorMessage = "Unable to clear blocker activity."
+            errorMessage = AppText.tr("Unable to clear blocker activity.")
         }
     }
 

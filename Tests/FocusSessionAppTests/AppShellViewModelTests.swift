@@ -63,18 +63,27 @@ final class AppShellViewModelTests: XCTestCase {
         XCTAssertEqual(
             AppSection.allCases.map(\.sidebarTitle),
             [
-                "Today",
-                "Plan",
-                "Session",
-                "White Noise",
-                "Notes",
-                "Analytics",
-                "PK",
-                "Blocker",
-                "Trash",
-                "Settings"
+                "今日",
+                "规划",
+                "专注",
+                "白噪音",
+                "笔记",
+                "分析",
+                "对战",
+                "屏蔽",
+                "回收站",
+                "设置"
             ]
         )
+    }
+
+    func testSectionTitlesAndSubtitlesAreLocalizedToChinese() {
+        XCTAssertEqual(AppSection.tasks.title, "今日")
+        XCTAssertEqual(AppSection.plan.title, "规划")
+        XCTAssertEqual(AppSection.currentSession.title, "当前专注")
+        XCTAssertEqual(AppSection.analytics.title, "数据分析")
+        XCTAssertEqual(AppSection.pk.title, "专注对战")
+        XCTAssertEqual(AppSection.settings.subtitle, "调整行为与集成功能。")
     }
 
     func testAppShellRoutesPlanSectionIntoDedicatedDashboard() throws {

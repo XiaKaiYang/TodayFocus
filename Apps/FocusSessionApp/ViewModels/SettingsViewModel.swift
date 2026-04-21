@@ -118,7 +118,7 @@ final class SettingsViewModel: ObservableObject {
             errorMessage = nil
         } catch {
             dataSummary = SettingsDataSummary()
-            errorMessage = "Unable to load settings data."
+            errorMessage = AppText.tr("Unable to load settings data.")
         }
     }
 
@@ -149,7 +149,7 @@ final class SettingsViewModel: ObservableObject {
             onDataChanged?()
             errorMessage = nil
         } catch {
-            errorMessage = "Unable to apply settings change."
+            errorMessage = AppText.tr("Unable to apply settings change.")
         }
     }
 }

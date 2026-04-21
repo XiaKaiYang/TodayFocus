@@ -134,17 +134,17 @@ struct CurrentSessionView: View {
                 HStack(spacing: 18) {
                     reflectionMoodButton(
                         emoji: "🤩",
-                        title: "Focused",
+                        title: AppText.tr("Focused"),
                         mood: .focused
                     )
                     reflectionMoodButton(
                         emoji: "😐",
-                        title: "Neutral",
+                        title: AppText.tr("Neutral"),
                         mood: .neutral
                     )
                     reflectionMoodButton(
                         emoji: "😞",
-                        title: "Distracted",
+                        title: AppText.tr("Distracted"),
                         mood: .distracted
                     )
                 }
@@ -679,7 +679,7 @@ struct CurrentSessionView: View {
     }
 
     private func timeReadout(layout: CurrentSessionLayoutMetrics) -> some View {
-        Text("\(viewModel.durationMinutes) min")
+        Text(AppText.format("%d min", viewModel.durationMinutes))
             .font(.system(size: layout.timeReadoutFontSize, weight: .medium, design: .rounded))
             .monospacedDigit()
             .foregroundStyle(AppSurfaceTheme.primaryText)
@@ -774,7 +774,7 @@ struct CurrentSessionView: View {
 
                 Spacer()
 
-                Text("\(viewModel.recentSessions.count) shown")
+                Text(AppText.format("%d shown", viewModel.recentSessions.count))
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppSurfaceTheme.secondaryText)
             }

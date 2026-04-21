@@ -38,7 +38,7 @@ final class LeaderboardViewModel: ObservableObject {
                 .sorted { $0.focusMinutes > $1.focusMinutes }
                 .map { LeaderboardEntry(userID: $0.userID, displayName: $0.userID, focusMinutes: $0.focusMinutes, violationCount: $0.violationCount, sessionCount: $0.sessionCount) }
         } catch {
-            errorMessage = "Unable to load leaderboard."
+            errorMessage = AppText.tr("Unable to load leaderboard.")
         }
     }
 }

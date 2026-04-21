@@ -275,7 +275,7 @@ final class PlanViewModel: ObservableObject {
         } catch {
             goals = []
             tasks = []
-            errorMessage = "Unable to load goals."
+            errorMessage = AppText.tr("Unable to load goals.")
         }
     }
 
@@ -309,12 +309,12 @@ final class PlanViewModel: ObservableObject {
     func saveGoal() -> Bool {
         let trimmedTitle = newGoalTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else {
-            errorMessage = "Goal title is required."
+            errorMessage = AppText.tr("Goal title is required.")
             return false
         }
 
         guard newGoalEndAt > newGoalStartAt else {
-            errorMessage = "End time must be later than start time."
+            errorMessage = AppText.tr("End time must be later than start time.")
             return false
         }
 
@@ -335,7 +335,7 @@ final class PlanViewModel: ObservableObject {
             )
         case let .edit(id):
             guard let existingGoal = goals.first(where: { $0.id == id }) else {
-                errorMessage = "Unable to find goal."
+                errorMessage = AppText.tr("Unable to find goal.")
                 return false
             }
             var updatedSubtasks = existingGoal.subtasks
@@ -379,7 +379,7 @@ final class PlanViewModel: ObservableObject {
             load()
             return true
         } catch {
-            errorMessage = "Unable to save goal."
+            errorMessage = AppText.tr("Unable to save goal.")
             return false
         }
     }
@@ -393,7 +393,7 @@ final class PlanViewModel: ObservableObject {
             }
             load()
         } catch {
-            errorMessage = "Unable to delete goal."
+            errorMessage = AppText.tr("Unable to delete goal.")
         }
     }
 
@@ -409,7 +409,7 @@ final class PlanViewModel: ObservableObject {
             try repository.update(updatedGoal)
             load()
         } catch {
-            errorMessage = "Unable to restore goal."
+            errorMessage = AppText.tr("Unable to restore goal.")
         }
     }
 
@@ -446,7 +446,7 @@ final class PlanViewModel: ObservableObject {
             }
             load()
         } catch {
-            errorMessage = "Unable to reorder goals."
+            errorMessage = AppText.tr("Unable to reorder goals.")
         }
     }
 
@@ -473,7 +473,7 @@ final class PlanViewModel: ObservableObject {
             try repository.update(updatedGoal)
             load()
         } catch {
-            errorMessage = "Unable to reorder subtasks."
+            errorMessage = AppText.tr("Unable to reorder subtasks.")
         }
     }
 
@@ -520,7 +520,7 @@ final class PlanViewModel: ObservableObject {
             try repository.update(updatedGoal)
             load()
         } catch {
-            errorMessage = "Unable to update subtask."
+            errorMessage = AppText.tr("Unable to update subtask.")
         }
     }
 
@@ -622,7 +622,7 @@ final class PlanViewModel: ObservableObject {
             }
             load()
         } catch {
-            errorMessage = "Unable to delete subtask."
+            errorMessage = AppText.tr("Unable to delete subtask.")
         }
     }
 
@@ -658,19 +658,19 @@ final class PlanViewModel: ObservableObject {
     @discardableResult
     func confirmSelectedTaskLink() -> Bool {
         guard let selectedLinkTaskID else {
-            errorMessage = "Select a Today task first."
+            errorMessage = AppText.tr("Select a Today task first.")
             return false
         }
         guard let task = linkableTasks.first(where: { $0.id == selectedLinkTaskID }) else {
-            errorMessage = "Selected task is no longer available to link."
+            errorMessage = AppText.tr("Selected task is no longer available to link.")
             return false
         }
         guard let subtask = currentEditingSubtask else {
-            errorMessage = "Save the subtask first."
+            errorMessage = AppText.tr("Save the subtask first.")
             return false
         }
         guard let contributionValue = parsedLinkTaskContributionValue else {
-            errorMessage = "Contribution value must be a number."
+            errorMessage = AppText.tr("Contribution value must be a number.")
             return false
         }
 
@@ -688,11 +688,11 @@ final class PlanViewModel: ObservableObject {
         contributionValue: Double
     ) -> Bool {
         guard subtask.trackingMode == .quantified else {
-            errorMessage = "Convert this subtask to Quantified before linking Today tasks."
+            errorMessage = AppText.tr("Convert this subtask to Quantified before linking Today tasks.")
             return false
         }
         guard contributionValue >= 0 else {
-            errorMessage = "Contribution value must be non-negative."
+            errorMessage = AppText.tr("Contribution value must be non-negative.")
             return false
         }
 
@@ -705,7 +705,7 @@ final class PlanViewModel: ObservableObject {
             load()
             return true
         } catch {
-            errorMessage = "Unable to link task."
+            errorMessage = AppText.tr("Unable to link task.")
             return false
         }
     }
@@ -722,7 +722,7 @@ final class PlanViewModel: ObservableObject {
             }
             load()
         } catch {
-            errorMessage = "Unable to unlink task."
+            errorMessage = AppText.tr("Unable to unlink task.")
         }
     }
 
@@ -823,7 +823,7 @@ final class PlanViewModel: ObservableObject {
         formatter.locale = Locale(identifier: "zh_CN")
         formatter.timeZone = calendar.timeZone
         formatter.dateFormat = "M月d日"
-        return "今日 \(formatter.string(from: referenceDate))"
+        return AppText.format("Today %@", formatter.string(from: referenceDate))
     }
 
     static func formatMetricValue(_ value: Double) -> String {
@@ -890,7 +890,7 @@ final class PlanViewModel: ObservableObject {
 
     private func prepareCurrentSubtaskForTaskLinking() -> PlanGoalSubtask? {
         guard subtaskDraftSupportsTaskLinking else {
-            errorMessage = "Convert this subtask to Quantified to link Today tasks."
+            errorMessage = AppText.tr("Convert this subtask to Quantified to link Today tasks.")
             return nil
         }
 
@@ -905,27 +905,27 @@ final class PlanViewModel: ObservableObject {
 
     private func persistCurrentSubtask(dismissAfterSave: Bool) -> UUID? {
         guard let subtaskComposerMode else {
-            errorMessage = "Unable to find subtask."
+            errorMessage = AppText.tr("Unable to find subtask.")
             return nil
         }
 
         let trimmedTitle = subtaskDraftTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else {
-            errorMessage = "Subtask title is required."
+            errorMessage = AppText.tr("Subtask title is required.")
             return nil
         }
 
         guard let goalSharePercent = parsedSubtaskGoalSharePercent else {
-            errorMessage = "Goal share must be a number."
+            errorMessage = AppText.tr("Goal share must be a number.")
             return nil
         }
         guard goalSharePercent >= 0 else {
-            errorMessage = "Goal share must be non-negative."
+            errorMessage = AppText.tr("Goal share must be non-negative.")
             return nil
         }
 
         guard var goal = goals.first(where: { $0.id == subtaskComposerMode.goalID }) else {
-            errorMessage = "Unable to find goal."
+            errorMessage = AppText.tr("Unable to find goal.")
             return nil
         }
 
@@ -936,7 +936,7 @@ final class PlanViewModel: ObservableObject {
 
         let totalShare = PlanGoalSubtask.roundedGoalSharePercent(goalSharePercent + siblingShares.values.reduce(0, +))
         guard totalShare <= 100.01 else {
-            errorMessage = "Allocated subtask shares can't exceed 100%."
+            errorMessage = AppText.tr("Allocated subtask shares can't exceed 100%.")
             return nil
         }
 
@@ -944,15 +944,15 @@ final class PlanViewModel: ObservableObject {
         switch subtaskDraftTrackingMode {
         case .estimated:
             guard let progressPercent = parsedSubtaskEstimatedProgressPercent else {
-                errorMessage = "Estimated progress must be a number."
+                errorMessage = AppText.tr("Estimated progress must be a number.")
                 return nil
             }
             guard (0 ... 100).contains(progressPercent) else {
-                errorMessage = "Estimated progress must be between 0 and 100."
+                errorMessage = AppText.tr("Estimated progress must be between 0 and 100.")
                 return nil
             }
             guard linkedTasksForEditingSubtask.isEmpty else {
-                errorMessage = "Estimated subtasks can't link Today tasks. Unlink tasks first."
+                errorMessage = AppText.tr("Estimated subtasks can't link Today tasks. Unlink tasks first.")
                 return nil
             }
 
@@ -967,15 +967,15 @@ final class PlanViewModel: ObservableObject {
             )
         case .quantified:
             guard let baselineValue = effectiveQuantifiedDraftBaselineValue else {
-                errorMessage = "Baseline value must be a number."
+                errorMessage = AppText.tr("Baseline value must be a number.")
                 return nil
             }
             guard let targetValue = parsedSubtaskTargetValue else {
-                errorMessage = "Target value must be a number."
+                errorMessage = AppText.tr("Target value must be a number.")
                 return nil
             }
             guard targetValue > 0 else {
-                errorMessage = "Target value must be greater than 0."
+                errorMessage = AppText.tr("Target value must be greater than 0.")
                 return nil
             }
 
@@ -1028,7 +1028,7 @@ final class PlanViewModel: ObservableObject {
             }
             return subtask.id
         } catch {
-            errorMessage = "Unable to save subtask."
+            errorMessage = AppText.tr("Unable to save subtask.")
             return nil
         }
     }
@@ -1161,11 +1161,11 @@ final class PlanViewModel: ObservableObject {
         for sibling in goal.subtasks where sibling.id != subtaskComposerMode?.subtaskID {
             let draftText = siblingGoalShareDrafts[sibling.id] ?? Self.formatMetricValue(sibling.goalSharePercent)
             guard let parsedShare = Double(draftText.trimmingCharacters(in: .whitespacesAndNewlines)) else {
-                errorMessage = "Every sibling goal share must be a number."
+                errorMessage = AppText.tr("Every sibling goal share must be a number.")
                 return nil
             }
             guard parsedShare >= 0 else {
-                errorMessage = "Goal share must be non-negative."
+                errorMessage = AppText.tr("Goal share must be non-negative.")
                 return nil
             }
             parsedShares[sibling.id] = parsedShare
@@ -1198,11 +1198,11 @@ final class PlanViewModel: ObservableObject {
         for subtask in goal.subtasks {
             let draftText = goalComposerSubtaskShareDrafts[subtask.id] ?? Self.formatMetricValue(subtask.goalSharePercent)
             guard let parsedShare = Double(draftText.trimmingCharacters(in: .whitespacesAndNewlines)) else {
-                errorMessage = "Every subtask goal share must be a number."
+                errorMessage = AppText.tr("Every subtask goal share must be a number.")
                 return nil
             }
             guard parsedShare >= 0 else {
-                errorMessage = "Goal share must be non-negative."
+                errorMessage = AppText.tr("Goal share must be non-negative.")
                 return nil
             }
             parsedShares[subtask.id] = parsedShare
@@ -1210,7 +1210,7 @@ final class PlanViewModel: ObservableObject {
 
         let totalShare = PlanGoalSubtask.roundedGoalSharePercent(parsedShares.values.reduce(0, +))
         guard totalShare <= 100.01 else {
-            errorMessage = "Allocated subtask shares can't exceed 100%."
+            errorMessage = AppText.tr("Allocated subtask shares can't exceed 100%.")
             return nil
         }
 

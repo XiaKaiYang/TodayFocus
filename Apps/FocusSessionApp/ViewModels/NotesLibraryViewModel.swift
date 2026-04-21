@@ -25,13 +25,13 @@ struct NotesLibraryEntry: Identifiable, Equatable {
         let roundedMinutes = max(1, Int(ceil(Double(record.durationSeconds) / 60)))
 
         id = record.id
-        title = trimmedTitle.isEmpty ? "Untitled Session" : trimmedTitle
+        title = trimmedTitle.isEmpty ? AppText.tr("Untitled Session") : trimmedTitle
         body = trimmedBody
         preview = String(trimmedBody.prefix(140))
         endedAtText = Self.formatEndedAt(record.endedAt, calendar: calendar)
         moodEmoji = Self.moodEmoji(for: record.mood)
         relativeEndedText = relativeFormatter.localizedString(for: record.endedAt, relativeTo: referenceDate)
-        durationText = "\(roundedMinutes) min"
+        durationText = AppText.format("%d min", roundedMinutes)
         endedAt = record.endedAt
     }
 
@@ -133,7 +133,7 @@ final class NotesLibraryViewModel: ObservableObject {
                 now: now(),
                 calendar: calendar
             )
-            errorMessage = "Unable to load notes."
+            errorMessage = AppText.tr("Unable to load notes.")
         }
     }
 
@@ -151,7 +151,7 @@ final class NotesLibraryViewModel: ObservableObject {
             load()
             errorMessage = nil
         } catch {
-            errorMessage = "Unable to delete note."
+            errorMessage = AppText.tr("Unable to delete note.")
         }
     }
 

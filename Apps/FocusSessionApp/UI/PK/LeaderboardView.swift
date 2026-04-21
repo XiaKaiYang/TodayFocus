@@ -13,8 +13,8 @@ struct LeaderboardView: View {
                     .foregroundStyle(Color(red: 1.0, green: 0.50, blue: 0.52))
                     .font(.callout)
             } else {
-                leaderboardSection(title: "Today", entries: viewModel.dailyEntries)
-                leaderboardSection(title: "This Week", entries: viewModel.weeklyEntries)
+                leaderboardSection(title: AppText.tr("Today"), entries: viewModel.dailyEntries)
+                leaderboardSection(title: AppText.tr("This Week"), entries: viewModel.weeklyEntries)
             }
         }
         .padding(20)
@@ -55,7 +55,7 @@ private struct LeaderboardRowView: View {
                 Text(entry.displayName)
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(AppSurfaceTheme.primaryText)
-                Text("\(entry.focusMinutes) min · \(entry.sessionCount) sessions")
+                Text(AppText.format("%d min · %d sessions", entry.focusMinutes, entry.sessionCount))
                     .font(.caption)
                     .foregroundStyle(AppSurfaceTheme.secondaryText)
             }

@@ -67,6 +67,7 @@ private final class FailingRoomRepository: RoomRepositoryProtocol, @unchecked Se
     func createRoom(_ room: RoomRecord) async throws { throw CloudKitDatabaseProviderError.unavailable }
     func fetchRoom(byInviteCode code: String) async throws -> RoomRecord? { throw CloudKitDatabaseProviderError.unavailable }
     func fetchRoom(roomID: String) async throws -> RoomRecord? { throw CloudKitDatabaseProviderError.unavailable }
+    func fetchRooms() async throws -> [RoomRecord] { throw CloudKitDatabaseProviderError.unavailable }
     func updateRoom(_ room: RoomRecord) async throws { throw CloudKitDatabaseProviderError.unavailable }
     func upsertMember(_ member: RoomMemberRecord) async throws { throw CloudKitDatabaseProviderError.unavailable }
     func fetchMembers(roomID: String) async throws -> [RoomMemberRecord] { throw CloudKitDatabaseProviderError.unavailable }

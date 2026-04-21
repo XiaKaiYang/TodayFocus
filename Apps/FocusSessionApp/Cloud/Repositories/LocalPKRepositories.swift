@@ -25,6 +25,10 @@ actor LocalPKRepositoryStore {
         rooms.values.first { $0.inviteCode == inviteCode }
     }
 
+    func fetchRooms() -> [RoomRecord] {
+        Array(rooms.values)
+    }
+
     func saveMember(_ member: RoomMemberRecord) {
         var currentMembers = members[member.roomID] ?? []
         if let index = currentMembers.firstIndex(where: { $0.userID == member.userID }) {
@@ -82,6 +86,10 @@ final class LocalRoomRepository: RoomRepositoryProtocol, @unchecked Sendable {
 
     func fetchRoom(roomID: String) async throws -> RoomRecord? {
         await store.fetchRoom(roomID: roomID)
+    }
+
+    func fetchRooms() async throws -> [RoomRecord] {
+        await store.fetchRooms()
     }
 
     func updateRoom(_ room: RoomRecord) async throws {

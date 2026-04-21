@@ -22,7 +22,7 @@ struct AccountDashboardView: View {
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
         case .profileLoading(let identity):
-            ProgressView("Loading profile for \(identity.displayName)…")
+            ProgressView(AppText.format("Loading profile for %@…", identity.displayName))
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
         case .ready(_, let profile):
@@ -70,9 +70,9 @@ struct AccountDashboardView: View {
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
             HStack(spacing: 32) {
-                statItem(value: "\(profile.totalVerifiedMinutes)", label: "Verified Min")
-                statItem(value: "\(profile.totalWins)", label: "Wins")
-                statItem(value: "\(profile.totalPenaltyCount)", label: "Penalties")
+                statItem(value: "\(profile.totalVerifiedMinutes)", label: AppText.tr("Verified Min"))
+                statItem(value: "\(profile.totalWins)", label: AppText.tr("Wins"))
+                statItem(value: "\(profile.totalPenaltyCount)", label: AppText.tr("Penalties"))
             }
 
             Button("Sign Out") {

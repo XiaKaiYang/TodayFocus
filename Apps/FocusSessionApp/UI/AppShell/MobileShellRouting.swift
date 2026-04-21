@@ -12,15 +12,15 @@ enum MobilePrimaryTab: String, CaseIterable, Hashable, Identifiable {
     var title: String {
         switch self {
         case .tasks:
-            "Today"
+            AppText.tr("Today")
         case .currentSession:
-            "Session"
+            AppText.tr("Session")
         case .plan:
-            "Plan"
+            AppText.tr("Plan")
         case .notes:
-            "Notes"
+            AppText.tr("Notes")
         case .more:
-            "More"
+            AppText.tr("More")
         }
     }
 

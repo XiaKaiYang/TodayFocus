@@ -106,7 +106,7 @@ final class CurrentSessionStatusItemController: NSObject {
         )
         menu.addItem(titleItem)
 
-        if currentSessionViewModel.phaseText != "Idle" {
+        if currentSessionViewModel.sessionState.phase != .idle {
             let detailItem = NSMenuItem(
                 title: "\(currentSessionViewModel.phaseText) • \(currentSessionViewModel.remainingTimeText(at: currentDate))",
                 action: nil,
@@ -119,18 +119,18 @@ final class CurrentSessionStatusItemController: NSObject {
         menu.addItem(.separator())
 
         if currentSessionViewModel.canPauseSession {
-            menu.addItem(actionItem("Pause Session", action: #selector(pauseSession)))
+            menu.addItem(actionItem(AppText.tr("Pause Session"), action: #selector(pauseSession)))
         }
 
         if currentSessionViewModel.canResumeSession {
-            menu.addItem(actionItem("Resume Session", action: #selector(resumeSession)))
+            menu.addItem(actionItem(AppText.tr("Resume Session"), action: #selector(resumeSession)))
         }
 
         if currentSessionViewModel.canFinishSession {
-            menu.addItem(actionItem("Finish Session", action: #selector(finishSession)))
+            menu.addItem(actionItem(AppText.tr("Finish Session"), action: #selector(finishSession)))
         }
 
-        menu.addItem(actionItem("Open TodayFocus", action: #selector(openFocus)))
+        menu.addItem(actionItem(AppText.tr("Open TodayFocus"), action: #selector(openFocus)))
         statusItem.menu = menu
     }
 

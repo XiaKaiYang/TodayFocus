@@ -5,6 +5,7 @@ protocol RoomRepositoryProtocol: Sendable {
     func createRoom(_ room: RoomRecord) async throws
     func fetchRoom(byInviteCode code: String) async throws -> RoomRecord?
     func fetchRoom(roomID: String) async throws -> RoomRecord?
+    func fetchRooms() async throws -> [RoomRecord]
     func updateRoom(_ room: RoomRecord) async throws
     func upsertMember(_ member: RoomMemberRecord) async throws
     func fetchMembers(roomID: String) async throws -> [RoomMemberRecord]
@@ -49,6 +50,15 @@ final class RoomRepository: RoomRepositoryProtocol, @unchecked Sendable {
         }
     }
 
+    func fetchRooms() async throws -> [RoomRecord] {
+        let database = try databaseProvider(databaseScope)
+        let query = CKQuery(recordType: RoomRecord.recordType, predicate: NSPredicate(value: true))
+        let (results, _) = try await database.records(matching: query, desiredKeys: nil)
+        return results.compactMap { _, result in
+            try? result.get()
+        }.compactMap(RoomRecord.init(ckRecord:))
+    }
+
     func updateRoom(_ room: RoomRecord) async throws {
         let database = try databaseProvider(databaseScope)
         let ckRecord = room.toCKRecord()
@@ -86,6 +96,10 @@ final class StubRoomRepository: RoomRepositoryProtocol, @unchecked Sendable {
 
     func fetchRoom(roomID: String) async throws -> RoomRecord? {
         rooms[roomID]
+    }
+
+    func fetchRooms() async throws -> [RoomRecord] {
+        Array(rooms.values)
     }
 
     func updateRoom(_ room: RoomRecord) async throws {

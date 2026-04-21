@@ -26,7 +26,7 @@ final class TrashDashboardViewSourceTests: XCTestCase {
 
         XCTAssertTrue(appSectionSource.contains("case trash"))
         XCTAssertTrue(appSectionSource.contains("case .trash"))
-        XCTAssertTrue(appSectionSource.contains("\"Trash\""))
+        XCTAssertTrue(appSectionSource.contains("\"app.section.trash.title\""))
         XCTAssertTrue(appSectionSource.contains("\"trash\""))
 
         XCTAssertTrue(appShellSource.contains("footerSidebarSections"))

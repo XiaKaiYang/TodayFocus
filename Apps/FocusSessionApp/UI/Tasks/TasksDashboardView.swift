@@ -33,7 +33,7 @@ struct TasksDashboardView: View {
                     headerRow
 
                     if prioritySections.isEmpty {
-                        Text(selectedScope == .today ? "No active tasks" : "No tasks for tomorrow")
+                        Text(selectedScope == .today ? AppText.tr("No active tasks") : AppText.tr("No tasks for tomorrow"))
                             .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundStyle(AppSurfaceTheme.tertiaryText)
                     } else {
@@ -68,7 +68,7 @@ struct TasksDashboardView: View {
 
     private var headerRow: some View {
         HStack(alignment: .center, spacing: 18) {
-            Text(selectedScope == .today ? "Today" : "Tomorrow")
+            Text(selectedScope.title)
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
@@ -88,7 +88,7 @@ struct TasksDashboardView: View {
             taskActionRowContent(task: task, scope: scope)
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("\(task.estimatedMinutes) min")
+                Text(AppText.format("%d min", task.estimatedMinutes))
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(AppSurfaceTheme.tertiaryText)
 
@@ -347,7 +347,7 @@ struct TasksDashboardView: View {
 
     private func taskActionRowContent(task: FocusTask, scope: TasksDashboardScope) -> some View {
         HStack(spacing: 10) {
-            Text("\(task.estimatedMinutes) min")
+            Text(AppText.format("%d min", task.estimatedMinutes))
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.tertiaryText)
 
@@ -458,7 +458,7 @@ struct TasksDashboardView: View {
                                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
-                            Text("\(task.estimatedMinutes) min")
+                            Text(AppText.format("%d min", task.estimatedMinutes))
                                 .font(.system(size: 12, weight: .medium, design: .rounded))
                                 .foregroundStyle(AppSurfaceTheme.secondaryText)
                         }

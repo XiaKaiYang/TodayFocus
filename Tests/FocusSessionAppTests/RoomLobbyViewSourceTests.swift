@@ -24,6 +24,13 @@ final class RoomLobbyViewSourceTests: XCTestCase {
 
         XCTAssertTrue(contents.contains("SignInWithAppleButton"))
         XCTAssertTrue(contents.contains("Sign in to create or join a PK room"))
+        XCTAssertTrue(contents.contains("Create Table"))
+        XCTAssertTrue(contents.contains("Join by Code"))
+        XCTAssertTrue(contents.contains("Refresh"))
+        XCTAssertTrue(contents.contains("arcadeTableCard"))
+        XCTAssertTrue(contents.contains("chairBubble"))
+        XCTAssertTrue(contents.contains("tableNumberPlate"))
+        XCTAssertTrue(contents.contains("hallBackdrop"))
     }
 
     private func makeViewModel() -> RoomLobbyViewModel {

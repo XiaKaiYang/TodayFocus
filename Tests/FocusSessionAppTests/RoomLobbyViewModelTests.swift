@@ -39,6 +39,53 @@ final class RoomLobbyViewModelTests: XCTestCase {
         XCTAssertTrue(vm.canStartSession || vm.members.count == 1)
     }
 
+    func testLoadTableHallSeedsLocalTablesWhenEmpty() async {
+        let accountService = StubAccountService()
+        accountService.stubbedIdentity = AccountIdentity(userID: "u1", displayName: "Alice", email: nil)
+        let accountVM = AccountViewModel(accountService: accountService, profileRepository: StubUserPublicProfileRepository())
+        await accountVM.restoreSession()
+
+        let vm = RoomLobbyViewModel(
+            roomRepository: LocalRoomRepository(store: LocalPKRepositoryStore()),
+            pkSessionRepository: LocalPKSessionRepository(store: LocalPKRepositoryStore()),
+            accountViewModel: accountVM,
+            tableSource: .local
+        )
+
+        await vm.loadTableHall()
+
+        XCTAssertGreaterThanOrEqual(vm.tables.count, 4)
+        XCTAssertTrue(vm.tables.allSatisfy { $0.source == .local })
+    }
+
+    func testSelectOpenTableJoinsAndEntersRoom() async {
+        let roomRepo = StubRoomRepository()
+        let room = RoomRecord(roomID: "r-join", ownerUserID: "owner", title: "Joinable", plannedMinutes: 25, inviteCode: "JOIN01")
+        try! await roomRepo.createRoom(room)
+        try! await roomRepo.upsertMember(
+            RoomMemberRecord(roomID: room.roomID, userID: "owner", role: .owner, readyState: .ready)
+        )
+        let accountService = StubAccountService()
+        accountService.stubbedIdentity = AccountIdentity(userID: "u2", displayName: "Bob", email: nil)
+        let accountVM = AccountViewModel(accountService: accountService, profileRepository: StubUserPublicProfileRepository())
+        await accountVM.restoreSession()
+        let vm = RoomLobbyViewModel(
+            roomRepository: roomRepo,
+            pkSessionRepository: StubPKSessionRepository(),
+            accountViewModel: accountVM
+        )
+
+        await vm.loadTableHall()
+        guard let table = vm.tables.first else {
+            XCTFail("Expected at least one table")
+            return
+        }
+        await vm.selectTable(table)
+
+        XCTAssertEqual(vm.currentRoom?.roomID, room.roomID)
+        XCTAssertEqual(vm.currentMembership?.role, .member)
+    }
+
     func testStartSessionBindsCurrentSessionAndStartsSupervision() async throws {
         let (vm, _, _, currentSessionViewModel, pkCoordinator, supervisionCoordinator) = try makeBoundHarness()
 

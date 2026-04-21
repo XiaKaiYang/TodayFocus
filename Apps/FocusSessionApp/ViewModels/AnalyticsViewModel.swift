@@ -12,88 +12,88 @@ enum DashboardTimeScope: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .day:
-            "Day"
+            AppText.tr("Day")
         case .week:
-            "Week"
+            AppText.tr("Week")
         case .month:
-            "Month"
+            AppText.tr("Month")
         }
     }
 
     var noteListEmptyTitle: String {
         switch self {
         case .day:
-            "Nothing saved today"
+            AppText.tr("Nothing saved today")
         case .week:
-            "Nothing saved this week"
+            AppText.tr("Nothing saved this week")
         case .month:
-            "Nothing saved this month"
+            AppText.tr("Nothing saved this month")
         }
     }
 
     var noteListEmptyMessage: String {
         switch self {
         case .day:
-            "Notes from sessions that end today will appear here."
+            AppText.tr("Notes from sessions that end today will appear here.")
         case .week:
-            "Notes from sessions that end this week will appear here."
+            AppText.tr("Notes from sessions that end this week will appear here.")
         case .month:
-            "Notes from sessions that end this month will appear here."
+            AppText.tr("Notes from sessions that end this month will appear here.")
         }
     }
 
     var noteDetailEmptyTitle: String {
         switch self {
         case .day:
-            "No Notes Today"
+            AppText.tr("No Notes Today")
         case .week:
-            "No Notes This Week"
+            AppText.tr("No Notes This Week")
         case .month:
-            "No Notes This Month"
+            AppText.tr("No Notes This Month")
         }
     }
 
     var noteDetailEmptyMessage: String {
         switch self {
         case .day:
-            "Finish a session today and capture a note. It will show up here right away."
+            AppText.tr("Finish a session today and capture a note. It will show up here right away.")
         case .week:
-            "Finish a session this week and capture a note. It will show up here right away."
+            AppText.tr("Finish a session this week and capture a note. It will show up here right away.")
         case .month:
-            "Finish a session this month and capture a note. It will show up here right away."
+            AppText.tr("Finish a session this month and capture a note. It will show up here right away.")
         }
     }
 
     var analyticsTrendTitle: String {
         switch self {
         case .day:
-            "Today's Sessions"
+            AppText.tr("Today's Sessions")
         case .week:
-            "This Week"
+            AppText.tr("This Week")
         case .month:
-            "This Month by Week"
+            AppText.tr("This Month by Week")
         }
     }
 
     var analyticsTopTasksTitle: String {
         switch self {
         case .day:
-            "Top Tasks Today"
+            AppText.tr("Top Tasks Today")
         case .week:
-            "Top Tasks This Week"
+            AppText.tr("Top Tasks This Week")
         case .month:
-            "Top Tasks This Month"
+            AppText.tr("Top Tasks This Month")
         }
     }
 
     var analyticsRecentTitle: String {
         switch self {
         case .day:
-            "Completed Sessions Today"
+            AppText.tr("Completed Sessions Today")
         case .week:
-            "Completed Sessions This Week"
+            AppText.tr("Completed Sessions This Week")
         case .month:
-            "Completed Sessions This Month"
+            AppText.tr("Completed Sessions This Month")
         }
     }
 
@@ -186,14 +186,14 @@ enum DashboardTimeScope: String, CaseIterable, Identifiable {
             let normalizedReference = calendar.startOfDay(for: referenceDate)
             let normalizedNow = calendar.startOfDay(for: now)
             if calendar.isDate(normalizedReference, inSameDayAs: normalizedNow) {
-                return "Today"
+                return AppText.tr("Today")
             }
             return normalizedReference.formatted(.dateTime.month(.wide).day())
         case .week:
             let window = timeWindow(containing: referenceDate, calendar: calendar)
             let currentWindow = timeWindow(containing: now, calendar: calendar)
             if window == currentWindow {
-                return "This week"
+                return AppText.tr("This week")
             }
             let inclusiveEnd = calendar.date(byAdding: .day, value: -1, to: window.end) ?? window.start
             return "\(window.start.formatted(.dateTime.month(.abbreviated).day())) - \(inclusiveEnd.formatted(.dateTime.month(.abbreviated).day()))"
@@ -201,7 +201,7 @@ enum DashboardTimeScope: String, CaseIterable, Identifiable {
             let window = timeWindow(containing: referenceDate, calendar: calendar)
             let currentWindow = timeWindow(containing: now, calendar: calendar)
             if window == currentWindow {
-                return "This month"
+                return AppText.tr("This month")
             }
             return "\(window.start.formatted(.dateTime.year())) \(window.start.formatted(.dateTime.month(.wide)))"
         }
@@ -333,11 +333,11 @@ struct AnalyticsMoodRow: Equatable, Identifiable {
     var title: String {
         switch mood {
         case .focused:
-            "Focused"
+            AppText.tr("Focused")
         case .neutral:
-            "Neutral"
+            AppText.tr("Neutral")
         case .distracted:
-            "Distracted"
+            AppText.tr("Distracted")
         }
     }
 
@@ -409,7 +409,7 @@ final class AnalyticsViewModel: ObservableObject {
             applyTimeWindow()
             errorMessage = nil
         } catch {
-            errorMessage = "Unable to load analytics."
+            errorMessage = AppText.tr("Unable to load analytics.")
             allRecords = []
             summary = AnalyticsSummary()
             trendBuckets = []
@@ -508,7 +508,7 @@ final class AnalyticsViewModel: ObservableObject {
     private func intentionBreakdowns(from records: [FocusSessionRecord]) -> [AnalyticsFocusRow] {
         Dictionary(grouping: records) { record in
             let trimmedIntention = record.intention.trimmingCharacters(in: .whitespacesAndNewlines)
-            return trimmedIntention.isEmpty ? "Untitled Focus" : trimmedIntention
+            return trimmedIntention.isEmpty ? AppText.tr("Untitled Focus") : trimmedIntention
         }
         .map { title, groupedRecords in
             AnalyticsFocusRow(
@@ -580,7 +580,7 @@ final class AnalyticsViewModel: ObservableObject {
                     totalSeconds: record.durationSeconds,
                     sessionCount: 1,
                     supportingText: record.intention.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        ? "Untitled focus block"
+                        ? AppText.tr("Untitled focus block")
                         : record.intention
                 )
             }
@@ -596,7 +596,11 @@ final class AnalyticsViewModel: ObservableObject {
                     title: day.formatted(.dateTime.weekday(.wide)),
                     totalSeconds: dayRecords.reduce(0) { $0 + $1.durationSeconds },
                     sessionCount: dayRecords.count,
-                    supportingText: "\(day.formatted(.dateTime.month(.abbreviated).day())) · \(dayRecords.count) sessions"
+                    supportingText: AppText.format(
+                        "%@ · %d sessions",
+                        day.formatted(.dateTime.month(.abbreviated).day()),
+                        dayRecords.count
+                    )
                 )
             }
         case .month:
@@ -623,7 +627,7 @@ final class AnalyticsViewModel: ObservableObject {
                         title: title,
                         totalSeconds: bucketRecords.reduce(0) { $0 + $1.durationSeconds },
                         sessionCount: bucketRecords.count,
-                        supportingText: "\(bucketRecords.count) sessions"
+                        supportingText: AppText.format("%d sessions", bucketRecords.count)
                     )
                 )
 
