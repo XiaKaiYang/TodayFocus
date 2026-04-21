@@ -42,6 +42,7 @@ struct AppShellView: View {
     @StateObject private var settingsViewModel: SettingsViewModel
     @StateObject private var accountViewModel: AccountViewModel
     @StateObject private var roomLobbyViewModel: RoomLobbyViewModel
+    @StateObject private var leaderboardViewModel: LeaderboardViewModel
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     @State private var sectionRefreshTask: Task<Void, Never>?
     @Namespace private var sidebarSelectionAnimation
@@ -125,6 +126,7 @@ struct AppShellView: View {
                 accountViewModel: resolvedAccountViewModel
             )
         )
+        _leaderboardViewModel = StateObject(wrappedValue: LeaderboardViewModel())
     }
 
     var body: some View {
