@@ -1,3 +1,4 @@
+import AuthenticationServices
 import SwiftUI
 
 struct RoomLobbyView: View {
@@ -48,16 +49,38 @@ struct RoomLobbyView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 340)
 
+            if viewModel.isSignedIn == false {
+                VStack(spacing: 12) {
+                    Text("Sign in to create or join a PK room.")
+                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                        .foregroundStyle(AppSurfaceTheme.secondaryText)
+                        .multilineTextAlignment(.center)
+
+                    SignInWithAppleButton(.signIn) { request in
+                        request.requestedScopes = [.fullName, .email]
+                    } onCompletion: { _ in
+                        viewModel.signIn()
+                    }
+                    .signInWithAppleButtonStyle(.white)
+                    .frame(width: 240, height: 44)
+                }
+            } else if let accountDisplayName = viewModel.accountDisplayName {
+                Text("Signed in as \(accountDisplayName)")
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .foregroundStyle(AppSurfaceTheme.secondaryText)
+            }
+
             HStack(spacing: 16) {
                 Button("Create Room") {
                     showCreateSheet = true
                 }
+                .disabled(viewModel.isSignedIn == false)
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.white.opacity(0.2))
+                        .fill(viewModel.isSignedIn ? Color.white.opacity(0.2) : Color.white.opacity(0.08))
                 )
                 .foregroundStyle(AppSurfaceTheme.primaryText)
                 .buttonStyle(.plain)
@@ -65,12 +88,13 @@ struct RoomLobbyView: View {
                 Button("Join Room") {
                     showJoinSheet = true
                 }
+                .disabled(viewModel.isSignedIn == false)
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
                 .background(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(Color.white.opacity(0.1))
+                        .fill(viewModel.isSignedIn ? Color.white.opacity(0.1) : Color.white.opacity(0.05))
                 )
                 .foregroundStyle(AppSurfaceTheme.primaryText)
                 .buttonStyle(.plain)

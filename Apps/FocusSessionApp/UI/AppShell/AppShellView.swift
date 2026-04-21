@@ -41,6 +41,8 @@ struct AppShellView: View {
     @StateObject private var blockerViewModel: BlockerViewModel
     @StateObject private var settingsViewModel: SettingsViewModel
     @StateObject private var accountViewModel: AccountViewModel
+    @StateObject private var pkSessionCoordinator: PKSessionCoordinator
+    @StateObject private var supervisionCoordinator: SupervisionCoordinator
     @StateObject private var roomLobbyViewModel: RoomLobbyViewModel
     @StateObject private var leaderboardViewModel: LeaderboardViewModel
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
@@ -84,6 +86,11 @@ struct AppShellView: View {
         let resolvedWhiteNoiseViewModel = WhiteNoiseViewModel(
             preferencesStore: resolvedPreferencesStore
         )
+        let resolvedAccountViewModel = AccountViewModel()
+        let resolvedPKSessionCoordinator = PKSessionCoordinator()
+        let resolvedSupervisionCoordinator = SupervisionCoordinator(
+            accountViewModel: resolvedAccountViewModel
+        )
         let resolvedSettingsViewModel = SettingsViewModel(
             preferencesStore: resolvedPreferencesStore,
             onDataChanged: {
@@ -95,6 +102,7 @@ struct AppShellView: View {
                 resolvedBlockerViewModel.load()
             }
         )
+        resolvedSettingsViewModel.bindSupervisionCoordinator(resolvedSupervisionCoordinator)
 
         _viewModel = StateObject(
             wrappedValue: AppShellViewModel(
@@ -116,17 +124,26 @@ struct AppShellView: View {
         _analyticsViewModel = StateObject(wrappedValue: resolvedAnalyticsViewModel)
         _blockerViewModel = StateObject(wrappedValue: resolvedBlockerViewModel)
         _settingsViewModel = StateObject(wrappedValue: resolvedSettingsViewModel)
-
-        let resolvedAccountViewModel = AccountViewModel()
         _accountViewModel = StateObject(wrappedValue: resolvedAccountViewModel)
+        _pkSessionCoordinator = StateObject(wrappedValue: resolvedPKSessionCoordinator)
+        _supervisionCoordinator = StateObject(wrappedValue: resolvedSupervisionCoordinator)
+        let resolvedRoomRepository = PKRepositoryFactory.makeRoomRepository()
+        let resolvedPKSessionRepository = PKRepositoryFactory.makePKSessionRepository()
         _roomLobbyViewModel = StateObject(
             wrappedValue: RoomLobbyViewModel(
-                roomRepository: RoomRepository(),
-                pkSessionRepository: PKSessionRepository(),
-                accountViewModel: resolvedAccountViewModel
+                roomRepository: resolvedRoomRepository,
+                pkSessionRepository: resolvedPKSessionRepository,
+                accountViewModel: resolvedAccountViewModel,
+                currentSessionViewModel: resolvedCurrentSessionViewModel,
+                pkSessionCoordinator: resolvedPKSessionCoordinator,
+                supervisionCoordinator: resolvedSupervisionCoordinator
             )
         )
-        _leaderboardViewModel = StateObject(wrappedValue: LeaderboardViewModel())
+        _leaderboardViewModel = StateObject(
+            wrappedValue: LeaderboardViewModel(
+                repository: PKRepositoryFactory.makeLeaderboardRepository()
+            )
+        )
     }
 
     var body: some View {
@@ -188,6 +205,10 @@ struct AppShellView: View {
         .onAppear {
             syncBlockerWithSession()
             syncBackgroundSound()
+            Task {
+                await accountViewModel.restoreSession()
+                await settingsViewModel.refreshSupervisionEligibility()
+            }
         }
         .onOpenURL { url in
             viewModel.handleIncomingURL(url)
@@ -201,6 +222,11 @@ struct AppShellView: View {
         }
         .onChange(of: preferencesStore.preferences) { _, _ in
             syncBackgroundSound()
+        }
+        .onChange(of: accountViewModel.state) { _, _ in
+            Task {
+                await settingsViewModel.refreshSupervisionEligibility()
+            }
         }
         .onChange(of: viewModel.selectedSection) { _, newSection in
             guard let newSection else { return }

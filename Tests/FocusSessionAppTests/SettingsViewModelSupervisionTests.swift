@@ -43,6 +43,21 @@ final class SettingsViewModelSupervisionTests: XCTestCase {
         }
     }
 
+    func testRefreshSupervisionEligibilityPullsLatestCoordinatorState() async throws {
+        let vm = makeViewModel()
+        let coordinator = StubSupervisionCoordinator()
+        coordinator.permissionSnapshot = SupervisionPermissionSnapshot(
+            isSignedIn: true,
+            cameraPermission: .authorized,
+            screenRecordingPermission: .authorized
+        )
+
+        vm.bindSupervisionCoordinator(coordinator)
+        await vm.refreshSupervisionEligibility()
+
+        XCTAssertEqual(vm.supervisionEligibility, .eligible)
+    }
+
     private func makeViewModel() -> SettingsViewModel {
         let suiteName = UUID().uuidString
         let defaults = UserDefaults(suiteName: suiteName)!

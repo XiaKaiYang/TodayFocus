@@ -222,6 +222,30 @@ final class AppShellViewModelTests: XCTestCase {
         XCTAssertTrue(projectContents.contains("- todayfocus"))
     }
 
+    func testAppShellRestoresAccountSessionOnAppear() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let appShellFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/AppShell/AppShellView.swift")
+        let appShellContents = try String(contentsOf: appShellFileURL, encoding: .utf8)
+
+        XCTAssertTrue(appShellContents.contains("await accountViewModel.restoreSession()"))
+    }
+
+    func testAppShellUsesPKRepositoryFactoryForFallbackMode() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let appShellFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/AppShell/AppShellView.swift")
+        let appShellContents = try String(contentsOf: appShellFileURL, encoding: .utf8)
+
+        XCTAssertTrue(appShellContents.contains("PKRepositoryFactory.makeRoomRepository()"))
+        XCTAssertTrue(appShellContents.contains("PKRepositoryFactory.makePKSessionRepository()"))
+        XCTAssertTrue(appShellContents.contains("PKRepositoryFactory.makeLeaderboardRepository()"))
+    }
+
     func testAppShellSharesAnalyticsViewModelAndRefreshesHistoryConsumersAfterSessionSubmit() throws {
         let root = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()

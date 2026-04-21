@@ -11,21 +11,25 @@ protocol RoomRepositoryProtocol: Sendable {
 }
 
 final class RoomRepository: RoomRepositoryProtocol, @unchecked Sendable {
-    private let databaseProvider: @Sendable () -> CKDatabase
-    private var database: CKDatabase { databaseProvider() }
+    let databaseScope: CKDatabase.Scope
+    private let databaseProvider: @Sendable (CKDatabase.Scope) throws -> CKDatabase
 
-    init(databaseProvider: @escaping @Sendable () -> CKDatabase = {
-        CKContainer(identifier: "iCloud.com.example.FocusSession").publicCloudDatabase
-    }) {
+    init(
+        databaseScope: CKDatabase.Scope = .private,
+        databaseProvider: @escaping @Sendable (CKDatabase.Scope) throws -> CKDatabase = CloudKitDatabaseProvider.makeDatabase
+    ) {
+        self.databaseScope = databaseScope
         self.databaseProvider = databaseProvider
     }
 
     func createRoom(_ room: RoomRecord) async throws {
+        let database = try databaseProvider(databaseScope)
         let ckRecord = room.toCKRecord()
         try await database.save(ckRecord)
     }
 
     func fetchRoom(byInviteCode code: String) async throws -> RoomRecord? {
+        let database = try databaseProvider(databaseScope)
         let predicate = NSPredicate(format: "inviteCode == %@", code)
         let query = CKQuery(recordType: RoomRecord.recordType, predicate: predicate)
         let (results, _) = try await database.records(matching: query, desiredKeys: nil)
@@ -35,6 +39,7 @@ final class RoomRepository: RoomRepositoryProtocol, @unchecked Sendable {
     }
 
     func fetchRoom(roomID: String) async throws -> RoomRecord? {
+        let database = try databaseProvider(databaseScope)
         let recordID = CKRecord.ID(recordName: roomID)
         do {
             let ckRecord = try await database.record(for: recordID)
@@ -45,16 +50,19 @@ final class RoomRepository: RoomRepositoryProtocol, @unchecked Sendable {
     }
 
     func updateRoom(_ room: RoomRecord) async throws {
+        let database = try databaseProvider(databaseScope)
         let ckRecord = room.toCKRecord()
         try await database.save(ckRecord)
     }
 
     func upsertMember(_ member: RoomMemberRecord) async throws {
+        let database = try databaseProvider(databaseScope)
         let ckRecord = member.toCKRecord()
         try await database.save(ckRecord)
     }
 
     func fetchMembers(roomID: String) async throws -> [RoomMemberRecord] {
+        let database = try databaseProvider(databaseScope)
         let predicate = NSPredicate(format: "roomID == %@", roomID)
         let query = CKQuery(recordType: RoomMemberRecord.recordType, predicate: predicate)
         let (results, _) = try await database.records(matching: query, desiredKeys: nil)

@@ -33,15 +33,29 @@ final class SupervisionCoordinator: ObservableObject, SupervisionCoordinatorProt
     private let accountViewModel: AccountViewModel
     private let supervisionRepository: any SupervisionRepositoryProtocol
     private let evidenceCaptureService: any EvidenceCaptureServiceProtocol
+    private let seatMonitorFactory: @MainActor @Sendable () -> any SeatMonitorProtocol
+    private let activityMonitorFactory: @MainActor @Sendable () -> any ActivityMonitorProtocol
 
     init(
         accountViewModel: AccountViewModel,
         supervisionRepository: any SupervisionRepositoryProtocol = SupervisionRepository(),
-        evidenceCaptureService: any EvidenceCaptureServiceProtocol = EvidenceCaptureService()
+        evidenceCaptureService: any EvidenceCaptureServiceProtocol = EvidenceCaptureService(),
+        seatMonitorFactory: @escaping @MainActor @Sendable () -> any SeatMonitorProtocol = {
+            #if os(macOS)
+            return SeatMonitor(pipeline: SeatMonitorFramePipeline())
+            #else
+            return StubSeatMonitor()
+            #endif
+        },
+        activityMonitorFactory: @escaping @MainActor @Sendable () -> any ActivityMonitorProtocol = {
+            ActivityMonitor()
+        }
     ) {
         self.accountViewModel = accountViewModel
         self.supervisionRepository = supervisionRepository
         self.evidenceCaptureService = evidenceCaptureService
+        self.seatMonitorFactory = seatMonitorFactory
+        self.activityMonitorFactory = activityMonitorFactory
     }
 
     func checkPermissions() async {
@@ -57,10 +71,10 @@ final class SupervisionCoordinator: ObservableObject, SupervisionCoordinatorProt
 
     func startSupervision(sessionID: String, roomID: String, userID: String) {
         currentStateSnapshot = SupervisionStateSnapshot(sessionID: sessionID, roomID: roomID, userID: userID)
-        let monitor = SeatMonitor(pipeline: StubSeatMonitorFramePipeline())
+        let monitor = seatMonitorFactory()
         monitor.start()
         seatMonitor = monitor
-        let activityMon = ActivityMonitor()
+        let activityMon = activityMonitorFactory()
         activityMon.start()
         activityMonitor = activityMon
     }
@@ -82,6 +96,16 @@ final class SupervisionCoordinator: ObservableObject, SupervisionCoordinatorProt
             violationType: type
         )
         try? await supervisionRepository.recordViolation(event)
+
+        if let evidenceData = await evidenceCaptureService.captureEvidence(for: event.eventID) {
+            let evidence = ViolationEvidenceRecord(
+                eventID: event.eventID,
+                sessionID: snapshot.sessionID,
+                userID: snapshot.userID,
+                imageDataBase64: evidenceData.base64EncodedString()
+            )
+            try? await supervisionRepository.uploadEvidence(evidence)
+        }
     }
 
     private func checkCameraPermission() async -> CameraPermissionState {

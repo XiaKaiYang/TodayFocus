@@ -28,6 +28,27 @@ final class AccountViewModelTests: XCTestCase {
         XCTAssertEqual(saved?.displayName, "Bob")
     }
 
+    func testRestoreSessionFallsBackToLocalProfileWhenCloudSyncUnavailable() async {
+        let stub = StubAccountService()
+        stub.stubbedIdentity = AccountIdentity(userID: "u-local", displayName: "Local User", email: nil)
+        let profileRepo = SpyUserPublicProfileRepository()
+        let vm = makeViewModel(
+            accountService: stub,
+            profileRepository: profileRepo,
+            cloudProfileSyncAvailabilityProvider: { false }
+        )
+
+        await vm.restoreSession()
+
+        XCTAssertEqual(vm.displayName, "Local User")
+        XCTAssertTrue(vm.isSignedIn)
+        XCTAssertEqual(vm.currentProfile?.userID, "u-local")
+        let fetchCallCount = await profileRepo.fetchCallCount
+        let upsertCallCount = await profileRepo.upsertCallCount
+        XCTAssertEqual(fetchCallCount, 0)
+        XCTAssertEqual(upsertCallCount, 0)
+    }
+
     func testSignOutReturnsToSignedOutState() async {
         let stub = StubAccountService()
         stub.stubbedIdentity = AccountIdentity(userID: "u3", displayName: "Carol", email: nil)
@@ -39,8 +60,27 @@ final class AccountViewModelTests: XCTestCase {
 
     private func makeViewModel(
         accountService: any AccountServicing = StubAccountService(),
-        profileRepository: any UserPublicProfileRepositoryProtocol = StubUserPublicProfileRepository()
+        profileRepository: any UserPublicProfileRepositoryProtocol = StubUserPublicProfileRepository(),
+        cloudProfileSyncAvailabilityProvider: @escaping @Sendable () -> Bool = { true }
     ) -> AccountViewModel {
-        AccountViewModel(accountService: accountService, profileRepository: profileRepository)
+        AccountViewModel(
+            accountService: accountService,
+            profileRepository: profileRepository,
+            cloudProfileSyncAvailabilityProvider: cloudProfileSyncAvailabilityProvider
+        )
+    }
+}
+
+private actor SpyUserPublicProfileRepository: UserPublicProfileRepositoryProtocol {
+    private(set) var fetchCallCount = 0
+    private(set) var upsertCallCount = 0
+
+    func fetch(userID: String) async throws -> UserPublicProfileRecord? {
+        fetchCallCount += 1
+        return nil
+    }
+
+    func upsert(_ record: UserPublicProfileRecord) async throws {
+        upsertCallCount += 1
     }
 }

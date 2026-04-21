@@ -3,6 +3,12 @@ import XCTest
 
 @MainActor
 final class PKSessionRepositoryTests: XCTestCase {
+    func testPKSessionRepositoryDefaultsToPrivateCloudDatabaseScope() {
+        let repo = PKSessionRepository()
+
+        XCTAssertEqual(repo.databaseScope, .private)
+    }
+
     func testCreateSessionAndFetch() async throws {
         let repo = StubPKSessionRepository()
         let session = PKSessionRecord(sessionID: "s1", roomID: "r1", plannedMinutes: 25)

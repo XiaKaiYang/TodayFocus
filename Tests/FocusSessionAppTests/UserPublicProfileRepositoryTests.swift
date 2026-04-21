@@ -3,6 +3,12 @@ import XCTest
 
 @MainActor
 final class UserPublicProfileRepositoryTests: XCTestCase {
+    func testUserPublicProfileRepositoryDefaultsToPublicCloudDatabaseScope() {
+        let repo = UserPublicProfileRepository()
+
+        XCTAssertEqual(repo.databaseScope, .public)
+    }
+
     func testFetchReturnsNilForMissingProfile() async throws {
         let repo = StubUserPublicProfileRepository()
         let result = try await repo.fetch(userID: "missing")

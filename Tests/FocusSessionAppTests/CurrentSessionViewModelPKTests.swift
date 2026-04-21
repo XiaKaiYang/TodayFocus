@@ -19,6 +19,19 @@ final class CurrentSessionViewModelPKTests: XCTestCase {
         XCTAssertNil(harness.viewModel.pkCoordinator)
     }
 
+    func testStartPKLinkedSessionStartsFocusWithoutTaskSelection() async throws {
+        let harness = try makeHarness()
+        let stub = StubPKSessionCoordinator()
+
+        harness.viewModel.bindPKSession(roomID: "r1", sessionID: "s1", coordinator: stub)
+        harness.viewModel.startPKLinkedSession(title: "PK Room Session", plannedMinutes: 25)
+        await Task.yield()
+
+        XCTAssertEqual(harness.viewModel.sessionState.phase, .focusing)
+        XCTAssertEqual(harness.viewModel.currentIntention, "PK Room Session")
+        XCTAssertTrue(stub.didStartCalled)
+    }
+
     private struct Harness {
         let viewModel: CurrentSessionViewModel
         let tasksRepository: TasksRepository

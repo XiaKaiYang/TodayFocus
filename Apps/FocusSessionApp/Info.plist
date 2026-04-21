@@ -18,10 +18,23 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>TodayFocus</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>todayfocus</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>15.0</string>
+	<key>NSCameraUsageDescription</key>
+	<string>TodayFocus uses the camera to verify seat presence during supervised PK sessions.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticTermination</key>

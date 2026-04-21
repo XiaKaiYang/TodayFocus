@@ -23,8 +23,11 @@ settings:
     MARKETING_VERSION: 0.1.0
     MACOSX_DEPLOYMENT_TARGET: 15.0
     SWIFT_VERSION: 6.0
-    CODE_SIGNING_ALLOWED: NO
-    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGNING_ALLOWED: $(FOCUSSESSION_CODE_SIGNING_ALLOWED)
+    CODE_SIGNING_REQUIRED: $(FOCUSSESSION_CODE_SIGNING_REQUIRED)
+    CODE_SIGN_STYLE: $(FOCUSSESSION_CODE_SIGN_STYLE)
+    CODE_SIGN_IDENTITY: $(FOCUSSESSION_CODE_SIGN_IDENTITY)
+    DEVELOPMENT_TEAM: $(FOCUSSESSION_DEVELOPMENT_TEAM)
     ENABLE_HARDENED_RUNTIME: NO
     GENERATE_INFOPLIST_FILE: YES
 
@@ -44,7 +47,12 @@ targets:
       path: Apps/FocusSessionApp/Info.plist
       properties:
         CFBundleDisplayName: TodayFocus
+        CFBundleURLTypes:
+          - CFBundleURLName: TodayFocus
+            CFBundleURLSchemes:
+              - todayfocus
         LSMinimumSystemVersion: "15.0"
+        NSCameraUsageDescription: TodayFocus uses the camera to verify seat presence during supervised PK sessions.
         NSPrincipalClass: NSApplication
         NSSupportsAutomaticTermination: true
         NSSupportsSuddenTermination: false
@@ -91,6 +99,16 @@ targets:
         CFBundleDisplayName: TodayFocus
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
     entitlements:
       path: Config/Entitlements/FocusSessionMobileApp.entitlements
       properties:
@@ -128,64 +146,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Helper
         PRODUCT_NAME: FocusSessionHelper
-        SKIP_INSTALL: YES
-
-  FocusSessionWidget:
-    type: app-extension
-    platform: macOS
-    sources:
-      - path: Extensions/FocusSessionWidget
-    dependencies:
-      - package: FocusSessionCore
-    info:
-      path: Extensions/FocusSessionWidget/Info.plist
-      properties:
-        CFBundleDisplayName: FocusSessionWidget
-        LSMinimumSystemVersion: "15.0"
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
-    entitlements:
-      path: Config/Entitlements/FocusSessionWidget.entitlements
-      properties:
-        com.apple.security.app-sandbox: true
-        com.apple.security.application-groups:
-          - group.com.example.FocusSession
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Widget
-        PRODUCT_NAME: FocusSessionWidget
-        SKIP_INSTALL: YES
-
-  FocusSessionIntents:
-    type: app-extension
-    platform: macOS
-    sources:
-      - path: Extensions/FocusSessionIntents
-    dependencies:
-      - package: FocusSessionCore
-    info:
-      path: Extensions/FocusSessionIntents/Info.plist
-      properties:
-        CFBundleDisplayName: FocusSessionIntents
-        LSMinimumSystemVersion: "15.0"
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.intents-service
-          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).IntentHandler
-          NSExtensionAttributes:
-            IntentsSupported:
-              - StartSessionIntent
-              - TogglePauseIntent
-              - TotalFocusTimeIntent
-    entitlements:
-      path: Config/Entitlements/FocusSessionIntents.entitlements
-      properties:
-        com.apple.security.app-sandbox: true
-        com.apple.security.application-groups:
-          - group.com.example.FocusSession
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Intents
-        PRODUCT_NAME: FocusSessionIntents
         SKIP_INSTALL: YES
 
   FocusSessionSafari:

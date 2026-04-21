@@ -1,5 +1,6 @@
 import XCTest
 @testable import FocusSession
+import SwiftData
 
 @MainActor
 final class RoomLobbyViewModelTests: XCTestCase {
@@ -38,6 +39,17 @@ final class RoomLobbyViewModelTests: XCTestCase {
         XCTAssertTrue(vm.canStartSession || vm.members.count == 1)
     }
 
+    func testStartSessionBindsCurrentSessionAndStartsSupervision() async throws {
+        let (vm, _, _, currentSessionViewModel, pkCoordinator, supervisionCoordinator) = try makeBoundHarness()
+
+        await vm.createRoom(title: "Bound Room", plannedMinutes: 25)
+        await vm.startSession()
+
+        XCTAssertTrue((currentSessionViewModel.pkCoordinator as? StubPKSessionCoordinator) === pkCoordinator)
+        XCTAssertEqual(supervisionCoordinator.currentStateSnapshot?.roomID, vm.currentRoom?.roomID)
+        XCTAssertEqual(supervisionCoordinator.currentStateSnapshot?.sessionID, vm.currentRoom?.currentSessionID)
+    }
+
     private func makeHarness() -> (RoomLobbyViewModel, StubRoomRepository, StubPKSessionRepository) {
         let roomRepo = StubRoomRepository()
         let pkRepo = StubPKSessionRepository()
@@ -47,5 +59,37 @@ final class RoomLobbyViewModelTests: XCTestCase {
         Task { await accountVM.restoreSession() }
         let vm = RoomLobbyViewModel(roomRepository: roomRepo, pkSessionRepository: pkRepo, accountViewModel: accountVM)
         return (vm, roomRepo, pkRepo)
+    }
+
+    private func makeBoundHarness() throws -> (RoomLobbyViewModel, StubRoomRepository, StubPKSessionRepository, CurrentSessionViewModel, StubPKSessionCoordinator, StubSupervisionCoordinator) {
+        let roomRepo = StubRoomRepository()
+        let pkRepo = StubPKSessionRepository()
+        let accountService = StubAccountService()
+        accountService.stubbedIdentity = AccountIdentity(userID: "u1", displayName: "Alice", email: nil)
+        let accountVM = AccountViewModel(accountService: accountService, profileRepository: StubUserPublicProfileRepository())
+        let currentSessionViewModel = try makeCurrentSessionViewModel()
+        let pkCoordinator = StubPKSessionCoordinator()
+        let supervisionCoordinator = StubSupervisionCoordinator()
+        let vm = RoomLobbyViewModel(
+            roomRepository: roomRepo,
+            pkSessionRepository: pkRepo,
+            accountViewModel: accountVM,
+            currentSessionViewModel: currentSessionViewModel,
+            pkSessionCoordinator: pkCoordinator,
+            supervisionCoordinator: supervisionCoordinator
+        )
+        return (vm, roomRepo, pkRepo, currentSessionViewModel, pkCoordinator, supervisionCoordinator)
+    }
+
+    private func makeCurrentSessionViewModel() throws -> CurrentSessionViewModel {
+        let container = try FocusSessionModelContainer.makeInMemory()
+        let context = ModelContext(container)
+        let tasksRepo = TasksRepository(modelContext: context)
+        let focusRepo = FocusSessionRepository(modelContext: context)
+        return CurrentSessionViewModel(
+            snapshotStore: nil,
+            focusSessionRepository: focusRepo,
+            tasksRepository: tasksRepo
+        )
     }
 }

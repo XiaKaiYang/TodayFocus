@@ -12,6 +12,8 @@ final class RoomLobbyViewModel: ObservableObject {
     private let roomRepository: any RoomRepositoryProtocol
     private let pkSessionRepository: any PKSessionRepositoryProtocol
     private let accountViewModel: AccountViewModel
+    private let currentSessionViewModel: CurrentSessionViewModel?
+    private let pkSessionCoordinator: (any PKSessionCoordinatorProtocol)?
     private(set) var supervisionCoordinator: (any SupervisionCoordinatorProtocol)?
 
     var canStartSession: Bool {
@@ -20,16 +22,22 @@ final class RoomLobbyViewModel: ObservableObject {
     }
 
     var inviteCode: String? { currentRoom?.inviteCode }
+    var isSignedIn: Bool { accountViewModel.isSignedIn }
+    var accountDisplayName: String? { accountViewModel.displayName }
 
     init(
         roomRepository: any RoomRepositoryProtocol,
         pkSessionRepository: any PKSessionRepositoryProtocol,
         accountViewModel: AccountViewModel,
+        currentSessionViewModel: CurrentSessionViewModel? = nil,
+        pkSessionCoordinator: (any PKSessionCoordinatorProtocol)? = nil,
         supervisionCoordinator: (any SupervisionCoordinatorProtocol)? = nil
     ) {
         self.roomRepository = roomRepository
         self.pkSessionRepository = pkSessionRepository
         self.accountViewModel = accountViewModel
+        self.currentSessionViewModel = currentSessionViewModel
+        self.pkSessionCoordinator = pkSessionCoordinator
         self.supervisionCoordinator = supervisionCoordinator
     }
 
@@ -127,6 +135,29 @@ final class RoomLobbyViewModel: ObservableObject {
             updatedRoom.currentSessionID = sessionID
             try await roomRepository.updateRoom(updatedRoom)
             currentRoom = updatedRoom
+
+            if let pkSessionCoordinator {
+                currentSessionViewModel?.bindPKSession(
+                    roomID: updatedRoom.roomID,
+                    sessionID: sessionID,
+                    coordinator: pkSessionCoordinator
+                )
+                currentSessionViewModel?.startPKLinkedSession(
+                    title: updatedRoom.title,
+                    plannedMinutes: updatedRoom.plannedMinutes
+                )
+            }
+
+            if let supervisionCoordinator, let userID = currentUserID() {
+                await supervisionCoordinator.checkPermissions()
+                if case .eligible = supervisionCoordinator.eligibility {
+                    supervisionCoordinator.startSupervision(
+                        sessionID: sessionID,
+                        roomID: updatedRoom.roomID,
+                        userID: userID
+                    )
+                }
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -140,6 +171,8 @@ final class RoomLobbyViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+        currentSessionViewModel?.unbindPKSession()
+        supervisionCoordinator?.stopSupervision()
         currentRoom = nil
         currentMembership = nil
         members = []
@@ -155,6 +188,10 @@ final class RoomLobbyViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func signIn() {
+        accountViewModel.signIn()
     }
 
     private func currentUserID() -> String? {

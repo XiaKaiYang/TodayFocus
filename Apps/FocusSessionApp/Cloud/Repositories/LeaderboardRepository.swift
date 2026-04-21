@@ -7,16 +7,19 @@ protocol LeaderboardRepositoryProtocol: Sendable {
 }
 
 final class LeaderboardRepository: LeaderboardRepositoryProtocol, @unchecked Sendable {
-    private let databaseProvider: @Sendable () -> CKDatabase
-    private var database: CKDatabase { databaseProvider() }
+    let databaseScope: CKDatabase.Scope
+    private let databaseProvider: @Sendable (CKDatabase.Scope) throws -> CKDatabase
 
-    init(databaseProvider: @escaping @Sendable () -> CKDatabase = {
-        CKContainer(identifier: "iCloud.com.example.FocusSession").publicCloudDatabase
-    }) {
+    init(
+        databaseScope: CKDatabase.Scope = .public,
+        databaseProvider: @escaping @Sendable (CKDatabase.Scope) throws -> CKDatabase = CloudKitDatabaseProvider.makeDatabase
+    ) {
+        self.databaseScope = databaseScope
         self.databaseProvider = databaseProvider
     }
 
     func fetchBuckets(roomID: String, period: LeaderboardPeriod, periodKey: String) async throws -> [LeaderboardBucketRecord] {
+        let database = try databaseProvider(databaseScope)
         let predicate = NSPredicate(
             format: "roomID == %@ AND period == %@ AND periodKey == %@",
             roomID, period.rawValue, periodKey
@@ -29,6 +32,7 @@ final class LeaderboardRepository: LeaderboardRepositoryProtocol, @unchecked Sen
     }
 
     func upsertBucket(_ bucket: LeaderboardBucketRecord) async throws {
+        let database = try databaseProvider(databaseScope)
         let ckRecord = bucket.toCKRecord()
         try await database.save(ckRecord)
     }

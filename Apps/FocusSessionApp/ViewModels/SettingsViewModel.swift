@@ -131,6 +131,12 @@ final class SettingsViewModel: ObservableObject {
         supervisionEligibility = coordinator.eligibility
     }
 
+    func refreshSupervisionEligibility() async {
+        guard let supervisionCoordinator else { return }
+        await supervisionCoordinator.checkPermissions()
+        supervisionEligibility = supervisionCoordinator.eligibility
+    }
+
     func withdrawSupervision() {
         supervisionCoordinator?.stopSupervision()
         supervisionEligibility = .ineligible(reasons: [.notSignedIn])

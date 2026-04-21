@@ -7,16 +7,19 @@ protocol UserPublicProfileRepositoryProtocol: Sendable {
 }
 
 final class UserPublicProfileRepository: UserPublicProfileRepositoryProtocol, @unchecked Sendable {
-    private let databaseProvider: @Sendable () -> CKDatabase
-    private var database: CKDatabase { databaseProvider() }
+    let databaseScope: CKDatabase.Scope
+    private let databaseProvider: @Sendable (CKDatabase.Scope) throws -> CKDatabase
 
-    init(databaseProvider: @escaping @Sendable () -> CKDatabase = {
-        CKContainer(identifier: "iCloud.com.example.FocusSession").publicCloudDatabase
-    }) {
+    init(
+        databaseScope: CKDatabase.Scope = .public,
+        databaseProvider: @escaping @Sendable (CKDatabase.Scope) throws -> CKDatabase = CloudKitDatabaseProvider.makeDatabase
+    ) {
+        self.databaseScope = databaseScope
         self.databaseProvider = databaseProvider
     }
 
     func fetch(userID: String) async throws -> UserPublicProfileRecord? {
+        let database = try databaseProvider(databaseScope)
         let recordID = CKRecord.ID(recordName: userID)
         do {
             let ckRecord = try await database.record(for: recordID)
@@ -27,6 +30,7 @@ final class UserPublicProfileRepository: UserPublicProfileRepositoryProtocol, @u
     }
 
     func upsert(_ record: UserPublicProfileRecord) async throws {
+        let database = try databaseProvider(databaseScope)
         let ckRecord = record.toCKRecord()
         try await database.save(ckRecord)
     }

@@ -14,13 +14,16 @@ final class AccountViewModel: ObservableObject {
 
     private let accountService: any AccountServicing
     private let profileRepository: any UserPublicProfileRepositoryProtocol
+    private let cloudProfileSyncAvailabilityProvider: @Sendable () -> Bool
 
     init(
         accountService: any AccountServicing = AccountService(),
-        profileRepository: any UserPublicProfileRepositoryProtocol = UserPublicProfileRepository()
+        profileRepository: any UserPublicProfileRepositoryProtocol = UserPublicProfileRepository(),
+        cloudProfileSyncAvailabilityProvider: @escaping @Sendable () -> Bool = CloudKitDatabaseProvider.isAvailable
     ) {
         self.accountService = accountService
         self.profileRepository = profileRepository
+        self.cloudProfileSyncAvailabilityProvider = cloudProfileSyncAvailabilityProvider
     }
 
     func restoreSession() async {
@@ -91,6 +94,14 @@ final class AccountViewModel: ObservableObject {
     }
 
     private func loadProfile(for identity: AccountIdentity) async {
+        guard cloudProfileSyncAvailabilityProvider() else {
+            state = .ready(
+                identity,
+                UserPublicProfileRecord(userID: identity.userID, displayName: identity.displayName)
+            )
+            return
+        }
+
         state = .profileLoading(identity)
         do {
             if let existing = try await profileRepository.fetch(userID: identity.userID) {

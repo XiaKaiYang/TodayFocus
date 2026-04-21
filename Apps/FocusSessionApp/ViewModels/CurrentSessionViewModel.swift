@@ -347,6 +347,37 @@ final class CurrentSessionViewModel: ObservableObject {
         )
     }
 
+    func startPKLinkedSession(title: String, plannedMinutes: Int) {
+        guard canConfigureSession else {
+            errorMessage = "Finish the current session before starting another task."
+            return
+        }
+
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty else {
+            errorMessage = "Room title is required to start a PK session."
+            return
+        }
+
+        let clampedMinutes = clampedDurationMinutes(plannedMinutes)
+        intention = trimmedTitle
+        durationMinutes = clampedMinutes
+        errorMessage = nil
+
+        if sessionState.phase == .completed || sessionState.phase == .abandoned {
+            sessionState = .idle
+            resetTracking()
+        }
+
+        dispatch(
+            .startSession(
+                intention: trimmedTitle,
+                durationSeconds: clampedMinutes * 60
+            ),
+            fallbackMessage: "Unable to start PK session."
+        )
+    }
+
     func startTaskSession(title: String, estimatedMinutes: Int) {
         guard canConfigureSession else {
             errorMessage = "Finish the current session before starting another task."

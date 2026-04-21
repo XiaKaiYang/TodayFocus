@@ -65,10 +65,31 @@ final class SupervisionCoordinatorTests: XCTestCase {
             accountService: makeSignedInStub(),
             profileRepository: StubUserPublicProfileRepository()
         )
-        let coordinator = SupervisionCoordinator(accountViewModel: accountVM)
+        let coordinator = makeCoordinator(accountViewModel: accountVM)
         coordinator.startSupervision(sessionID: "s1", roomID: "r1", userID: "u1")
         XCTAssertNotNil(coordinator.currentStateSnapshot)
         XCTAssertEqual(coordinator.currentStateSnapshot?.sessionID, "s1")
+    }
+
+    func testStartSupervisionUsesInjectedMonitors() {
+        let accountVM = AccountViewModel(
+            accountService: makeSignedInStub(),
+            profileRepository: StubUserPublicProfileRepository()
+        )
+        let seatMonitor = StubSeatMonitor()
+        let activityMonitor = StubActivityMonitor()
+        let coordinator = SupervisionCoordinator(
+            accountViewModel: accountVM,
+            seatMonitorFactory: { seatMonitor },
+            activityMonitorFactory: { activityMonitor }
+        )
+
+        coordinator.startSupervision(sessionID: "s1", roomID: "r1", userID: "u1")
+
+        XCTAssertTrue(seatMonitor.didStart)
+        XCTAssertTrue(activityMonitor.didStart)
+        XCTAssertTrue((coordinator.seatMonitor as? StubSeatMonitor) === seatMonitor)
+        XCTAssertTrue((coordinator.activityMonitor as? StubActivityMonitor) === activityMonitor)
     }
 
     func testStopSupervisionClearsSnapshot() {
@@ -76,7 +97,7 @@ final class SupervisionCoordinatorTests: XCTestCase {
             accountService: makeSignedInStub(),
             profileRepository: StubUserPublicProfileRepository()
         )
-        let coordinator = SupervisionCoordinator(accountViewModel: accountVM)
+        let coordinator = makeCoordinator(accountViewModel: accountVM)
         coordinator.startSupervision(sessionID: "s1", roomID: "r1", userID: "u1")
         coordinator.stopSupervision()
         XCTAssertNil(coordinator.currentStateSnapshot)
@@ -86,5 +107,13 @@ final class SupervisionCoordinatorTests: XCTestCase {
         let stub = StubAccountService()
         stub.stubbedIdentity = AccountIdentity(userID: "u1", displayName: "Alice", email: nil)
         return stub
+    }
+
+    private func makeCoordinator(accountViewModel: AccountViewModel) -> SupervisionCoordinator {
+        SupervisionCoordinator(
+            accountViewModel: accountViewModel,
+            seatMonitorFactory: { StubSeatMonitor() },
+            activityMonitorFactory: { StubActivityMonitor() }
+        )
     }
 }
