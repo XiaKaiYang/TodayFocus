@@ -105,6 +105,10 @@ final class CurrentSessionViewModel: ObservableObject {
     private var reflectionSubmissionBehavior: ReflectionSubmissionBehavior = .completeTask
     private var cancellables = Set<AnyCancellable>()
 
+    private(set) var pkCoordinator: (any PKSessionCoordinatorProtocol)?
+    private var boundPKRoomID: String?
+    private var boundPKSessionID: String?
+
     init(
         snapshotStore: RuntimeSnapshotStore? = RuntimeSnapshotStore.defaultLocal(),
         focusSessionRepository: FocusSessionRepository? = nil,
@@ -417,6 +421,18 @@ final class CurrentSessionViewModel: ObservableObject {
         dispatch(.abandon, fallbackMessage: "Unable to abandon session.")
     }
 
+    func bindPKSession(roomID: String, sessionID: String, coordinator: any PKSessionCoordinatorProtocol) {
+        self.boundPKRoomID = roomID
+        self.boundPKSessionID = sessionID
+        self.pkCoordinator = coordinator
+    }
+
+    func unbindPKSession() {
+        self.boundPKRoomID = nil
+        self.boundPKSessionID = nil
+        self.pkCoordinator = nil
+    }
+
     func extendSession(byMinutes minutes: Int) {
         dispatch(.extend(minutes: minutes), fallbackMessage: "Unable to extend session.")
     }
@@ -577,6 +593,10 @@ final class CurrentSessionViewModel: ObservableObject {
                 snapshot.startedAt = eventDate
                 sessionState.snapshot = snapshot
             }
+            if let coord = pkCoordinator, let roomID = boundPKRoomID, let sessionID = boundPKSessionID {
+                let minutes = durationMinutes
+                Task { await coord.sessionDidStart(roomID: roomID, sessionID: sessionID, plannedMinutes: minutes) }
+            }
 
         case .pause:
             accumulatedFocusSeconds += elapsedSeconds(
@@ -639,6 +659,7 @@ final class CurrentSessionViewModel: ObservableObject {
             pendingReflectionSession = nil
             selectedReflectionMood = nil
             resetTracking()
+            pkCoordinator?.sessionDidAbandon()
 
         case .extend, .startBreak, .skipBreak, .finishBreak:
             break
@@ -763,6 +784,8 @@ final class CurrentSessionViewModel: ObservableObject {
         if shouldCompleteSelectedTask {
             try completeSelectedTaskIfNeeded(at: reflection.endedAt)
         }
+        let focusedMinutes = max(0, Int(round(reflection.endedAt.timeIntervalSince(reflection.startedAt) / 60)))
+        pkCoordinator?.sessionDidFinish(verifiedMinutes: focusedMinutes)
         sessionNotes = ""
         selectedReflectionMood = nil
         reloadAvailableTasks()
