@@ -1,3 +1,4 @@
+import FocusSessionCore
 import SwiftUI
 
 @MainActor
@@ -14,6 +15,17 @@ final class AppShellViewModel: ObservableObject {
             on: .macOS
         )
     }
+
+    func handleIncomingURL(_ url: URL) {
+        guard let destination = FocusSessionDeepLink.destination(for: url) else {
+            return
+        }
+
+        switch destination {
+        case .plan:
+            selectedSection = .plan
+        }
+    }
 }
 
 struct AppShellView: View {
@@ -28,6 +40,8 @@ struct AppShellView: View {
     @StateObject private var analyticsViewModel: AnalyticsViewModel
     @StateObject private var blockerViewModel: BlockerViewModel
     @StateObject private var settingsViewModel: SettingsViewModel
+    @StateObject private var accountViewModel: AccountViewModel
+    @StateObject private var roomLobbyViewModel: RoomLobbyViewModel
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     @State private var sectionRefreshTask: Task<Void, Never>?
     @Namespace private var sidebarSelectionAnimation
@@ -101,6 +115,16 @@ struct AppShellView: View {
         _analyticsViewModel = StateObject(wrappedValue: resolvedAnalyticsViewModel)
         _blockerViewModel = StateObject(wrappedValue: resolvedBlockerViewModel)
         _settingsViewModel = StateObject(wrappedValue: resolvedSettingsViewModel)
+
+        let resolvedAccountViewModel = AccountViewModel()
+        _accountViewModel = StateObject(wrappedValue: resolvedAccountViewModel)
+        _roomLobbyViewModel = StateObject(
+            wrappedValue: RoomLobbyViewModel(
+                roomRepository: RoomRepository(),
+                pkSessionRepository: PKSessionRepository(),
+                accountViewModel: resolvedAccountViewModel
+            )
+        )
     }
 
     var body: some View {
@@ -163,6 +187,9 @@ struct AppShellView: View {
             syncBlockerWithSession()
             syncBackgroundSound()
         }
+        .onOpenURL { url in
+            viewModel.handleIncomingURL(url)
+        }
         .onChange(of: currentSessionViewModel.sessionState.phase) { _, _ in
             syncBlockerWithSession()
             syncBackgroundSound()
@@ -196,6 +223,8 @@ struct AppShellView: View {
                 case .analytics:
                     analyticsViewModel.load()
                 case .blocker, .settings:
+                    break
+                case .pk:
                     break
                 }
             }
@@ -247,6 +276,8 @@ struct AppShellView: View {
             TrashDashboardView(tasksViewModel: tasksViewModel, planViewModel: planViewModel)
         case .settings:
             SettingsDashboardView(viewModel: settingsViewModel)
+        case .pk:
+            RoomLobbyView(viewModel: roomLobbyViewModel)
         }
     }
 

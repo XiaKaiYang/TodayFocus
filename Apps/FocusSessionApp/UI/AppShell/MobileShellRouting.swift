@@ -68,7 +68,7 @@ enum MobilePrimaryTab: String, CaseIterable, Hashable, Identifiable {
             .plan
         case .notes:
             .notes
-        case .whiteNoise, .analytics, .trash, .settings, .blocker:
+        case .whiteNoise, .analytics, .trash, .settings, .blocker, .pk:
             .more
         }
     }

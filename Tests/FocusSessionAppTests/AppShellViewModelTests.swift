@@ -1,5 +1,6 @@
 import XCTest
 @testable import FocusSession
+import FocusSessionCore
 
 @MainActor
 final class AppShellViewModelTests: XCTestCase {
@@ -38,6 +39,26 @@ final class AppShellViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.selectedSection, .analytics)
     }
 
+    func testIncomingPlanDeepLinkSelectsPlanSection() {
+        let viewModel = AppShellViewModel()
+
+        viewModel.handleIncomingURL(FocusSessionDeepLink.planURL)
+
+        XCTAssertEqual(viewModel.selectedSection, .plan)
+    }
+
+    func testIncomingUnknownDeepLinkKeepsCurrentSelection() {
+        let viewModel = AppShellViewModel(
+            configuration: AppLaunchConfiguration(
+                environment: ["FOCUSSESSION_INITIAL_SECTION": "analytics"]
+            )
+        )
+
+        viewModel.handleIncomingURL(URL(string: "todayfocus://notes")!)
+
+        XCTAssertEqual(viewModel.selectedSection, .analytics)
+    }
+
     func testSectionsExposePrimarySidebarDestinations() {
         XCTAssertEqual(
             AppSection.allCases.map(\.sidebarTitle),
@@ -48,6 +69,7 @@ final class AppShellViewModelTests: XCTestCase {
                 "White Noise",
                 "Notes",
                 "Analytics",
+                "PK",
                 "Blocker",
                 "Trash",
                 "Settings"
@@ -181,6 +203,23 @@ final class AppShellViewModelTests: XCTestCase {
             appShellContents.contains("SharedTaskComposerSheet(viewModel: tasksViewModel)"),
             "The shared Today task composer should be hosted at the app shell level so both Plan and Tasks can present the same form."
         )
+    }
+
+    func testAppShellListensForOpenURLAndProjectDeclaresTodayFocusScheme() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let appShellFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/AppShell/AppShellView.swift")
+        let projectFileURL = root.appendingPathComponent("project.yml")
+        let appShellContents = try String(contentsOf: appShellFileURL, encoding: .utf8)
+        let projectContents = try String(contentsOf: projectFileURL, encoding: .utf8)
+
+        XCTAssertTrue(appShellContents.contains(".onOpenURL { url in"))
+        XCTAssertTrue(appShellContents.contains("viewModel.handleIncomingURL(url)"))
+        XCTAssertTrue(projectContents.contains("CFBundleURLTypes"))
+        XCTAssertTrue(projectContents.contains("CFBundleURLSchemes"))
+        XCTAssertTrue(projectContents.contains("- todayfocus"))
     }
 
     func testAppShellSharesAnalyticsViewModelAndRefreshesHistoryConsumersAfterSessionSubmit() throws {

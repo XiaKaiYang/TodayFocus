@@ -1,0 +1,107 @@
+import Foundation
+
+enum AccountState: Equatable {
+    case signedOut
+    case signingIn
+    case profileLoading(AccountIdentity)
+    case ready(AccountIdentity, UserPublicProfileRecord)
+    case error(String)
+}
+
+@MainActor
+final class AccountViewModel: ObservableObject {
+    @Published private(set) var state: AccountState = .signedOut
+
+    private let accountService: any AccountServicing
+    private let profileRepository: any UserPublicProfileRepositoryProtocol
+
+    init(
+        accountService: any AccountServicing = AccountService(),
+        profileRepository: any UserPublicProfileRepositoryProtocol = UserPublicProfileRepository()
+    ) {
+        self.accountService = accountService
+        self.profileRepository = profileRepository
+    }
+
+    func restoreSession() async {
+        do {
+            guard let identity = try await accountService.restoreSession() else {
+                state = .signedOut
+                return
+            }
+            await loadProfile(for: identity)
+        } catch {
+            state = .error(error.localizedDescription)
+        }
+    }
+
+    func signIn() {
+        Task {
+            state = .signingIn
+            do {
+                let identity = try await accountService.signIn()
+                await loadProfile(for: identity)
+            } catch {
+                state = .error(error.localizedDescription)
+            }
+        }
+    }
+
+    func signOut() {
+        accountService.signOut()
+        state = .signedOut
+    }
+
+    var currentUserID: String? {
+        switch state {
+        case .ready(let identity, _):
+            return identity.userID
+        case .profileLoading(let identity):
+            return identity.userID
+        default:
+            return accountService.currentIdentity?.userID
+        }
+    }
+
+    var isSignedIn: Bool {
+        switch state {
+        case .ready, .profileLoading:
+            return true
+        case .signedOut, .signingIn, .error:
+            return false
+        }
+    }
+
+    var displayName: String? {
+        switch state {
+        case .ready(let identity, _):
+            return identity.displayName
+        case .profileLoading(let identity):
+            return identity.displayName
+        default:
+            return nil
+        }
+    }
+
+    var currentProfile: UserPublicProfileRecord? {
+        if case .ready(_, let profile) = state {
+            return profile
+        }
+        return nil
+    }
+
+    private func loadProfile(for identity: AccountIdentity) async {
+        state = .profileLoading(identity)
+        do {
+            if let existing = try await profileRepository.fetch(userID: identity.userID) {
+                state = .ready(identity, existing)
+            } else {
+                let newProfile = UserPublicProfileRecord(userID: identity.userID, displayName: identity.displayName)
+                try await profileRepository.upsert(newProfile)
+                state = .ready(identity, newProfile)
+            }
+        } catch {
+            state = .error(error.localizedDescription)
+        }
+    }
+}

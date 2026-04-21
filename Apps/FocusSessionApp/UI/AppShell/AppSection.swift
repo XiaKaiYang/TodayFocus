@@ -20,6 +20,7 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
     case whiteNoise
     case notes
     case analytics
+    case pk
     case blocker
     case trash
     case settings
@@ -34,6 +35,7 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             .whiteNoise,
             .notes,
             .analytics,
+            .pk,
             .blocker,
             .trash,
             .settings
@@ -41,11 +43,16 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
     }
 
     func isAvailable(on platform: AppPlatform) -> Bool {
-        switch platform {
-        case .macOS:
-            true
-        case .iOS:
-            self != .blocker
+        switch self {
+        case .pk:
+            return platform == .macOS
+        default:
+            switch platform {
+            case .macOS:
+                return true
+            case .iOS:
+                return self != .blocker
+            }
         }
     }
 
@@ -70,7 +77,7 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             switch $0 {
             case .trash, .settings:
                 false
-            case .tasks, .plan, .currentSession, .whiteNoise, .notes, .analytics, .blocker:
+            case .tasks, .plan, .currentSession, .whiteNoise, .notes, .analytics, .pk, .blocker:
                 true
             }
         }
@@ -90,6 +97,8 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             "Notes"
         case .analytics:
             "Analytics"
+        case .pk:
+            "PK Room"
         case .blocker:
             "Blocker"
         case .trash:
@@ -109,6 +118,8 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             "Session"
         case .whiteNoise:
             "White Noise"
+        case .pk:
+            "PK"
         case .trash:
             "Trash"
         default:
@@ -130,6 +141,8 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             "Browse previous session notes."
         case .analytics:
             "Review momentum and trends."
+        case .pk:
+            "Compete in supervised focus rooms."
         case .blocker:
             "Control distractions and rules."
         case .trash:
@@ -153,6 +166,8 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             "note.text"
         case .analytics:
             "chart.bar.xaxis"
+        case .pk:
+            "person.2.fill"
         case .blocker:
             "hand.raised"
         case .trash:
