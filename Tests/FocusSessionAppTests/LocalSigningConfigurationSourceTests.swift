@@ -1,13 +1,13 @@
 import XCTest
 
 final class LocalSigningConfigurationSourceTests: XCTestCase {
-    func testSharedXcconfigIncludesOptionalLocalSigningOverridesAndSafeDefaults() throws {
+    func testSharedXcconfigIncludesLocalSigningOverridesAndSafeDefaults() throws {
         let shared = try String(
             contentsOfFile: "/Users/xiakaiyang/Documents/New project/Config/Shared.xcconfig",
             encoding: .utf8
         )
 
-        XCTAssertTrue(shared.contains("#include? \"LocalSigning.xcconfig\""))
+        XCTAssertTrue(shared.contains("#include \"LocalSigning.xcconfig\""))
         XCTAssertTrue(shared.contains("FOCUSSESSION_CODE_SIGNING_ALLOWED = NO"))
         XCTAssertTrue(shared.contains("FOCUSSESSION_CODE_SIGNING_REQUIRED = NO"))
         XCTAssertTrue(shared.contains("FOCUSSESSION_CODE_SIGN_STYLE = Automatic"))
