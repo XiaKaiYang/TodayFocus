@@ -1,0 +1,100 @@
+import CloudKit
+import Foundation
+
+protocol RoomRepositoryProtocol: Sendable {
+    func createRoom(_ room: RoomRecord) async throws
+    func fetchRoom(byInviteCode code: String) async throws -> RoomRecord?
+    func fetchRoom(roomID: String) async throws -> RoomRecord?
+    func updateRoom(_ room: RoomRecord) async throws
+    func upsertMember(_ member: RoomMemberRecord) async throws
+    func fetchMembers(roomID: String) async throws -> [RoomMemberRecord]
+}
+
+final class RoomRepository: RoomRepositoryProtocol, @unchecked Sendable {
+    private let databaseProvider: @Sendable () -> CKDatabase
+    private var database: CKDatabase { databaseProvider() }
+
+    init(databaseProvider: @escaping @Sendable () -> CKDatabase = {
+        CKContainer(identifier: "iCloud.com.example.FocusSession").publicCloudDatabase
+    }) {
+        self.databaseProvider = databaseProvider
+    }
+
+    func createRoom(_ room: RoomRecord) async throws {
+        let ckRecord = room.toCKRecord()
+        try await database.save(ckRecord)
+    }
+
+    func fetchRoom(byInviteCode code: String) async throws -> RoomRecord? {
+        let predicate = NSPredicate(format: "inviteCode == %@", code)
+        let query = CKQuery(recordType: RoomRecord.recordType, predicate: predicate)
+        let (results, _) = try await database.records(matching: query, desiredKeys: nil)
+        return results.compactMap { _, result in
+            try? result.get()
+        }.compactMap(RoomRecord.init(ckRecord:)).first
+    }
+
+    func fetchRoom(roomID: String) async throws -> RoomRecord? {
+        let recordID = CKRecord.ID(recordName: roomID)
+        do {
+            let ckRecord = try await database.record(for: recordID)
+            return RoomRecord(ckRecord: ckRecord)
+        } catch let error as CKError where error.code == .unknownItem {
+            return nil
+        }
+    }
+
+    func updateRoom(_ room: RoomRecord) async throws {
+        let ckRecord = room.toCKRecord()
+        try await database.save(ckRecord)
+    }
+
+    func upsertMember(_ member: RoomMemberRecord) async throws {
+        let ckRecord = member.toCKRecord()
+        try await database.save(ckRecord)
+    }
+
+    func fetchMembers(roomID: String) async throws -> [RoomMemberRecord] {
+        let predicate = NSPredicate(format: "roomID == %@", roomID)
+        let query = CKQuery(recordType: RoomMemberRecord.recordType, predicate: predicate)
+        let (results, _) = try await database.records(matching: query, desiredKeys: nil)
+        return results.compactMap { _, result in
+            try? result.get()
+        }.compactMap(RoomMemberRecord.init(ckRecord:))
+    }
+}
+
+final class StubRoomRepository: RoomRepositoryProtocol, @unchecked Sendable {
+    var rooms: [String: RoomRecord] = [:]
+    var members: [String: [RoomMemberRecord]] = [:]
+
+    func createRoom(_ room: RoomRecord) async throws {
+        rooms[room.roomID] = room
+    }
+
+    func fetchRoom(byInviteCode code: String) async throws -> RoomRecord? {
+        rooms.values.first { $0.inviteCode == code }
+    }
+
+    func fetchRoom(roomID: String) async throws -> RoomRecord? {
+        rooms[roomID]
+    }
+
+    func updateRoom(_ room: RoomRecord) async throws {
+        rooms[room.roomID] = room
+    }
+
+    func upsertMember(_ member: RoomMemberRecord) async throws {
+        var roomMembers = members[member.roomID] ?? []
+        if let idx = roomMembers.firstIndex(where: { $0.userID == member.userID }) {
+            roomMembers[idx] = member
+        } else {
+            roomMembers.append(member)
+        }
+        members[member.roomID] = roomMembers
+    }
+
+    func fetchMembers(roomID: String) async throws -> [RoomMemberRecord] {
+        members[roomID] ?? []
+    }
+}
