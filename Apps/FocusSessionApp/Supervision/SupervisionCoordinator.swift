@@ -10,6 +10,7 @@ protocol SupervisionCoordinatorProtocol: AnyObject {
     var eligibility: SupervisionEligibility { get }
     var currentStateSnapshot: SupervisionStateSnapshot? { get }
     var seatMonitor: (any SeatMonitorProtocol)? { get }
+    var activityMonitor: (any ActivityMonitorProtocol)? { get }
     func checkPermissions() async
     func startSupervision(sessionID: String, roomID: String, userID: String)
     func stopSupervision()
@@ -24,6 +25,7 @@ final class SupervisionCoordinator: ObservableObject, SupervisionCoordinatorProt
     )
     @Published private(set) var currentStateSnapshot: SupervisionStateSnapshot?
     private(set) var seatMonitor: (any SeatMonitorProtocol)?
+    private(set) var activityMonitor: (any ActivityMonitorProtocol)?
 
     var eligibility: SupervisionEligibility { permissionSnapshot.eligibility }
 
@@ -49,11 +51,16 @@ final class SupervisionCoordinator: ObservableObject, SupervisionCoordinatorProt
         let monitor = SeatMonitor(pipeline: StubSeatMonitorFramePipeline())
         monitor.start()
         seatMonitor = monitor
+        let activityMon = ActivityMonitor()
+        activityMon.start()
+        activityMonitor = activityMon
     }
 
     func stopSupervision() {
         seatMonitor?.stop()
         seatMonitor = nil
+        activityMonitor?.stop()
+        activityMonitor = nil
         currentStateSnapshot = nil
     }
 
@@ -92,6 +99,7 @@ final class StubSupervisionCoordinator: SupervisionCoordinatorProtocol {
     )
     var currentStateSnapshot: SupervisionStateSnapshot?
     var seatMonitor: (any SeatMonitorProtocol)? = nil
+    var activityMonitor: (any ActivityMonitorProtocol)? = nil
     var eligibility: SupervisionEligibility { permissionSnapshot.eligibility }
 
     func checkPermissions() async {}
