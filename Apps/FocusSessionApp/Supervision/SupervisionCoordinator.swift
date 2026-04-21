@@ -14,6 +14,7 @@ protocol SupervisionCoordinatorProtocol: AnyObject {
     func checkPermissions() async
     func startSupervision(sessionID: String, roomID: String, userID: String)
     func stopSupervision()
+    func reportViolation(type: ViolationType) async
 }
 
 @MainActor
@@ -30,9 +31,17 @@ final class SupervisionCoordinator: ObservableObject, SupervisionCoordinatorProt
     var eligibility: SupervisionEligibility { permissionSnapshot.eligibility }
 
     private let accountViewModel: AccountViewModel
+    private let supervisionRepository: any SupervisionRepositoryProtocol
+    private let evidenceCaptureService: any EvidenceCaptureServiceProtocol
 
-    init(accountViewModel: AccountViewModel) {
+    init(
+        accountViewModel: AccountViewModel,
+        supervisionRepository: any SupervisionRepositoryProtocol = SupervisionRepository(),
+        evidenceCaptureService: any EvidenceCaptureServiceProtocol = EvidenceCaptureService()
+    ) {
         self.accountViewModel = accountViewModel
+        self.supervisionRepository = supervisionRepository
+        self.evidenceCaptureService = evidenceCaptureService
     }
 
     func checkPermissions() async {
@@ -62,6 +71,17 @@ final class SupervisionCoordinator: ObservableObject, SupervisionCoordinatorProt
         activityMonitor?.stop()
         activityMonitor = nil
         currentStateSnapshot = nil
+    }
+
+    func reportViolation(type: ViolationType) async {
+        guard let snapshot = currentStateSnapshot else { return }
+        let event = ViolationEventRecord(
+            sessionID: snapshot.sessionID,
+            roomID: snapshot.roomID,
+            userID: snapshot.userID,
+            violationType: type
+        )
+        try? await supervisionRepository.recordViolation(event)
     }
 
     private func checkCameraPermission() async -> CameraPermissionState {
@@ -111,4 +131,6 @@ final class StubSupervisionCoordinator: SupervisionCoordinatorProtocol {
     func stopSupervision() {
         currentStateSnapshot = nil
     }
+
+    func reportViolation(type: ViolationType) async {}
 }
