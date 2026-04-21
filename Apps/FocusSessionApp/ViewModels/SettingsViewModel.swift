@@ -122,6 +122,20 @@ final class SettingsViewModel: ObservableObject {
         }
     }
 
+    // Supervision section
+    @Published private(set) var supervisionEligibility: SupervisionEligibility = .ineligible(reasons: [.notSignedIn])
+    private var supervisionCoordinator: (any SupervisionCoordinatorProtocol)?
+
+    func bindSupervisionCoordinator(_ coordinator: any SupervisionCoordinatorProtocol) {
+        supervisionCoordinator = coordinator
+        supervisionEligibility = coordinator.eligibility
+    }
+
+    func withdrawSupervision() {
+        supervisionCoordinator?.stopSupervision()
+        supervisionEligibility = .ineligible(reasons: [.notSignedIn])
+    }
+
     private func performDataChange(_ change: () throws -> Void) {
         do {
             try change()
