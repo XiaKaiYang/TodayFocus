@@ -13,9 +13,9 @@ enum TaskTimeRangeMode: Hashable, CaseIterable {
     var composerTitle: String {
         switch self {
         case .none:
-            "None"
+            AppText.tr("None")
         case .scheduled:
-            "Set"
+            AppText.tr("Set")
         }
     }
 }
@@ -35,9 +35,9 @@ enum TasksDashboardScope: String, CaseIterable, Equatable, Hashable {
     var title: String {
         switch self {
         case .today:
-            "Today"
+            AppText.tr("Today")
         case .tomorrow:
-            "Tomorrow"
+            AppText.tr("Tomorrow")
         }
     }
 
@@ -157,7 +157,7 @@ final class TasksViewModel: ObservableObject {
             errorMessage = nil
         } catch {
             tasks = []
-            errorMessage = "Unable to load tasks."
+            errorMessage = AppText.tr("Unable to load tasks.")
         }
     }
 
@@ -212,19 +212,19 @@ final class TasksViewModel: ObservableObject {
     func saveTask() -> Bool {
         let trimmedTitle = newTaskTitle.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else {
-            errorMessage = "Task title is required."
+            errorMessage = AppText.tr("Task title is required.")
             return false
         }
 
         if usesTimeRange {
             guard newTaskEndAt > newTaskStartAt else {
-                errorMessage = "End time must be later than start time."
+                errorMessage = AppText.tr("End time must be later than start time.")
                 return false
             }
         }
 
         if newTaskRepeatRule == .weekly && newTaskRepeatWeekday.title.isEmpty {
-            errorMessage = "Choose a weekday for weekly repeats."
+            errorMessage = AppText.tr("Choose a weekday for weekly repeats.")
             return false
         }
 
@@ -256,7 +256,7 @@ final class TasksViewModel: ObservableObject {
                 }
             }
         } else {
-            errorMessage = "Repeat count must be a positive integer."
+            errorMessage = AppText.tr("Repeat count must be a positive integer.")
             return false
         }
         let contributionValue: Double?
@@ -266,7 +266,7 @@ final class TasksViewModel: ObservableObject {
         } else if let parsedContributionValue = Double(trimmedContributionValue) {
             contributionValue = parsedContributionValue
         } else {
-            errorMessage = "Contribution value must be a number."
+            errorMessage = AppText.tr("Contribution value must be a number.")
             return false
         }
 
@@ -292,7 +292,7 @@ final class TasksViewModel: ObservableObject {
             )
         case let .edit(id):
             guard let existingTask = tasks.first(where: { $0.id == id }) else {
-                errorMessage = "Unable to find task."
+                errorMessage = AppText.tr("Unable to find task.")
                 return false
             }
             task = FocusTask(
@@ -348,7 +348,7 @@ final class TasksViewModel: ObservableObject {
             onTasksChanged?()
             return true
         } catch {
-            errorMessage = "Unable to create task."
+            errorMessage = AppText.tr("Unable to create task.")
             return false
         }
     }
@@ -373,7 +373,7 @@ final class TasksViewModel: ObservableObject {
             load()
             onTasksChanged?()
         } catch {
-            errorMessage = "Unable to update task."
+            errorMessage = AppText.tr("Unable to update task.")
         }
     }
 
@@ -395,7 +395,7 @@ final class TasksViewModel: ObservableObject {
             load()
             onTasksChanged?()
         } catch {
-            errorMessage = (error as? LinkedTaskSettlementCoordinatorError)?.errorDescription ?? "Unable to update task."
+            errorMessage = (error as? LinkedTaskSettlementCoordinatorError)?.errorDescription ?? AppText.tr("Unable to update task.")
         }
     }
 
@@ -405,7 +405,7 @@ final class TasksViewModel: ObservableObject {
             load()
             onTasksChanged?()
         } catch {
-            errorMessage = "Unable to delete task."
+            errorMessage = AppText.tr("Unable to delete task.")
         }
     }
 
@@ -458,7 +458,7 @@ final class TasksViewModel: ObservableObject {
             load()
             onTasksChanged?()
         } catch {
-            errorMessage = "Unable to update task."
+            errorMessage = AppText.tr("Unable to update task.")
         }
     }
 
@@ -474,7 +474,7 @@ final class TasksViewModel: ObservableObject {
             onTasksChanged?()
             return completedParent
         } catch {
-            errorMessage = "Unable to update task."
+            errorMessage = AppText.tr("Unable to update task.")
             return false
         }
     }
@@ -511,7 +511,7 @@ final class TasksViewModel: ObservableObject {
             load()
             onTasksChanged?()
         } catch {
-            errorMessage = "Unable to reorder tasks."
+            errorMessage = AppText.tr("Unable to reorder tasks.")
         }
     }
 

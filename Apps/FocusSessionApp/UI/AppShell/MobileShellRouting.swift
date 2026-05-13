@@ -12,15 +12,15 @@ enum MobilePrimaryTab: String, CaseIterable, Hashable, Identifiable {
     var title: String {
         switch self {
         case .tasks:
-            "Today"
+            AppText.tr("Today")
         case .currentSession:
-            "Session"
+            AppText.tr("Session")
         case .plan:
-            "Plan"
+            AppText.tr("Plan")
         case .notes:
-            "Notes"
+            AppText.tr("Notes")
         case .more:
-            "More"
+            AppText.tr("More")
         }
     }
 
@@ -55,7 +55,7 @@ enum MobilePrimaryTab: String, CaseIterable, Hashable, Identifiable {
     }
 
     static var moreSections: [AppSection] {
-        [.whiteNoise, .analytics, .trash, .settings]
+        [.whiteNoise, .analytics, .account, .settings]
     }
 
     static func tab(for section: AppSection) -> MobilePrimaryTab {
@@ -68,7 +68,7 @@ enum MobilePrimaryTab: String, CaseIterable, Hashable, Identifiable {
             .plan
         case .notes:
             .notes
-        case .whiteNoise, .analytics, .trash, .settings, .blocker:
+        case .whiteNoise, .analytics, .account, .settings, .blocker, .pk:
             .more
         }
     }

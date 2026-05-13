@@ -45,6 +45,9 @@ struct MobileAppShellView: View {
         .onAppear {
             syncBackgroundSound()
             applyInitialMoreSelectionIfNeeded()
+            Task {
+                await services.accountViewModel.restoreSession()
+            }
         }
         .onChange(of: services.currentSessionViewModel.sessionState.phase) { _, _ in
             syncBackgroundSound()
@@ -154,11 +157,8 @@ struct MobileAppShellView: View {
             NotesLibraryView(viewModel: services.notesViewModel)
         case .analytics:
             AnalyticsDashboardView(viewModel: services.analyticsViewModel)
-        case .trash:
-            TrashDashboardView(
-                tasksViewModel: services.tasksViewModel,
-                planViewModel: services.planViewModel
-            )
+        case .account:
+            AccountDashboardView(viewModel: services.accountViewModel)
         case .settings:
             SettingsDashboardView(viewModel: services.settingsViewModel)
         case .blocker:

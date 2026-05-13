@@ -67,7 +67,7 @@ final class SessionReducerTests: XCTestCase {
         XCTAssertEqual(transition.effects, [.persistSnapshot, .refreshMenubar])
     }
 
-    func testFinishFocusMovesFocusingToReflectingAndClearsSnapshot() throws {
+    func testFinishFocusMovesFocusingToCompletedAndClearsSnapshot() throws {
         var state = SessionState(
             phase: .focusing,
             snapshot: ActiveSessionSnapshot(
@@ -78,24 +78,11 @@ final class SessionReducerTests: XCTestCase {
 
         let transition = try SessionReducer.reduce(state: &state, event: .finishFocus)
 
-        XCTAssertEqual(state.phase, .reflecting)
-        XCTAssertNil(state.snapshot)
-        XCTAssertEqual(
-            transition.effects,
-            [.deactivateBlocker, .refreshMenubar, .persistSnapshot]
-        )
-    }
-
-    func testSubmitReflectionMovesReflectingToCompleted() throws {
-        var state = SessionState(phase: .reflecting, snapshot: nil)
-
-        let transition = try SessionReducer.reduce(state: &state, event: .submitReflection)
-
         XCTAssertEqual(state.phase, .completed)
         XCTAssertNil(state.snapshot)
         XCTAssertEqual(
             transition.effects,
-            [.refreshMenubar, .persistSnapshot]
+            [.deactivateBlocker, .refreshMenubar, .persistSnapshot]
         )
     }
 

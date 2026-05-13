@@ -11,6 +11,7 @@ final class MobileAppSessionServices: ObservableObject {
     let notesViewModel: NotesLibraryViewModel
     let analyticsViewModel: AnalyticsViewModel
     let settingsViewModel: SettingsViewModel
+    let accountViewModel: AccountViewModel
 
     init() {
         let preferencesStore = AppPreferencesStore()
@@ -55,6 +56,8 @@ final class MobileAppSessionServices: ObservableObject {
         whiteNoiseViewModel = WhiteNoiseViewModel(
             preferencesStore: preferencesStore
         )
+
+        accountViewModel = AccountViewModel()
 
         settingsViewModel = SettingsViewModel(
             preferencesStore: preferencesStore,

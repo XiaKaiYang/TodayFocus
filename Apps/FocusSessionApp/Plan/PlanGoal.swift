@@ -11,15 +11,15 @@ enum PlanGoalStatus: String, CaseIterable, Equatable, Hashable {
     var title: String {
         switch self {
         case .notStarted:
-            "Not Started"
+            AppText.tr("Not Started")
         case .inProgress:
-            "In Progress"
+            AppText.tr("In Progress")
         case .completed:
-            "Completed"
+            AppText.tr("Completed")
         case .unfinished:
-            "Unfinished"
+            AppText.tr("Unfinished")
         case .onHold:
-            "On Hold"
+            AppText.tr("On Hold")
         }
     }
 
@@ -40,9 +40,9 @@ enum PlanGoalSubtaskTrackingMode: String, CaseIterable, Equatable, Hashable, Cod
     var title: String {
         switch self {
         case .estimated:
-            "Estimated"
+            AppText.tr("Estimated")
         case .quantified:
-            "Quantified"
+            AppText.tr("Quantified")
         }
     }
 }
@@ -365,11 +365,11 @@ enum PlanTimelineScale: String, CaseIterable, Hashable {
     var title: String {
         switch self {
         case .day:
-            "Day"
+            AppText.tr("Day")
         case .week:
-            "Week"
+            AppText.tr("Week")
         case .month:
-            "Month"
+            AppText.tr("Month")
         }
     }
 

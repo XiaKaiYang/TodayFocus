@@ -134,23 +134,23 @@ struct CurrentSessionView: View {
                 HStack(spacing: 18) {
                     reflectionMoodButton(
                         emoji: "🤩",
-                        title: "Focused",
+                        title: AppText.tr("Focused"),
                         mood: .focused
                     )
                     reflectionMoodButton(
                         emoji: "😐",
-                        title: "Neutral",
+                        title: AppText.tr("Neutral"),
                         mood: .neutral
                     )
                     reflectionMoodButton(
                         emoji: "😞",
-                        title: "Distracted",
+                        title: AppText.tr("Distracted"),
                         mood: .distracted
                     )
                 }
 
                 AppPromptedTextEditor(
-                    prompt: "Leave an optional note about how this session felt.",
+                    prompt: "可选地写下这次专注的感受。",
                     text: $viewModel.sessionNotes,
                     fontSize: layout.notesBodyFontSize,
                     cornerRadius: 24,
@@ -161,7 +161,7 @@ struct CurrentSessionView: View {
                 .frame(minHeight: 150)
 
                 HStack(spacing: 12) {
-                    Button("Submit") {
+                    Button("提交") {
                         viewModel.submitReflection()
                     }
                     .buttonStyle(AppAccentButtonStyle())
@@ -169,7 +169,7 @@ struct CurrentSessionView: View {
                     .disabled(isReflectionActionDisabled)
                     .opacity(isReflectionActionDisabled ? 0.45 : 1)
 
-                    Button("Submit & Continue") {
+                    Button("提交并继续") {
                         viewModel.submitReflectionAndContinueEpisode()
                     }
                     .buttonStyle(
@@ -391,7 +391,7 @@ struct CurrentSessionView: View {
 
             if viewModel.canPauseSession {
                 statusActionButton(
-                    title: "Pause",
+                    title: "暂停",
                     fontSize: layout.statusActionFontSize,
                     action: viewModel.pauseSession
                 )
@@ -399,7 +399,7 @@ struct CurrentSessionView: View {
 
             if viewModel.canResumeSession {
                 statusActionButton(
-                    title: "Resume",
+                    title: "继续",
                     fontSize: layout.statusActionFontSize,
                     action: viewModel.resumeSession
                 )
@@ -407,7 +407,7 @@ struct CurrentSessionView: View {
 
             if viewModel.canFinishSession {
                 statusActionButton(
-                    title: "Finish",
+                    title: "结束",
                     fontSize: layout.statusActionFontSize,
                     isPrimary: true,
                     action: viewModel.finishSession
@@ -416,7 +416,7 @@ struct CurrentSessionView: View {
 
             if viewModel.canPrepareNextSession {
                 statusActionButton(
-                    title: "New Session",
+                    title: "新会话",
                     fontSize: layout.statusActionFontSize,
                     isPrimary: true,
                     action: viewModel.prepareNextSession
@@ -497,7 +497,7 @@ struct CurrentSessionView: View {
         )
 
         return AppPromptedTextEditor(
-            prompt: "Write down what you learned, what distracted you, or what still feels fuzzy.",
+            prompt: "写下你学到了什么、被什么分散了注意力，或者哪里还不够清晰。",
             text: $viewModel.sessionNotes,
             fontSize: layout.notesBodyFontSize,
             cornerRadius: 30,
@@ -525,7 +525,7 @@ struct CurrentSessionView: View {
                         .font(.system(size: layout.statusValueFontSize, weight: .bold, design: .rounded))
                         .foregroundStyle(AppSurfaceTheme.primaryText)
 
-                    Text(viewModel.recentSessions.first?.durationText ?? "Saved to history")
+                    Text(viewModel.recentSessions.first?.durationText ?? "已保存到历史记录")
                         .font(.system(size: layout.statusMetaFontSize, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppSurfaceTheme.secondaryText)
                 }
@@ -623,8 +623,8 @@ struct CurrentSessionView: View {
     private func taskSelector(layout: CurrentSessionLayoutMetrics) -> some View {
         let selectorTitle = viewModel.selectedTaskTitle
             ?? (viewModel.availableTaskSelections.isEmpty
-                ? "Create a task in Today first"
-                : "Select a Today task")
+                ? "请先在“今日”里创建任务"
+                : "请选择一个“今日”任务")
         let selectorOptions = viewModel.availableTaskSelections.map { selection in
             AppDropdownOption(
                 value: selection,
@@ -634,7 +634,7 @@ struct CurrentSessionView: View {
         }
 
         return VStack(spacing: 10) {
-            Text("Today Task")
+            Text("今日任务")
                 .font(.system(size: layout.intentionTitleFontSize, weight: .semibold, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.secondaryText)
                 .textCase(.uppercase)
@@ -679,7 +679,7 @@ struct CurrentSessionView: View {
     }
 
     private func timeReadout(layout: CurrentSessionLayoutMetrics) -> some View {
-        Text("\(viewModel.durationMinutes) min")
+        Text(AppText.format("%d min", viewModel.durationMinutes))
             .font(.system(size: layout.timeReadoutFontSize, weight: .medium, design: .rounded))
             .monospacedDigit()
             .foregroundStyle(AppSurfaceTheme.primaryText)
@@ -695,7 +695,7 @@ struct CurrentSessionView: View {
                 adjustDuration(byMinutes: -5)
             }
 
-            Text("Set your focus length")
+            Text("设置专注时长")
                 .font(.system(size: layout.durationControlFontSize, weight: .semibold, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.primaryText)
                 .padding(.horizontal, layout.leftColumnSpacing + 4)
@@ -721,7 +721,7 @@ struct CurrentSessionView: View {
     }
 
     private var startSessionButton: some View {
-        Button("Start Session") {
+        Button("开始专注") {
             viewModel.startSession()
         }
         .buttonStyle(.plain)
@@ -749,12 +749,12 @@ struct CurrentSessionView: View {
 
     private func noteEditor(layout: CurrentSessionLayoutMetrics) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Note")
+            Text("笔记")
                 .font(.system(size: layout.notesTitleFontSize, weight: .semibold, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
             AppPromptedTextEditor(
-                prompt: "Write down what you learned, what distracted you, or what still feels fuzzy.",
+                prompt: "写下你学到了什么、被什么分散了注意力，或者哪里还不够清晰。",
                 text: $viewModel.sessionNotes,
                 fontSize: layout.notesBodyFontSize,
                 cornerRadius: 30,
@@ -768,13 +768,13 @@ struct CurrentSessionView: View {
     private func historyNotesSection(layout: CurrentSessionLayoutMetrics) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("History Notes")
+                Text("历史笔记")
                     .font(.system(size: layout.recentSectionTitleFontSize, weight: .bold, design: .rounded))
                     .foregroundStyle(AppSurfaceTheme.primaryText)
 
                 Spacer()
 
-                Text("\(viewModel.recentSessions.count) shown")
+                Text(AppText.format("%d shown", viewModel.recentSessions.count))
                     .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(AppSurfaceTheme.secondaryText)
             }
@@ -826,7 +826,7 @@ struct CurrentSessionView: View {
                     .foregroundStyle(AppSurfaceTheme.secondaryText)
             }
 
-            Text(session.notePreview.isEmpty ? "No notes captured for this session." : session.notePreview)
+            Text(session.notePreview.isEmpty ? "这次专注还没有记录笔记。" : session.notePreview)
                 .font(.system(size: layout.supportingCopyFontSize, weight: .medium, design: .rounded))
                 .foregroundStyle(
                     session.notePreview.isEmpty

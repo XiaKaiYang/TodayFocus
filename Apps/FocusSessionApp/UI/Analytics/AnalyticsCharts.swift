@@ -52,8 +52,8 @@ struct AnalyticsTrendPieChartView: View {
                 AnalyticsPieDetailPanel(
                     eyebrow: selectedRangeTitle,
                     value: analyticsDurationText(totalSeconds),
-                    emphasis: "\(activeBucketCount) active buckets",
-                    supportingText: "Hover a slice to inspect a specific bucket.",
+                    emphasis: "\(activeBucketCount) 个活跃分组",
+                    supportingText: "悬停在扇区上即可查看某个分组的详情。",
                     tint: nil
                 )
             }
@@ -73,7 +73,7 @@ struct TaskBreakdownPieChartView: View {
                 id: row.id,
                 title: row.title,
                 value: row.totalSeconds,
-                supportingText: "\(row.sessionCount) completed sessions",
+                supportingText: "\(row.sessionCount) 次已完成专注",
                 color: analyticsPiePalette[index % analyticsPiePalette.count]
             )
         }
@@ -103,10 +103,10 @@ struct TaskBreakdownPieChartView: View {
                 )
             } else {
                 AnalyticsPieDetailPanel(
-                    eyebrow: "Top task total",
+                    eyebrow: "任务总专注时长",
                     value: analyticsDurationText(totalSeconds),
-                    emphasis: "\(slices.count) tracked tasks",
-                    supportingText: "Hover a slice to inspect a task breakdown.",
+                    emphasis: "\(slices.count) 个已跟踪任务",
+                    supportingText: "悬停在扇区上即可查看任务拆分。",
                     tint: nil
                 )
             }

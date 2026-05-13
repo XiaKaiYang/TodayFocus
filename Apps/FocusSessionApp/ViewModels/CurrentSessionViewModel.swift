@@ -20,10 +20,10 @@ struct RecentSessionSummary: Identifiable, Equatable {
         let roundedMinutes = max(1, Int(ceil(Double(record.durationSeconds) / 60)))
 
         id = record.id
-        title = trimmedIntention.isEmpty ? "Untitled Session" : trimmedIntention
+        title = trimmedIntention.isEmpty ? AppText.tr("Untitled Session") : trimmedIntention
         notePreview = trimmedNotes
         relativeEndedText = relativeFormatter.localizedString(for: record.endedAt, relativeTo: referenceDate)
-        durationText = "\(roundedMinutes) min"
+        durationText = AppText.format("%d min", roundedMinutes)
         wasCompleted = record.wasCompleted
     }
 }
@@ -104,6 +104,10 @@ final class CurrentSessionViewModel: ObservableObject {
     private var pendingReflectionSession: PendingReflectionSession?
     private var reflectionSubmissionBehavior: ReflectionSubmissionBehavior = .completeTask
     private var cancellables = Set<AnyCancellable>()
+
+    private(set) var pkCoordinator: (any PKSessionCoordinatorProtocol)?
+    private var boundPKRoomID: String?
+    private var boundPKSessionID: String?
 
     init(
         snapshotStore: RuntimeSnapshotStore? = RuntimeSnapshotStore.defaultLocal(),
@@ -255,27 +259,27 @@ final class CurrentSessionViewModel: ObservableObject {
     var phaseText: String {
         switch sessionState.phase {
         case .idle:
-            "Idle"
+            AppText.tr("Idle")
         case .focusing:
-            "Focusing"
+            AppText.tr("Focusing")
         case .focusPaused:
-            "Paused"
+            AppText.tr("Paused")
         case .breakRunning:
-            "On Break"
+            AppText.tr("On Break")
         case .breakPaused:
-            "Break Paused"
+            AppText.tr("Break Paused")
         case .reflecting:
-            "Reflecting"
+            AppText.tr("Reflecting")
         case .completed:
-            "Completed"
+            AppText.tr("Completed")
         case .abandoned:
-            "Abandoned"
+            AppText.tr("Abandoned")
         }
     }
 
     var remainingMinutesText: String {
         let seconds = remainingSeconds(at: now())
-        return "\(seconds / 60) min"
+        return AppText.format("%d min", seconds / 60)
     }
 
     var dialConfigurationProgress: Double {
@@ -314,13 +318,13 @@ final class CurrentSessionViewModel: ObservableObject {
     func startSession() {
         guard let selectedTaskSelection else {
             errorMessage = availableTaskSelections.isEmpty
-                ? "Create a task in Today first."
-                : "Select a Today task first."
+                ? AppText.tr("Create a task in Today first.")
+                : AppText.tr("Select a Today task first.")
             return
         }
 
         guard durationMinutes > 0 else {
-            errorMessage = "Turn the dial above 0 first."
+            errorMessage = AppText.tr("Turn the dial above 0 first.")
             return
         }
 
@@ -339,19 +343,50 @@ final class CurrentSessionViewModel: ObservableObject {
                 intention: trimmedIntention,
                 durationSeconds: plannedMinutes * 60
             ),
-            fallbackMessage: "Unable to start session."
+            fallbackMessage: AppText.tr("Unable to start session.")
+        )
+    }
+
+    func startPKLinkedSession(title: String, plannedMinutes: Int) {
+        guard canConfigureSession else {
+            errorMessage = AppText.tr("Finish the current session before starting another task.")
+            return
+        }
+
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTitle.isEmpty else {
+            errorMessage = AppText.tr("Room title is required to start a PK session.")
+            return
+        }
+
+        let clampedMinutes = clampedDurationMinutes(plannedMinutes)
+        intention = trimmedTitle
+        durationMinutes = clampedMinutes
+        errorMessage = nil
+
+        if sessionState.phase == .completed || sessionState.phase == .abandoned {
+            sessionState = .idle
+            resetTracking()
+        }
+
+        dispatch(
+            .startSession(
+                intention: trimmedTitle,
+                durationSeconds: clampedMinutes * 60
+            ),
+            fallbackMessage: AppText.tr("Unable to start PK session.")
         )
     }
 
     func startTaskSession(title: String, estimatedMinutes: Int) {
         guard canConfigureSession else {
-            errorMessage = "Finish the current session before starting another task."
+            errorMessage = AppText.tr("Finish the current session before starting another task.")
             return
         }
 
         errorMessage = availableTaskSelections.isEmpty
-            ? "Create a task in Today first."
-            : "Select a Today task first."
+            ? AppText.tr("Create a task in Today first.")
+            : AppText.tr("Select a Today task first.")
     }
 
     func selectTask(_ task: FocusTask, subtask: TaskSubtask? = nil) {
@@ -402,11 +437,11 @@ final class CurrentSessionViewModel: ObservableObject {
     }
 
     func pauseSession() {
-        dispatch(.pause, fallbackMessage: "Unable to pause session.")
+        dispatch(.pause, fallbackMessage: AppText.tr("Unable to pause session."))
     }
 
     func resumeSession() {
-        dispatch(.resume, fallbackMessage: "Unable to resume session.")
+        dispatch(.resume, fallbackMessage: AppText.tr("Unable to resume session."))
     }
 
     func finishSession() {
@@ -414,11 +449,23 @@ final class CurrentSessionViewModel: ObservableObject {
     }
 
     func abandonSession() {
-        dispatch(.abandon, fallbackMessage: "Unable to abandon session.")
+        dispatch(.abandon, fallbackMessage: AppText.tr("Unable to abandon session."))
+    }
+
+    func bindPKSession(roomID: String, sessionID: String, coordinator: any PKSessionCoordinatorProtocol) {
+        self.boundPKRoomID = roomID
+        self.boundPKSessionID = sessionID
+        self.pkCoordinator = coordinator
+    }
+
+    func unbindPKSession() {
+        self.boundPKRoomID = nil
+        self.boundPKSessionID = nil
+        self.pkCoordinator = nil
     }
 
     func extendSession(byMinutes minutes: Int) {
-        dispatch(.extend(minutes: minutes), fallbackMessage: "Unable to extend session.")
+        dispatch(.extend(minutes: minutes), fallbackMessage: AppText.tr("Unable to extend session."))
     }
 
     func reloadData() {
@@ -452,7 +499,7 @@ final class CurrentSessionViewModel: ObservableObject {
             let selectedTaskSelection,
             selectedTaskSelection == selectedTaskSelectionBeforeSubmit
         else {
-            errorMessage = "Unable to continue because the selected Today task is no longer available."
+            errorMessage = AppText.tr("Unable to continue because the selected Today task is no longer available.")
             return
         }
 
@@ -461,20 +508,20 @@ final class CurrentSessionViewModel: ObservableObject {
 
     private func submitReflection(using behavior: ReflectionSubmissionBehavior) {
         guard showReflectionComposer else {
-            errorMessage = "Finish a session before submitting reflection."
+            errorMessage = AppText.tr("Finish a session before submitting reflection.")
             return
         }
         guard pendingReflectionSession != nil else {
-            errorMessage = "Unable to find the finished session."
+            errorMessage = AppText.tr("Unable to find the finished session.")
             return
         }
         guard selectedReflectionMood != nil else {
-            errorMessage = "Choose a session mood before submitting."
+            errorMessage = AppText.tr("Choose a session mood before submitting.")
             return
         }
 
         reflectionSubmissionBehavior = behavior
-        dispatch(.submitReflection, fallbackMessage: "Unable to submit reflection.")
+        dispatch(.submitReflection, fallbackMessage: AppText.tr("Unable to submit reflection."))
         reflectionSubmissionBehavior = .completeTask
     }
 
@@ -517,7 +564,7 @@ final class CurrentSessionViewModel: ObservableObject {
     private func finishSession(at eventDate: Date) {
         dispatch(
             .finishFocus,
-            fallbackMessage: "Unable to finish session.",
+            fallbackMessage: AppText.tr("Unable to finish session."),
             eventDateOverride: eventDate
         )
     }
@@ -576,6 +623,10 @@ final class CurrentSessionViewModel: ObservableObject {
             if var snapshot = sessionState.snapshot {
                 snapshot.startedAt = eventDate
                 sessionState.snapshot = snapshot
+            }
+            if let coord = pkCoordinator, let roomID = boundPKRoomID, let sessionID = boundPKSessionID {
+                let minutes = durationMinutes
+                Task { await coord.sessionDidStart(roomID: roomID, sessionID: sessionID, plannedMinutes: minutes) }
             }
 
         case .pause:
@@ -639,6 +690,7 @@ final class CurrentSessionViewModel: ObservableObject {
             pendingReflectionSession = nil
             selectedReflectionMood = nil
             resetTracking()
+            pkCoordinator?.sessionDidAbandon()
 
         case .extend, .startBreak, .skipBreak, .finishBreak:
             break
@@ -763,6 +815,8 @@ final class CurrentSessionViewModel: ObservableObject {
         if shouldCompleteSelectedTask {
             try completeSelectedTaskIfNeeded(at: reflection.endedAt)
         }
+        let focusedMinutes = max(0, Int(round(reflection.endedAt.timeIntervalSince(reflection.startedAt) / 60)))
+        pkCoordinator?.sessionDidFinish(verifiedMinutes: focusedMinutes)
         sessionNotes = ""
         selectedReflectionMood = nil
         reloadAvailableTasks()

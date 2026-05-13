@@ -63,17 +63,28 @@ final class AppShellViewModelTests: XCTestCase {
         XCTAssertEqual(
             AppSection.allCases.map(\.sidebarTitle),
             [
-                "Today",
-                "Plan",
-                "Session",
-                "White Noise",
-                "Notes",
-                "Analytics",
-                "Blocker",
-                "Trash",
-                "Settings"
+                "今日",
+                "规划",
+                "专注",
+                "白噪音",
+                "笔记",
+                "分析",
+                "对战",
+                "屏蔽",
+                "我的",
+                "设置"
             ]
         )
+    }
+
+    func testSectionTitlesAndSubtitlesAreLocalizedToChinese() {
+        XCTAssertEqual(AppSection.tasks.title, "今日")
+        XCTAssertEqual(AppSection.plan.title, "规划")
+        XCTAssertEqual(AppSection.currentSession.title, "当前专注")
+        XCTAssertEqual(AppSection.analytics.title, "数据分析")
+        XCTAssertEqual(AppSection.pk.title, "专注对战")
+        XCTAssertEqual(AppSection.account.title, "个人主页")
+        XCTAssertEqual(AppSection.settings.subtitle, "调整行为与集成功能。")
     }
 
     func testAppShellRoutesPlanSectionIntoDedicatedDashboard() throws {
@@ -97,16 +108,20 @@ final class AppShellViewModelTests: XCTestCase {
             "The Plan screen should receive the shared tasks view model so it can open the full Today task composer from subtasks."
         )
         XCTAssertTrue(
-            appShellContents.contains("case .trash"),
-            "The app shell should route the unified completed-items trash section."
+            appShellContents.contains("case .account"),
+            "The app shell should route the new account/profile section."
         )
         XCTAssertTrue(
-            appShellContents.contains("TrashDashboardView(tasksViewModel: tasksViewModel, planViewModel: planViewModel)"),
-            "The Trash section should render a dedicated dashboard for completed tasks."
+            appShellContents.contains("AccountDashboardView(viewModel: accountViewModel)"),
+            "The account section should render the profile dashboard."
+        )
+        XCTAssertFalse(
+            appShellContents.contains("case .trash"),
+            "The trash route should be removed from the app shell."
         )
     }
 
-    func testAppShellPinsTrashAndSettingsToBottomUtilityFooter() throws {
+    func testAppShellPinsAccountAndSettingsToBottomUtilityFooter() throws {
         let root = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
@@ -123,12 +138,20 @@ final class AppShellViewModelTests: XCTestCase {
             "The app shell should define a dedicated primary section collection instead of relying on allCases for the whole sidebar."
         )
         XCTAssertTrue(
-            appShellContents.contains("AppSection.allCases.filter { $0 != .trash && $0 != .settings }"),
-            "The primary sidebar collection should exclude both Trash and Settings so they can render in a fixed footer."
+            appShellContents.contains("AppSection.allCases.filter { $0 != .account && $0 != .settings }"),
+            "The primary sidebar collection should exclude both Account and Settings so they can render in a fixed footer."
         )
         XCTAssertTrue(
             appShellContents.contains("private var footerSidebarSections: [AppSection]"),
             "The app shell should define a dedicated footer collection for utility destinations."
+        )
+        XCTAssertTrue(
+            appShellContents.contains("[.account, .settings]"),
+            "The footer should contain the account avatar entry and settings entry."
+        )
+        XCTAssertFalse(
+            appShellContents.contains("[.trash, .settings]"),
+            "Trash should no longer appear in the footer."
         )
         XCTAssertTrue(
             appShellContents.contains("ForEach(footerSidebarSections)"),
@@ -136,7 +159,7 @@ final class AppShellViewModelTests: XCTestCase {
         )
         XCTAssertTrue(
             appShellContents.contains("sidebarUtilityRow(for: section)"),
-            "Trash and Settings should use a dedicated icon-only footer row style."
+            "Account and Settings should use a dedicated icon-only footer row style."
         )
     }
 
@@ -219,6 +242,30 @@ final class AppShellViewModelTests: XCTestCase {
         XCTAssertTrue(projectContents.contains("CFBundleURLTypes"))
         XCTAssertTrue(projectContents.contains("CFBundleURLSchemes"))
         XCTAssertTrue(projectContents.contains("- todayfocus"))
+    }
+
+    func testAppShellRestoresAccountSessionOnAppear() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let appShellFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/AppShell/AppShellView.swift")
+        let appShellContents = try String(contentsOf: appShellFileURL, encoding: .utf8)
+
+        XCTAssertTrue(appShellContents.contains("await accountViewModel.restoreSession()"))
+    }
+
+    func testAppShellUsesPKRepositoryFactoryForFallbackMode() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let appShellFileURL = root.appendingPathComponent("Apps/FocusSessionApp/UI/AppShell/AppShellView.swift")
+        let appShellContents = try String(contentsOf: appShellFileURL, encoding: .utf8)
+
+        XCTAssertTrue(appShellContents.contains("PKRepositoryFactory.makeRoomRepository()"))
+        XCTAssertTrue(appShellContents.contains("PKRepositoryFactory.makePKSessionRepository()"))
+        XCTAssertTrue(appShellContents.contains("PKRepositoryFactory.makeLeaderboardRepository()"))
     }
 
     func testAppShellSharesAnalyticsViewModelAndRefreshesHistoryConsumersAfterSessionSubmit() throws {

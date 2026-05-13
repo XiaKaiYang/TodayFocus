@@ -40,6 +40,11 @@ struct AppShellView: View {
     @StateObject private var analyticsViewModel: AnalyticsViewModel
     @StateObject private var blockerViewModel: BlockerViewModel
     @StateObject private var settingsViewModel: SettingsViewModel
+    @StateObject private var accountViewModel: AccountViewModel
+    @StateObject private var pkSessionCoordinator: PKSessionCoordinator
+    @StateObject private var supervisionCoordinator: SupervisionCoordinator
+    @StateObject private var roomLobbyViewModel: RoomLobbyViewModel
+    @StateObject private var leaderboardViewModel: LeaderboardViewModel
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     @State private var sectionRefreshTask: Task<Void, Never>?
     @Namespace private var sidebarSelectionAnimation
@@ -81,6 +86,11 @@ struct AppShellView: View {
         let resolvedWhiteNoiseViewModel = WhiteNoiseViewModel(
             preferencesStore: resolvedPreferencesStore
         )
+        let resolvedAccountViewModel = AccountViewModel()
+        let resolvedPKSessionCoordinator = PKSessionCoordinator()
+        let resolvedSupervisionCoordinator = SupervisionCoordinator(
+            accountViewModel: resolvedAccountViewModel
+        )
         let resolvedSettingsViewModel = SettingsViewModel(
             preferencesStore: resolvedPreferencesStore,
             onDataChanged: {
@@ -92,6 +102,7 @@ struct AppShellView: View {
                 resolvedBlockerViewModel.load()
             }
         )
+        resolvedSettingsViewModel.bindSupervisionCoordinator(resolvedSupervisionCoordinator)
 
         _viewModel = StateObject(
             wrappedValue: AppShellViewModel(
@@ -113,6 +124,26 @@ struct AppShellView: View {
         _analyticsViewModel = StateObject(wrappedValue: resolvedAnalyticsViewModel)
         _blockerViewModel = StateObject(wrappedValue: resolvedBlockerViewModel)
         _settingsViewModel = StateObject(wrappedValue: resolvedSettingsViewModel)
+        _accountViewModel = StateObject(wrappedValue: resolvedAccountViewModel)
+        _pkSessionCoordinator = StateObject(wrappedValue: resolvedPKSessionCoordinator)
+        _supervisionCoordinator = StateObject(wrappedValue: resolvedSupervisionCoordinator)
+        let resolvedRoomRepository = PKRepositoryFactory.makeRoomRepository()
+        let resolvedPKSessionRepository = PKRepositoryFactory.makePKSessionRepository()
+        _roomLobbyViewModel = StateObject(
+            wrappedValue: RoomLobbyViewModel(
+                roomRepository: resolvedRoomRepository,
+                pkSessionRepository: resolvedPKSessionRepository,
+                accountViewModel: resolvedAccountViewModel,
+                currentSessionViewModel: resolvedCurrentSessionViewModel,
+                pkSessionCoordinator: resolvedPKSessionCoordinator,
+                supervisionCoordinator: resolvedSupervisionCoordinator
+            )
+        )
+        _leaderboardViewModel = StateObject(
+            wrappedValue: LeaderboardViewModel(
+                repository: PKRepositoryFactory.makeLeaderboardRepository()
+            )
+        )
     }
 
     var body: some View {
@@ -174,6 +205,10 @@ struct AppShellView: View {
         .onAppear {
             syncBlockerWithSession()
             syncBackgroundSound()
+            Task {
+                await accountViewModel.restoreSession()
+                await settingsViewModel.refreshSupervisionEligibility()
+            }
         }
         .onOpenURL { url in
             viewModel.handleIncomingURL(url)
@@ -188,6 +223,11 @@ struct AppShellView: View {
         .onChange(of: preferencesStore.preferences) { _, _ in
             syncBackgroundSound()
         }
+        .onChange(of: accountViewModel.state) { _, _ in
+            Task {
+                await settingsViewModel.refreshSupervisionEligibility()
+            }
+        }
         .onChange(of: viewModel.selectedSection) { _, newSection in
             guard let newSection else { return }
             sectionRefreshTask?.cancel()
@@ -199,9 +239,8 @@ struct AppShellView: View {
                     planViewModel.load()
                 case .tasks:
                     tasksViewModel.load()
-                case .trash:
-                    tasksViewModel.load()
-                    planViewModel.load()
+                case .account:
+                    break
                 case .currentSession:
                     currentSessionViewModel.reloadData()
                 case .whiteNoise:
@@ -211,6 +250,8 @@ struct AppShellView: View {
                 case .analytics:
                     analyticsViewModel.load()
                 case .blocker, .settings:
+                    break
+                case .pk:
                     break
                 }
             }
@@ -232,11 +273,11 @@ struct AppShellView: View {
     }
 
     private var primarySidebarSections: [AppSection] {
-        AppSection.allCases.filter { $0 != .trash && $0 != .settings }
+        AppSection.allCases.filter { $0 != .account && $0 != .settings }
     }
 
     private var footerSidebarSections: [AppSection] {
-        [.trash, .settings]
+        [.account, .settings]
     }
 
     @ViewBuilder
@@ -258,10 +299,12 @@ struct AppShellView: View {
             NotesLibraryView(viewModel: notesViewModel)
         case .analytics:
             AnalyticsDashboardView(viewModel: analyticsViewModel)
-        case .trash:
-            TrashDashboardView(tasksViewModel: tasksViewModel, planViewModel: planViewModel)
+        case .account:
+            AccountDashboardView(viewModel: accountViewModel)
         case .settings:
             SettingsDashboardView(viewModel: settingsViewModel)
+        case .pk:
+            RoomLobbyView(viewModel: roomLobbyViewModel)
         }
     }
 
@@ -381,6 +424,12 @@ struct AppShellView: View {
 
     private func sidebarUtilityRow(for section: AppSection) -> some View {
         let isSelected = section == (viewModel.selectedSection ?? .tasks)
+        let symbolName: String = {
+            if section == .account {
+                return accountViewModel.isSignedIn ? "person.crop.circle.fill" : "person.crop.circle"
+            }
+            return section.symbolName
+        }()
 
         return Button {
             guard viewModel.selectedSection != section else { return }
@@ -388,7 +437,7 @@ struct AppShellView: View {
                 viewModel.selectedSection = section
             }
         } label: {
-            Image(systemName: section.symbolName)
+            Image(systemName: symbolName)
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(
                     isSelected ? AppSurfaceTheme.primaryText : AppSurfaceTheme.secondaryText

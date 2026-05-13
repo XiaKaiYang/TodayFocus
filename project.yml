@@ -43,8 +43,6 @@ targets:
       - path: Apps/FocusSessionApp
     dependencies:
       - package: FocusSessionCore
-      - target: FocusSessionWidget
-        embed: true
     info:
       path: Apps/FocusSessionApp/Info.plist
       properties:
@@ -54,6 +52,7 @@ targets:
             CFBundleURLSchemes:
               - todayfocus
         LSMinimumSystemVersion: "15.0"
+        NSCameraUsageDescription: TodayFocus 会使用摄像头来确认你在专注对战中的在座状态。
         NSPrincipalClass: NSApplication
         NSSupportsAutomaticTermination: true
         NSSupportsSuddenTermination: false
@@ -147,64 +146,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Helper
         PRODUCT_NAME: FocusSessionHelper
-        SKIP_INSTALL: YES
-
-  FocusSessionWidget:
-    type: app-extension
-    platform: macOS
-    sources:
-      - path: Extensions/FocusSessionWidget
-    dependencies:
-      - package: FocusSessionCore
-    info:
-      path: Extensions/FocusSessionWidget/Info.plist
-      properties:
-        CFBundleDisplayName: FocusSessionWidget
-        LSMinimumSystemVersion: "15.0"
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
-    entitlements:
-      path: Config/Entitlements/FocusSessionWidget.entitlements
-      properties:
-        com.apple.security.app-sandbox: true
-        com.apple.security.application-groups:
-          - group.com.example.FocusSession
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Widget
-        PRODUCT_NAME: FocusSessionWidget
-        SKIP_INSTALL: YES
-
-  FocusSessionIntents:
-    type: app-extension
-    platform: macOS
-    sources:
-      - path: Extensions/FocusSessionIntents
-    dependencies:
-      - package: FocusSessionCore
-    info:
-      path: Extensions/FocusSessionIntents/Info.plist
-      properties:
-        CFBundleDisplayName: FocusSessionIntents
-        LSMinimumSystemVersion: "15.0"
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.intents-service
-          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).IntentHandler
-          NSExtensionAttributes:
-            IntentsSupported:
-              - StartSessionIntent
-              - TogglePauseIntent
-              - TotalFocusTimeIntent
-    entitlements:
-      path: Config/Entitlements/FocusSessionIntents.entitlements
-      properties:
-        com.apple.security.app-sandbox: true
-        com.apple.security.application-groups:
-          - group.com.example.FocusSession
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.FocusSession.Intents
-        PRODUCT_NAME: FocusSessionIntents
         SKIP_INSTALL: YES
 
   FocusSessionSafari:

@@ -88,7 +88,7 @@ final class TasksViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.createTask())
 
         XCTAssertTrue(viewModel.isPresentingCreateSheet)
-        XCTAssertEqual(viewModel.errorMessage, "Task title is required.")
+        XCTAssertEqual(viewModel.errorMessage, "任务标题不能为空。")
     }
 
     func testStartFocusUsesTaskCallback() throws {
@@ -298,7 +298,7 @@ final class TasksViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.saveTask())
 
         XCTAssertTrue(viewModel.isPresentingCreateSheet)
-        XCTAssertEqual(viewModel.errorMessage, "End time must be later than start time.")
+        XCTAssertEqual(viewModel.errorMessage, "结束时间必须晚于开始时间。")
     }
 
     func testEditTaskCanClearExistingTimeRange() throws {

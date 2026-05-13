@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsDashboardView: View {
     @StateObject private var viewModel: SettingsViewModel
+    @State private var showPrivacySheet = false
 
     init(viewModel: SettingsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -20,9 +21,13 @@ struct SettingsDashboardView: View {
                     }
                     StartupSection(viewModel: viewModel)
                     LocalDataSection(viewModel: viewModel)
+                    SupervisionSection(viewModel: viewModel, showPrivacySheet: $showPrivacySheet)
                 }
                 .padding(28)
             }
+        }
+        .sheet(isPresented: $showPrivacySheet) {
+            SupervisionPrivacySheet(isPresented: $showPrivacySheet, eligibility: viewModel.supervisionEligibility)
         }
     }
 
@@ -348,5 +353,45 @@ private struct SettingsActionButton: View {
                 foregroundColor: foregroundColor
             )
         )
+    }
+}
+
+private struct SupervisionSection: View {
+    @ObservedObject var viewModel: SettingsViewModel
+    @Binding var showPrivacySheet: Bool
+
+    var body: some View {
+        SettingsSectionCard(
+            title: "Supervision",
+            subtitle: "AI-powered supervision verifies your presence and focus during PK sessions."
+        ) {
+            VStack(alignment: .leading, spacing: 18) {
+                HStack {
+                    Text(supervisionStatusText)
+                        .foregroundStyle(AppSurfaceTheme.primaryText)
+                    Spacer()
+                    Button("Learn More") { showPrivacySheet = true }
+                        .buttonStyle(.borderless)
+                }
+                if case .eligible = viewModel.supervisionEligibility {
+                    SettingsActionButton(
+                        title: "Withdraw Supervision",
+                        tint: Color(red: 0.80, green: 0.25, blue: 0.26),
+                        foregroundColor: .white
+                    ) {
+                        viewModel.withdrawSupervision()
+                    }
+                }
+            }
+        }
+    }
+
+    private var supervisionStatusText: String {
+        switch viewModel.supervisionEligibility {
+        case .eligible:
+            return "Supervision: Enabled"
+        case .ineligible:
+            return "Supervision: Disabled"
+        }
     }
 }

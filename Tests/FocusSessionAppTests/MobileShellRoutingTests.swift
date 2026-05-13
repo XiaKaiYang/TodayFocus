@@ -18,7 +18,7 @@ final class MobileShellRoutingTests: XCTestCase {
         XCTAssertNil(MobilePrimaryTab.more.rootSection)
         XCTAssertEqual(
             MobilePrimaryTab.moreSections,
-            [.whiteNoise, .analytics, .trash, .settings]
+            [.whiteNoise, .analytics, .account, .settings]
         )
     }
 
