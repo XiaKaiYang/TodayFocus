@@ -49,11 +49,11 @@ extension SupervisionEligibility.IneligibilityReason {
     var localizedDescription: String {
         switch self {
         case .notSignedIn:
-            return "Sign in to enable supervision."
+            return "请登录以启用监督。"
         case .cameraPermissionDenied:
-            return "Camera access is required. Grant permission in System Settings."
+            return "需要相机权限。请在系统设置中授予权限。"
         case .screenRecordingPermissionDenied:
-            return "Screen recording access is required. Grant permission in System Settings."
+            return "需要屏幕录制权限。请在系统设置中授予权限。"
         }
     }
 }

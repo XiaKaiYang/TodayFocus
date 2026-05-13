@@ -71,24 +71,24 @@ struct AnalyticsDashboardView: View {
             spacing: 16
         ) {
             analyticsCard(
-                title: "Focus Time",
+                title: "专注时长",
                 value: formatDuration(viewModel.summary.focusTimeSeconds),
-                detail: "Focused time in the selected range"
+                detail: "所选范围内的专注时长"
             )
             analyticsCard(
-                title: "Completed Sessions",
+                title: "已完成专注",
                 value: "\(viewModel.summary.completedSessionsCount)",
-                detail: "Completed focus blocks in range"
+                detail: "所选范围内完成的专注块"
             )
             analyticsCard(
-                title: "Avg Session",
+                title: "平均专注时长",
                 value: formatDuration(viewModel.summary.averageCompletedSessionSeconds),
-                detail: "Average completed focus block"
+                detail: "平均已完成专注块"
             )
             analyticsCard(
-                title: "Notes Captured",
+                title: "已记录笔记",
                 value: "\(viewModel.summary.notesCapturedCount)",
-                detail: "Completed sessions with notes"
+                detail: "记录了笔记的已完成专注"
             )
         }
     }
@@ -102,7 +102,7 @@ struct AnalyticsDashboardView: View {
             AnalyticsTrendPieChartView(
                 buckets: viewModel.trendBuckets,
                 selectedRangeTitle: viewModel.referenceTitle,
-                emptyText: "No completed focus blocks in the selected range yet."
+                emptyText: "所选范围内还没有完成的专注块。"
             )
         }
         .padding(24)
@@ -118,7 +118,7 @@ struct AnalyticsDashboardView: View {
 
             TaskBreakdownPieChartView(
                 rows: viewModel.focusRows,
-                emptyText: "No completed tasks in the selected range yet, so there is nothing to rank."
+                emptyText: "所选范围内还没有完成的任务，因此暂时没有可排名的内容。"
             )
         }
         .padding(24)
@@ -133,7 +133,7 @@ struct AnalyticsDashboardView: View {
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
             if viewModel.recentSessions.isEmpty {
-                Text("Finish a few focus blocks in the selected range and they will show up here.")
+                Text("在所选范围内完成几次专注后，它们就会显示在这里。")
                     .foregroundStyle(AppSurfaceTheme.secondaryText)
             } else {
                 ForEach(viewModel.recentSessions) { session in
@@ -171,7 +171,7 @@ struct AnalyticsDashboardView: View {
 
     private func moodSummaryCard(widthTier: AppResponsiveWidthTier) -> some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Session Mood")
+            Text(AppText.tr("Session Mood"))
                 .font(.headline)
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 

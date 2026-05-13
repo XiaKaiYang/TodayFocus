@@ -12,8 +12,8 @@ final class CurrentSessionViewSourceTests: XCTestCase {
         XCTAssertTrue(source.contains("🤩"))
         XCTAssertTrue(source.contains("😐"))
         XCTAssertTrue(source.contains("😞"))
-        XCTAssertTrue(source.contains("Submit"))
-        XCTAssertTrue(source.contains("Submit & Continue"))
+        XCTAssertTrue(source.contains("提交"))
+        XCTAssertTrue(source.contains("提交并继续"))
     }
 
     func testCurrentSessionViewUsesTodayTaskOnlySelectorCopy() throws {
@@ -22,8 +22,8 @@ final class CurrentSessionViewSourceTests: XCTestCase {
             encoding: .utf8
         )
 
-        XCTAssertTrue(source.contains("Create a task in Today first"))
-        XCTAssertTrue(source.contains("Select a Today task"))
+        XCTAssertTrue(source.contains("请先在“今日”里创建任务"))
+        XCTAssertTrue(source.contains("请选择一个“今日”任务"))
         XCTAssertFalse(source.contains("Create a task in Tasks first"))
         XCTAssertFalse(source.contains("Select a task"))
     }

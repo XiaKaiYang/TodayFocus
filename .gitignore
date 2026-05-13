@@ -1,8 +1,10 @@
 .DS_Store
+.omx/
 .playwright-cli/
 .venv-sim/
 artifacts/
 build/
+Config/LocalSigning.xcconfig
 default.profraw
 docs/plans/
 findings.md

@@ -152,9 +152,9 @@ final class AnalyticsViewModelTests: XCTestCase {
         XCTAssertTrue(dashboardSource.contains("DashboardTimeNavigator"))
         XCTAssertTrue(dashboardSource.contains("AnalyticsTrendPieChartView"))
         XCTAssertTrue(dashboardSource.contains("TaskBreakdownPieChartView"))
-        XCTAssertTrue(dashboardSource.contains("Focus Time"))
-        XCTAssertTrue(dashboardSource.contains("Completed Sessions"))
-        XCTAssertTrue(dashboardSource.contains("Notes Captured"))
+        XCTAssertTrue(dashboardSource.contains("专注时长"))
+        XCTAssertTrue(dashboardSource.contains("已完成专注"))
+        XCTAssertTrue(dashboardSource.contains("已记录笔记"))
         XCTAssertTrue(dashboardSource.contains("Session Mood"))
         XCTAssertTrue(dashboardSource.contains("viewModel.moodRows"))
         XCTAssertTrue(chartsSource.contains("onHover"))
@@ -185,11 +185,11 @@ final class AnalyticsViewModelTests: XCTestCase {
 
         XCTAssertEqual(
             DashboardTimeScope.week.title(for: now, now: now, calendar: calendar),
-            "This week"
+            "本周"
         )
         XCTAssertEqual(
             DashboardTimeScope.month.title(for: now, now: now, calendar: calendar),
-            "This month"
+            "本月"
         )
 
         guard case let .weeks(weeks) = DashboardTimeScope.week.timeStrip(
@@ -272,7 +272,7 @@ final class AnalyticsViewModelTests: XCTestCase {
 
         viewModel.setScope(.week)
 
-        XCTAssertEqual(viewModel.referenceTitle, "This week")
+        XCTAssertEqual(viewModel.referenceTitle, "本周")
         guard case let .weeks(weeks) = viewModel.timeStrip else {
             return XCTFail("Week scope should expose week cards.")
         }
@@ -281,7 +281,7 @@ final class AnalyticsViewModelTests: XCTestCase {
 
         viewModel.setScope(.month)
 
-        XCTAssertEqual(viewModel.referenceTitle, "This month")
+        XCTAssertEqual(viewModel.referenceTitle, "本月")
         guard case let .months(months) = viewModel.timeStrip else {
             return XCTFail("Month scope should expose month cards.")
         }

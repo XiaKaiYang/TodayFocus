@@ -573,7 +573,7 @@ final class PlanViewModelTests: XCTestCase {
         viewModel.subtaskDraftGoalSharePercent = "20"
 
         XCTAssertFalse(viewModel.saveSubtask())
-        XCTAssertEqual(viewModel.errorMessage, "Allocated subtask shares can't exceed 100%.")
+        XCTAssertEqual(viewModel.errorMessage, "子任务分配占比总和不能超过 100%。")
     }
 
     func testEstimatedSubtaskCanConvertToQuantifiedUsingSameProgressPercent() throws {
@@ -703,7 +703,7 @@ final class PlanViewModelTests: XCTestCase {
 
         XCTAssertFalse(viewModel.saveGoal())
         XCTAssertTrue(viewModel.isPresentingGoalSheet)
-        XCTAssertEqual(viewModel.errorMessage, "End time must be later than start time.")
+        XCTAssertEqual(viewModel.errorMessage, "结束时间必须晚于开始时间。")
     }
 
     func testTimelineScaleWindowsRespectReferenceDate() {
@@ -1079,7 +1079,7 @@ final class PlanViewModelTests: XCTestCase {
         viewModel.load()
 
         XCTAssertFalse(viewModel.confirmSelectedTaskLink())
-        XCTAssertEqual(viewModel.errorMessage, "Selected task is no longer available to link.")
+        XCTAssertEqual(viewModel.errorMessage, "所选任务已经无法关联。")
     }
 
     func testLinkableTasksIncludeVisibleDailyAndWeeklyTasks() throws {

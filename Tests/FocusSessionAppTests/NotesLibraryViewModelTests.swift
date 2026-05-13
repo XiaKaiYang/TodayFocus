@@ -275,11 +275,11 @@ final class NotesLibraryViewModelTests: XCTestCase {
             calendar: calendar
         )
 
-        XCTAssertEqual(viewModel.referenceTitle, "Today")
+        XCTAssertEqual(viewModel.referenceTitle, "今日")
 
         viewModel.setScope(.week)
 
-        XCTAssertEqual(viewModel.referenceTitle, "This week")
+        XCTAssertEqual(viewModel.referenceTitle, "本周")
         guard case let .weeks(weeks) = viewModel.timeStrip else {
             return XCTFail("Week scope should expose a five-card week strip.")
         }
@@ -295,7 +295,7 @@ final class NotesLibraryViewModelTests: XCTestCase {
 
         viewModel.setScope(.month)
 
-        XCTAssertEqual(viewModel.referenceTitle, "This month")
+        XCTAssertEqual(viewModel.referenceTitle, "本月")
         guard case let .months(months) = viewModel.timeStrip else {
             return XCTFail("Month scope should expose a five-card month strip.")
         }

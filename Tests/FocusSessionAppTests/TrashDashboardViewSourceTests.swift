@@ -1,7 +1,7 @@
 import XCTest
 
 final class TrashDashboardViewSourceTests: XCTestCase {
-    func testTrashPageOnlyOwnsCompletedTasks() throws {
+    func testTrashPageIsRemovedFromNavigationAndSource() throws {
         let root = "/Users/xiakaiyang/Documents/New project/Apps/FocusSessionApp"
         let appSectionSource = try String(
             contentsOfFile: "\(root)/UI/AppShell/AppSection.swift",
@@ -19,33 +19,22 @@ final class TrashDashboardViewSourceTests: XCTestCase {
             contentsOfFile: "\(root)/ViewModels/PlanViewModel.swift",
             encoding: .utf8
         )
-        let trashDashboardSource = try String(
-            contentsOfFile: "\(root)/UI/Trash/TrashDashboardView.swift",
-            encoding: .utf8
-        )
+        let trashDashboardPath = "\(root)/UI/Trash/TrashDashboardView.swift"
 
-        XCTAssertTrue(appSectionSource.contains("case trash"))
-        XCTAssertTrue(appSectionSource.contains("case .trash"))
-        XCTAssertTrue(appSectionSource.contains("\"app.section.trash.title\""))
-        XCTAssertTrue(appSectionSource.contains("\"trash\""))
+        XCTAssertFalse(appSectionSource.contains("case trash"))
+        XCTAssertFalse(appSectionSource.contains("case .trash"))
+        XCTAssertFalse(appSectionSource.contains("\"app.section.trash.title\""))
 
-        XCTAssertTrue(appShellSource.contains("footerSidebarSections"))
-        XCTAssertTrue(appShellSource.contains("sidebarUtilityRow(for: section)"))
-        XCTAssertTrue(appShellSource.contains("TrashDashboardView(tasksViewModel: tasksViewModel, planViewModel: planViewModel)"))
+        XCTAssertFalse(appShellSource.contains("TrashDashboardView(tasksViewModel: tasksViewModel, planViewModel: planViewModel)"))
+        XCTAssertFalse(appShellSource.contains("[.trash, .settings]"))
+        XCTAssertTrue(appShellSource.contains("[.account, .settings]"))
 
         XCTAssertTrue(planViewModelSource.contains("var activeGoals: [PlanGoal]"))
         XCTAssertTrue(planViewModelSource.contains("var noMansLandGoals: [PlanGoal]"))
         XCTAssertTrue(planViewModelSource.contains("goals.filter { !$0.status.isTerminal }"))
         XCTAssertTrue(planViewModelSource.contains("goals.filter(\\.status.isTerminal)"))
 
-        XCTAssertTrue(trashDashboardSource.contains("Completed Tasks"))
-        XCTAssertTrue(trashDashboardSource.contains("tasksViewModel.completedTasks"))
-        XCTAssertTrue(trashDashboardSource.contains("tasksViewModel.restoreTask(task)"))
-        XCTAssertTrue(trashDashboardSource.contains("tasksViewModel.deleteTask(task)"))
-        XCTAssertFalse(trashDashboardSource.contains("Completed Goals"))
-        XCTAssertFalse(trashDashboardSource.contains("planViewModel.noMansLandGoals"))
-        XCTAssertFalse(trashDashboardSource.contains("planViewModel.restoreGoal(goal)"))
-        XCTAssertFalse(trashDashboardSource.contains("planViewModel.deleteGoal(goal)"))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: trashDashboardPath))
 
         XCTAssertFalse(tasksDashboardSource.contains("isTrashCollapsed"))
         XCTAssertFalse(tasksDashboardSource.contains("trashSection"))

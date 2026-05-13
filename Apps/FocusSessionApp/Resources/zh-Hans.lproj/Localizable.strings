@@ -6,6 +6,7 @@
 "app.section.analytics.title" = "数据分析";
 "app.section.pk.title" = "专注对战";
 "app.section.blocker.title" = "屏蔽器";
+"app.section.account.title" = "个人主页";
 "app.section.trash.title" = "回收站";
 "app.section.settings.title" = "设置";
 
@@ -16,6 +17,7 @@
 "app.section.analytics.sidebar" = "分析";
 "app.section.pk.sidebar" = "对战";
 "app.section.blocker.sidebar" = "屏蔽";
+"app.section.account.sidebar" = "我的";
 "app.section.trash.sidebar" = "回收站";
 
 "app.section.tasks.subtitle" = "整理并安排今天的任务。";
@@ -26,6 +28,7 @@
 "app.section.analytics.subtitle" = "回顾趋势与节奏。";
 "app.section.pk.subtitle" = "进入受监督的专注对战房间。";
 "app.section.blocker.subtitle" = "管理分心屏蔽规则。";
+"app.section.account.subtitle" = "查看资料、简介与对战战绩。";
 "app.section.trash.subtitle" = "查看已完成任务。";
 "app.section.settings.subtitle" = "调整行为与集成功能。";
 
@@ -36,6 +39,9 @@
 "Notes" = "笔记";
 "Analytics" = "分析";
 "White Noise" = "白噪音";
+"Control background sound, session sound, session end sound, break sound, and break end sound from one dedicated workspace." = "在一个专用空间里统一管理背景声、专注提示音、专注结束音、休息提示音和休息结束音。";
+"Suggested starting points include Clock Ticking, Ocean Waves, and Gong." = "推荐从 Clock Ticking、Ocean Waves 和 Gong 这几种声音开始。";
+"Volume" = "音量";
 "Trash" = "回收站";
 "Settings" = "设置";
 "Blocker" = "屏蔽器";
@@ -81,8 +87,45 @@
 "Supervision Privacy" = "监督隐私";
 "Launch Destination" = "启动页面";
 "Plan Goal Subtasks" = "规划目标子任务";
+"Focus Defaults" = "专注默认值";
+"Change the base duration that the dial and new sessions start from." = "调整表盘和新专注默认开始时使用的基础时长。";
+"Default Focus" = "默认专注时长";
+"Adjust in 5-minute steps" = "每次以 5 分钟调整";
+"Blocker Automation" = "屏蔽自动化";
+"Let the blocker follow the focus lifecycle without overriding manual control." = "让屏蔽器跟随专注流程自动变化，同时保留手动控制。";
+"Automatically enable blocker while a focus session is active" = "专注进行中时自动启用屏蔽";
+"Startup" = "启动";
+"Pick the section the app should land on when there is no explicit launch override." = "当没有显式启动页覆盖时，选择应用默认进入的页面。";
+"Default Collapsed" = "默认折叠";
+"Default Expanded" = "默认展开";
+"Recent Sessions" = "最近专注";
+"History rows on Current Session" = "当前专注页中的历史条数";
+"Local Data" = "本地数据";
+"Synced Data" = "同步数据";
+"Clear specific slices without touching the rest, or wipe the full local workspace." = "可以单独清除某类数据，也可以一次性清空整个本地工作空间。";
+"Clear specific slices from the shared CloudKit-backed data set without changing your local display preferences." = "可以清除共享的 CloudKit 数据，但不会影响当前设备的显示偏好。";
+"Focus" = "专注";
+"Tasks" = "任务";
+"Goals" = "目标";
+"Rules" = "规则";
+"Blocked Hits" = "屏蔽命中";
+"Clear Focus History" = "清空专注历史";
+"Clear Synced Focus History" = "清空同步专注历史";
+"Clear Completed Tasks" = "清空已完成任务";
+"Clear Synced Completed Tasks" = "清空已同步的已完成任务";
+"Clear Blocker Activity" = "清空屏蔽记录";
+"Reset All Local Data" = "重置全部本地数据";
+"Reset All Synced Data" = "重置全部同步数据";
+"Supervision" = "监督";
+"AI-powered supervision verifies your presence and focus during PK sessions." = "AI 监督会在专注对战中验证你的在座状态与专注情况。";
+"Supervision: Enabled" = "监督：已启用";
+"Supervision: Disabled" = "监督：未启用";
+"Withdraw Supervision" = "撤回监督授权";
+"Blocker stays on macOS for this version of TodayFocus." = "当前版本的 TodayFocus 里，屏蔽器仅支持 macOS。";
 "Timeline" = "时间线";
 "Goals" = "目标";
+"Plan" = "规划";
+"Create a new subtask" = "创建新子任务";
 "Subtasks" = "子任务";
 "Subtask Metrics" = "子任务指标";
 "Tracking Mode" = "跟踪模式";
@@ -101,6 +144,11 @@
 "Active during break" = "休息时生效";
 "Enable local app blocking" = "启用本地应用屏蔽";
 "Recent Blocked Attempts" = "最近屏蔽记录";
+"Local app rules are live. Keep this page open while you tune the first focus-safe rule set." = "本地应用屏蔽规则已生效。保持这个页面打开，方便你调整第一套适合专注的规则。";
+"Quick Add Rule" = "快速添加规则";
+"Rules" = "规则";
+"No blocker rules yet. Add the first app or website you want to control." = "还没有屏蔽规则，先添加第一个想要控制的应用或网站吧。";
+"Switch to a blocked app while blocker is enabled and the event log will appear here." = "当屏蔽功能开启后，切到受限应用时，这里会出现事件记录。";
 "Background sound" = "背景声音";
 "Session sound" = "专注开始提示音";
 "Session end sound" = "专注结束提示音";
@@ -160,6 +208,7 @@
 "Try Again" = "再试一次";
 
 "Current Session" = "当前专注";
+"Today Task" = "今日任务";
 "Set your focus length" = "设置专注时长";
 "History Notes" = "历史笔记";
 "No history notes yet. Finish one focused session and the note will appear here." = "还没有历史笔记。完成一次专注后，笔记会显示在这里。";
@@ -204,6 +253,7 @@
 "This week" = "本周";
 "This Month by Week" = "本月按周";
 "This month" = "本月";
+"Finish a few focus blocks in the selected range and they will show up here." = "在所选时间范围内完成几次专注后，数据就会显示在这里。";
 "Top Tasks Today" = "今日高频任务";
 "Top Tasks This Week" = "本周高频任务";
 "Top Tasks This Month" = "本月高频任务";
@@ -262,10 +312,18 @@
 "No tasks yet" = "还没有任务";
 "No active tasks" = "当前没有任务";
 "No tasks for tomorrow" = "明天没有任务";
+"Create" = "创建";
+"Edit" = "编辑";
+"Select" = "选择";
+"Linked" = "已关联";
+"Linked Subtask" = "关联子任务";
+"Priority" = "优先级";
+"Repeat" = "重复";
+"Repeat day" = "重复日";
+"Repeat count" = "重复次数";
 "Add subtask" = "添加子任务";
 "Repeat day" = "重复星期";
 "Repeat count" = "重复次数";
-"Linked Subtask" = "关联子任务";
 "Review completed tasks." = "查看已完成任务。";
 
 "Unable to load goals." = "无法加载目标。";
@@ -305,20 +363,36 @@
 "On Hold" = "暂停中";
 "Estimated" = "估算";
 "Quantified" = "量化";
-"No active goals right now." = "当前没有进行中的目标。";
 "No Man's Land" = "目标缓冲区";
+"Move Left" = "左移";
+"Move Right" = "右移";
+"No active goals right now." = "当前没有进行中的目标。";
 "No completed or unfinished goals drifting here yet." = "这里还没有已完成或未完成的目标。";
 "This goal does not have subtasks yet. Add subtasks from the expanded goal list, then return here to rebalance allocation." = "这个目标还没有子任务。请先在展开后的目标列表中添加子任务，再回来调整占比。";
+"Allocation Across Subtasks" = "子任务占比分配";
 "Choose Estimated when you only know the rough share of the goal, then switch to Quantified once the metric becomes clear." = "如果你现在只知道大概占比，就先选“估算”；等指标明确后，再切换成“量化”。";
 "Save the subtask, then create or link Today tasks here." = "先保存子任务，再在这里创建或关联“今日”任务。";
 "No current Today tasks or repeating tasks are available to link." = "当前没有可关联的“今日”任务或重复任务。";
 "Select an existing Today task or repeating task. If it is already linked to another subtask, linking here will move it." = "选择一个已有的“今日”任务或重复任务。如果它已经关联到别的子任务，重新关联后会转移过来。";
+"Link Existing Task" = "关联已有任务";
+"Link" = "关联";
+"Unlink" = "取消关联";
 "Contribution %@" = "贡献值 %@";
 
 "Unable to load notes." = "无法加载笔记。";
 "Unable to delete note." = "无法删除笔记。";
 "Delete" = "删除";
 "No data yet." = "还没有数据。";
+"Restore" = "恢复";
+"Review completed tasks, then restore them or delete them permanently." = "查看已完成任务，并选择恢复或永久删除。";
+"Settings" = "设置";
+"Learn More" = "了解更多";
+"Supervision Privacy" = "监督隐私";
+"Action Required" = "需要操作";
+"Join Room" = "加入房间";
+"Enter the invite code shared by the room host." = "输入房主分享的邀请码。";
+"Done" = "完成";
+"minutes" = "分钟";
 
 "Clock Ticking" = "时钟滴答";
 "Duskfall On A River" = "河畔黄昏";

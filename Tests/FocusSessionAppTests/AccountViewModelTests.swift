@@ -58,6 +58,20 @@ final class AccountViewModelTests: XCTestCase {
         XCTAssertEqual(vm.state, .signedOut)
     }
 
+    func testUpdateBioPersistsIntoCurrentProfile() async throws {
+        let stub = StubAccountService()
+        stub.stubbedIdentity = AccountIdentity(userID: "u4", displayName: "Dana", email: nil)
+        let profileRepo = StubUserPublicProfileRepository()
+        let vm = makeViewModel(accountService: stub, profileRepository: profileRepo)
+
+        await vm.restoreSession()
+        try await vm.updateBio("专注对战产品设计者")
+
+        XCTAssertEqual(vm.currentProfile?.bio, "专注对战产品设计者")
+        let saved = await profileRepo.profiles["u4"]
+        XCTAssertEqual(saved?.bio, "专注对战产品设计者")
+    }
+
     private func makeViewModel(
         accountService: any AccountServicing = StubAccountService(),
         profileRepository: any UserPublicProfileRepositoryProtocol = StubUserPublicProfileRepository(),

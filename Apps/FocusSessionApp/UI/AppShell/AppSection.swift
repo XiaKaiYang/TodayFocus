@@ -22,7 +22,7 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
     case analytics
     case pk
     case blocker
-    case trash
+    case account
     case settings
 
     var id: Self { self }
@@ -37,7 +37,7 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             .analytics,
             .pk,
             .blocker,
-            .trash,
+            .account,
             .settings
         ]
     }
@@ -75,7 +75,7 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
     static func launchDestinationSections(on platform: AppPlatform) -> [AppSection] {
         availableSections(on: platform).filter {
             switch $0 {
-            case .trash, .settings:
+            case .account, .settings:
                 false
             case .tasks, .plan, .currentSession, .whiteNoise, .notes, .analytics, .pk, .blocker:
                 true
@@ -101,8 +101,8 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             AppText.tr("app.section.pk.title")
         case .blocker:
             AppText.tr("app.section.blocker.title")
-        case .trash:
-            AppText.tr("app.section.trash.title")
+        case .account:
+            AppText.tr("app.section.account.title")
         case .settings:
             AppText.tr("app.section.settings.title")
         }
@@ -120,12 +120,12 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             AppText.tr("app.section.whiteNoise.sidebar")
         case .pk:
             AppText.tr("app.section.pk.sidebar")
-        case .trash:
-            AppText.tr("app.section.trash.sidebar")
         case .analytics:
             AppText.tr("app.section.analytics.sidebar")
         case .blocker:
             AppText.tr("app.section.blocker.sidebar")
+        case .account:
+            AppText.tr("app.section.account.sidebar")
         default:
             title
         }
@@ -149,8 +149,8 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             AppText.tr("app.section.pk.subtitle")
         case .blocker:
             AppText.tr("app.section.blocker.subtitle")
-        case .trash:
-            AppText.tr("app.section.trash.subtitle")
+        case .account:
+            AppText.tr("app.section.account.subtitle")
         case .settings:
             AppText.tr("app.section.settings.subtitle")
         }
@@ -174,8 +174,8 @@ enum AppSection: String, CaseIterable, Hashable, Identifiable {
             "person.2.fill"
         case .blocker:
             "hand.raised"
-        case .trash:
-            "trash"
+        case .account:
+            "person.crop.circle"
         case .settings:
             "gearshape"
         }

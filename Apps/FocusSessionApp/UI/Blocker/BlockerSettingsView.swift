@@ -29,16 +29,16 @@ struct BlockerSettingsView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Blocker")
+            Text("屏蔽器")
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
-            Text("Local app rules are live. Keep this page open while you tune the first focus-safe rule set.")
+            Text("本地屏蔽规则已经生效。你可以在这里调整专注时的软件与网站屏蔽方案。")
                 .font(.title3)
                 .foregroundStyle(AppSurfaceTheme.secondaryText)
 
             Toggle(isOn: $viewModel.isBlockingEnabled) {
-                Text("Enable local app blocking")
+                Text("启用本地应用屏蔽")
                     .font(.headline)
                     .foregroundStyle(AppSurfaceTheme.primaryText)
             }
@@ -55,31 +55,31 @@ struct BlockerSettingsView: View {
     private var summaryCards: some View {
         HStack(spacing: 16) {
             blockerMetricCard(
-                title: "App Rules",
+                title: "应用规则",
                 value: "\(viewModel.appRules.count)",
-                detail: "Rules targeting native apps"
+                detail: "当前面向软件的规则数量"
             )
             blockerMetricCard(
-                title: "Website Rules",
+                title: "网站规则",
                 value: "\(viewModel.domainRules.count)",
-                detail: "Ready for Safari export"
+                detail: "当前面向网站的规则数量"
             )
             blockerMetricCard(
-                title: "Blocked Hits",
-                value: "\(viewModel.recentEvents.count)",
-                detail: "Recent distraction attempts"
+                title: "屏蔽状态",
+                value: viewModel.isBlockingEnabled ? "已开启" : "已关闭",
+                detail: "专注中会按规则自动生效"
             )
             blockerMetricCard(
-                title: "Last Hit",
-                value: viewModel.lastBlockedAppName ?? "None",
-                detail: "Most recent blocked app"
+                title: "最近命中",
+                value: viewModel.lastBlockedAppName ?? "暂无",
+                detail: "最近一次被拦截的软件"
             )
         }
     }
 
     private var ruleComposer: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Quick Add Rule")
+            Text("快速添加规则")
                 .font(.headline)
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
@@ -98,9 +98,9 @@ struct BlockerSettingsView: View {
             ) { mode in
                 switch mode {
                 case .deny:
-                    "Deny"
+                    "屏蔽"
                 case .allow:
-                    "Allow"
+                    "放行"
                 }
             }
 
@@ -110,16 +110,16 @@ struct BlockerSettingsView: View {
             )
 
             Toggle(isOn: $viewModel.activeDuringFocus) {
-                Text("Active during focus")
+                Text("专注时生效")
                     .foregroundStyle(AppSurfaceTheme.primaryText)
             }
 
             Toggle(isOn: $viewModel.activeDuringBreak) {
-                Text("Active during break")
+                Text("休息时生效")
                     .foregroundStyle(AppSurfaceTheme.primaryText)
             }
 
-            Button("Save Rule") {
+            Button("保存规则") {
                 viewModel.createRule()
             }
             .buttonStyle(AppAccentButtonStyle())
@@ -131,17 +131,17 @@ struct BlockerSettingsView: View {
 
     private var rulesOverview: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Rules")
+            Text("规则概览")
                 .font(.headline)
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
             if viewModel.rules.isEmpty {
-                Text("No blocker rules yet. Add the first app or website you want to control.")
+                Text("还没有任何规则，先添加第一个想要控制的软件或网站。")
                     .foregroundStyle(AppSurfaceTheme.secondaryText)
             } else {
-                ruleSection(title: "Apps", rules: viewModel.appRules)
+                ruleSection(title: "软件", rules: viewModel.appRules)
                 Divider()
-                ruleSection(title: "Websites", rules: viewModel.domainRules)
+                ruleSection(title: "网站", rules: viewModel.domainRules)
             }
         }
         .padding(24)
@@ -156,7 +156,7 @@ struct BlockerSettingsView: View {
                 .foregroundStyle(AppSurfaceTheme.secondaryText)
 
             if rules.isEmpty {
-                Text("None")
+                Text("暂无")
                     .foregroundStyle(AppSurfaceTheme.secondaryText)
             } else {
                 ForEach(rules) { rule in
@@ -177,7 +177,7 @@ struct BlockerSettingsView: View {
 
                         Spacer()
 
-                        Button("Delete") {
+                        Button("删除") {
                             viewModel.deleteRule(rule)
                         }
                         .buttonStyle(
@@ -195,34 +195,30 @@ struct BlockerSettingsView: View {
 
     private var eventsCard: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Recent Blocked Attempts")
+            Text("屏蔽统计")
                 .font(.headline)
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
-            if viewModel.recentEvents.isEmpty {
-                Text("Switch to a blocked app while blocker is enabled and the event log will appear here.")
-                    .foregroundStyle(AppSurfaceTheme.secondaryText)
-            } else {
-                ForEach(viewModel.recentEvents) { event in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(eventTitle(event))
-                                .font(.headline)
-                                .foregroundStyle(AppSurfaceTheme.primaryText)
-                            Text(event.occurredAt, format: .dateTime.month(.abbreviated).day().hour().minute())
-                                .font(.caption)
-                                .foregroundStyle(AppSurfaceTheme.secondaryText)
-                        }
-
-                        Spacer()
-                    }
-                    .padding(.vertical, 4)
-                }
-            }
+            blockerCountRow(title: "软件已屏蔽", value: viewModel.blockedAppCount)
+            blockerCountRow(title: "网站已屏蔽", value: viewModel.blockedWebsiteCount)
         }
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppCardSurface(style: .standard, cornerRadius: 28))
+    }
+
+    private func blockerCountRow(title: String, value: Int) -> some View {
+        HStack {
+            Text(title)
+                .font(.system(size: 15, weight: .medium, design: .rounded))
+                .foregroundStyle(AppSurfaceTheme.secondaryText)
+
+            Spacer()
+
+            Text("\(value) 次")
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .foregroundStyle(AppSurfaceTheme.primaryText)
+        }
     }
 
     private func blockerMetricCard(title: String, value: String, detail: String) -> some View {
@@ -252,19 +248,10 @@ struct BlockerSettingsView: View {
     }
 
     private func ruleSubtitle(_ rule: BlockingRule) -> String {
-        let modeText = rule.mode == .deny ? "Deny list" : "Allow list"
-        let focusText = rule.activeDuringFocus ? "Focus" : ""
-        let breakText = rule.activeDuringBreak ? "Break" : ""
+        let modeText = rule.mode == .deny ? "屏蔽名单" : "放行名单"
+        let focusText = rule.activeDuringFocus ? "专注" : ""
+        let breakText = rule.activeDuringBreak ? "休息" : ""
         let activeText = [focusText, breakText].filter { !$0.isEmpty }.joined(separator: " + ")
         return activeText.isEmpty ? modeText : "\(modeText) · \(activeText)"
-    }
-
-    private func eventTitle(_ event: DistractionEvent) -> String {
-        switch event.kind {
-        case let .blockedApp(name):
-            "Blocked app: \(name)"
-        case let .blockedWebsite(host):
-            "Blocked website: \(host)"
-        }
     }
 }

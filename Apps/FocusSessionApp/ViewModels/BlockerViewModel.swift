@@ -128,6 +128,22 @@ final class BlockerViewModel: ObservableObject {
         }
     }
 
+    var blockedAppCount: Int {
+        recentEvents.reduce(into: 0) { count, event in
+            if case .blockedApp = event.kind {
+                count += 1
+            }
+        }
+    }
+
+    var blockedWebsiteCount: Int {
+        recentEvents.reduce(into: 0) { count, event in
+            if case .blockedWebsite = event.kind {
+                count += 1
+            }
+        }
+    }
+
     func load() {
         do {
             rules = try rulesRepository.fetchAll()

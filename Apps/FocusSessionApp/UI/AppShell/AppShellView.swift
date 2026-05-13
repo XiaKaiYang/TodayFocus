@@ -239,9 +239,8 @@ struct AppShellView: View {
                     planViewModel.load()
                 case .tasks:
                     tasksViewModel.load()
-                case .trash:
-                    tasksViewModel.load()
-                    planViewModel.load()
+                case .account:
+                    break
                 case .currentSession:
                     currentSessionViewModel.reloadData()
                 case .whiteNoise:
@@ -274,11 +273,11 @@ struct AppShellView: View {
     }
 
     private var primarySidebarSections: [AppSection] {
-        AppSection.allCases.filter { $0 != .trash && $0 != .settings }
+        AppSection.allCases.filter { $0 != .account && $0 != .settings }
     }
 
     private var footerSidebarSections: [AppSection] {
-        [.trash, .settings]
+        [.account, .settings]
     }
 
     @ViewBuilder
@@ -300,8 +299,8 @@ struct AppShellView: View {
             NotesLibraryView(viewModel: notesViewModel)
         case .analytics:
             AnalyticsDashboardView(viewModel: analyticsViewModel)
-        case .trash:
-            TrashDashboardView(tasksViewModel: tasksViewModel, planViewModel: planViewModel)
+        case .account:
+            AccountDashboardView(viewModel: accountViewModel)
         case .settings:
             SettingsDashboardView(viewModel: settingsViewModel)
         case .pk:
@@ -425,6 +424,12 @@ struct AppShellView: View {
 
     private func sidebarUtilityRow(for section: AppSection) -> some View {
         let isSelected = section == (viewModel.selectedSection ?? .tasks)
+        let symbolName: String = {
+            if section == .account {
+                return accountViewModel.isSignedIn ? "person.crop.circle.fill" : "person.crop.circle"
+            }
+            return section.symbolName
+        }()
 
         return Button {
             guard viewModel.selectedSection != section else { return }
@@ -432,7 +437,7 @@ struct AppShellView: View {
                 viewModel.selectedSection = section
             }
         } label: {
-            Image(systemName: section.symbolName)
+            Image(systemName: symbolName)
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(
                     isSelected ? AppSurfaceTheme.primaryText : AppSurfaceTheme.secondaryText

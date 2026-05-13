@@ -55,6 +55,22 @@ final class AccountViewModel: ObservableObject {
         state = .signedOut
     }
 
+    func updateBio(_ bio: String) async throws {
+        guard case let .ready(identity, profile) = state else {
+            throw AccountProfileUpdateError.notReady
+        }
+
+        let trimmedBio = bio.trimmingCharacters(in: .whitespacesAndNewlines)
+        var updatedProfile = profile
+        updatedProfile.bio = trimmedBio
+
+        if cloudProfileSyncAvailabilityProvider() {
+            try await profileRepository.upsert(updatedProfile)
+        }
+
+        state = .ready(identity, updatedProfile)
+    }
+
     var currentUserID: String? {
         switch state {
         case .ready(let identity, _):
@@ -113,6 +129,17 @@ final class AccountViewModel: ObservableObject {
             }
         } catch {
             state = .error(error.localizedDescription)
+        }
+    }
+}
+
+enum AccountProfileUpdateError: LocalizedError {
+    case notReady
+
+    var errorDescription: String? {
+        switch self {
+        case .notReady:
+            return "账户资料尚未准备好。"
         }
     }
 }

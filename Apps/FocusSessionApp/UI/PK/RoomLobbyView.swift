@@ -167,7 +167,7 @@ struct RoomLobbyView: View {
                     Text(room.title)
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundStyle(AppSurfaceTheme.primaryText)
-                    Text(AppText.format("%d min table · %@", room.plannedMinutes, room.status.rawValue.capitalized))
+                    Text(AppText.format("%d min table · %@", room.plannedMinutes, localizedRoomStatusText(room.status)))
                         .font(.system(size: 15, weight: .medium, design: .rounded))
                         .foregroundStyle(AppSurfaceTheme.secondaryText)
                 }
@@ -343,7 +343,7 @@ struct RoomLobbyView: View {
                     }
 
                     VStack(spacing: 6) {
-                        Text(table.status == .running ? "In Match" : "Waiting")
+                        Text(table.status == .running ? "进行中" : "等待中")
                             .font(.system(size: 12, weight: .bold, design: .rounded))
                             .foregroundStyle(Color(red: 0.26, green: 0.20, blue: 0.13))
 
@@ -363,7 +363,7 @@ struct RoomLobbyView: View {
             VStack(spacing: 0) {
                 HStack(alignment: .top) {
                     if table.isCurrentUsersTable {
-                        Text("Resume")
+                        Text("继续")
                             .font(.system(size: 11, weight: .bold, design: .rounded))
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
@@ -371,7 +371,7 @@ struct RoomLobbyView: View {
                                 Capsule(style: .continuous)
                                     .fill(Color(red: 0.84, green: 0.58, blue: 0.44))
                             )
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(Color(red: 0.35, green: 0.19, blue: 0.09))
                     }
 
                     Spacer()
@@ -506,7 +506,7 @@ struct RoomLobbyView: View {
     }
 
     private func sourceBadge(_ source: PKTableSource) -> some View {
-        Text(source == .live ? "Live" : "Local")
+        Text(source == .live ? "实时" : "本地")
             .font(.system(size: 11, weight: .semibold, design: .rounded))
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
@@ -518,7 +518,7 @@ struct RoomLobbyView: View {
     }
 
     private func statusBadge(_ status: PKTableStatus) -> some View {
-        Text(status.rawValue.capitalized)
+        Text(localizedTableStatusText(status))
             .font(.system(size: 11, weight: .bold, design: .rounded))
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
@@ -526,7 +526,7 @@ struct RoomLobbyView: View {
                 Capsule(style: .continuous)
                     .fill(statusFillColor(for: status))
             )
-            .foregroundStyle(Color.white)
+            .foregroundStyle(Color(red: 0.30, green: 0.20, blue: 0.12))
     }
 
     private func statusFillColor(for status: PKTableStatus) -> Color {
@@ -553,7 +553,7 @@ struct RoomLobbyView: View {
         }
         .disabled(isDisabled)
         .font(.system(size: 15, weight: .semibold, design: .rounded))
-        .foregroundStyle(tint == nil ? AppSurfaceTheme.primaryText : Color.white)
+        .foregroundStyle(tint == nil ? AppSurfaceTheme.primaryText : AppSurfaceTheme.accentText)
         .background(
             Group {
                 if let tint {
@@ -571,7 +571,7 @@ struct RoomLobbyView: View {
 
     private func inviteCard(code: String) -> some View {
         VStack(alignment: .trailing, spacing: 4) {
-            Text("Invite Code")
+            Text("邀请码")
                 .font(.system(size: 11, weight: .medium, design: .rounded))
                 .foregroundStyle(Color(red: 0.42, green: 0.30, blue: 0.18).opacity(0.82))
             Text(code)
@@ -609,17 +609,17 @@ struct RoomLobbyView: View {
                     .font(.system(size: 15, weight: .bold, design: .rounded))
                     .foregroundStyle(Color(red: 0.31, green: 0.24, blue: 0.16).opacity(0.82))
             } else {
-                Text("Ready Table")
+                Text("准备桌")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
                     .foregroundStyle(Color(red: 0.26, green: 0.18, blue: 0.11))
-                Text("Everyone is seated. Start the round from the middle of the table.")
+                Text("成员已就座。可以从桌面中央开始本轮专注。")
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 0.33, green: 0.25, blue: 0.17).opacity(0.82))
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 320)
 
                 if viewModel.currentMembership?.role == .owner {
-                    Button("Start Session") {
+                    Button("开始专注") {
                         Task { await viewModel.startSession() }
                     }
                     .disabled(!viewModel.canStartSession)
@@ -694,12 +694,12 @@ struct RoomLobbyView: View {
                         .foregroundStyle(Color(red: 0.42, green: 0.30, blue: 0.18))
                 }
             } else {
-                Text("Empty Seat")
+                Text("空位")
                     .font(.system(size: 13, weight: .semibold, design: .rounded))
-                    .foregroundStyle(Color.white.opacity(0.72))
-                Text("Open")
+                    .foregroundStyle(Color(red: 0.45, green: 0.34, blue: 0.23).opacity(0.82))
+                Text("开放")
                     .font(.system(size: 12, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color.white.opacity(0.52))
+                    .foregroundStyle(Color(red: 0.54, green: 0.42, blue: 0.30).opacity(0.72))
             }
         }
         .frame(width: 148, height: 88)
@@ -717,49 +717,105 @@ struct RoomLobbyView: View {
 
     private func seatStatusLabel(for member: RoomMemberRecord) -> String {
         if member.readyState == .ready && viewModel.currentRoom?.status == .lobby {
-            return "Ready"
+            return "准备完成"
         }
 
         switch member.currentSeatState {
         case .present:
             switch member.currentActivityState {
             case .active:
-                return "Present"
+                return "在座"
             case .inactive:
-                return "Inactive"
+                return "无活动"
             case .unknown:
-                return "Present"
+                return "在座"
             }
         case .away:
-            return "Away"
+            return "离开"
         case .unknown:
-            return "Waiting"
+            return "等待中"
         }
     }
 
     private func seatStatusColor(for member: RoomMemberRecord) -> Color {
-        switch seatStatusLabel(for: member) {
-        case "Ready", "Present":
+        if member.readyState == .ready && viewModel.currentRoom?.status == .lobby {
             return Color(red: 0.31, green: 0.69, blue: 0.41)
-        case "Inactive":
-            return Color(red: 0.60, green: 0.53, blue: 0.50)
-        case "Away":
+        }
+
+        switch member.currentSeatState {
+        case .present:
+            switch member.currentActivityState {
+            case .inactive:
+                return Color(red: 0.60, green: 0.53, blue: 0.50)
+            case .active, .unknown:
+                return Color(red: 0.31, green: 0.69, blue: 0.41)
+            }
+        case .away:
             return Color(red: 0.86, green: 0.57, blue: 0.24)
-        default:
-            return Color.white.opacity(0.70)
+        case .unknown:
+            return Color(red: 0.67, green: 0.58, blue: 0.48)
+        }
+    }
+
+    private func localizedTableStatusText(_ status: PKTableStatus) -> String {
+        switch status {
+        case .open:
+            return "开放"
+        case .running:
+            return "进行中"
+        case .full:
+            return "已满"
+        }
+    }
+
+    private func localizedRoomStatusText(_ status: RoomStatus) -> String {
+        switch status {
+        case .lobby:
+            return "等待中"
+        case .running:
+            return "进行中"
+        case .ended:
+            return "已结束"
+        case .cancelled:
+            return "已取消"
+        }
+    }
+
+    private func statusBadge(_ status: RoomStatus) -> some View {
+        Text(localizedRoomStatusText(status))
+            .font(.system(size: 11, weight: .bold, design: .rounded))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(statusFillColor(for: status))
+            )
+            .foregroundStyle(Color(red: 0.30, green: 0.20, blue: 0.12))
+    }
+
+    private func statusFillColor(for status: RoomStatus) -> Color {
+        switch status {
+        case .lobby:
+            return Color(red: 0.56, green: 0.69, blue: 0.58)
+        case .running:
+            return Color(red: 0.84, green: 0.64, blue: 0.46)
+        case .ended:
+            return Color(red: 0.73, green: 0.68, blue: 0.63)
+        case .cancelled:
+            return Color(red: 0.60, green: 0.53, blue: 0.50)
         }
     }
 
     private var createRoomSheet: some View {
         VStack(spacing: 20) {
-            Text("Create Table")
+            Text("创建房间")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
-            TextField("Room Title", text: $newRoomTitle)
+            TextField("房间标题", text: $newRoomTitle)
                 .textFieldStyle(.roundedBorder)
 
-            Stepper("Duration: \(newRoomMinutes) min", value: $newRoomMinutes, in: 5...120, step: 5)
+            Stepper("时长：\(newRoomMinutes) 分钟", value: $newRoomMinutes, in: 5...120, step: 5)
                 .font(.system(size: 14, weight: .medium, design: .rounded))
                 .foregroundStyle(AppSurfaceTheme.primaryText)
 
@@ -768,7 +824,7 @@ struct RoomLobbyView: View {
                     .buttonStyle(.plain)
                     .foregroundStyle(AppSurfaceTheme.secondaryText)
 
-                Button("Create") {
+                Button("创建") {
                     showCreateSheet = false
                     Task { await viewModel.createRoom(title: newRoomTitle, plannedMinutes: newRoomMinutes) }
                 }
