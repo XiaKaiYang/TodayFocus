@@ -15,11 +15,13 @@ final class DistractionEventRepository {
         try modelContext.save()
     }
 
-    func fetchAll(limit: Int = 50) throws -> [DistractionEvent] {
+    func fetchAll(limit: Int? = nil) throws -> [DistractionEvent] {
         var descriptor = FetchDescriptor<StoredDistractionEvent>(
             sortBy: [SortDescriptor(\.occurredAt, order: .reverse)]
         )
-        descriptor.fetchLimit = limit
+        if let limit {
+            descriptor.fetchLimit = limit
+        }
         return try modelContext.fetch(descriptor).map(\.domainModel)
     }
 

@@ -118,8 +118,28 @@ final class SettingsViewModel: ObservableObject {
             errorMessage = nil
         } catch {
             dataSummary = SettingsDataSummary()
-            errorMessage = "Unable to load settings data."
+            errorMessage = AppText.tr("Unable to load settings data.")
         }
+    }
+
+    // Supervision section
+    @Published private(set) var supervisionEligibility: SupervisionEligibility = .ineligible(reasons: [.notSignedIn])
+    private var supervisionCoordinator: (any SupervisionCoordinatorProtocol)?
+
+    func bindSupervisionCoordinator(_ coordinator: any SupervisionCoordinatorProtocol) {
+        supervisionCoordinator = coordinator
+        supervisionEligibility = coordinator.eligibility
+    }
+
+    func refreshSupervisionEligibility() async {
+        guard let supervisionCoordinator else { return }
+        await supervisionCoordinator.checkPermissions()
+        supervisionEligibility = supervisionCoordinator.eligibility
+    }
+
+    func withdrawSupervision() {
+        supervisionCoordinator?.stopSupervision()
+        supervisionEligibility = .ineligible(reasons: [.notSignedIn])
     }
 
     private func performDataChange(_ change: () throws -> Void) {
@@ -129,7 +149,7 @@ final class SettingsViewModel: ObservableObject {
             onDataChanged?()
             errorMessage = nil
         } catch {
-            errorMessage = "Unable to apply settings change."
+            errorMessage = AppText.tr("Unable to apply settings change.")
         }
     }
 }

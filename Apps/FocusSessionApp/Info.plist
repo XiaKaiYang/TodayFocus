@@ -33,6 +33,8 @@
 	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>15.0</string>
+	<key>NSCameraUsageDescription</key>
+	<string>TodayFocus 会使用摄像头来确认你在专注对战中的在座状态。</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>NSSupportsAutomaticTermination</key>

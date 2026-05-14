@@ -14,7 +14,7 @@ final class WhiteNoiseDashboardViewSourceTests: XCTestCase {
 
         XCTAssertTrue(appSectionSource.contains("case whiteNoise"))
         XCTAssertTrue(appSectionSource.contains("case .whiteNoise"))
-        XCTAssertTrue(appSectionSource.contains("\"White Noise\""))
+        XCTAssertTrue(appSectionSource.contains("\"app.section.whiteNoise.title\""))
         XCTAssertTrue(appSectionSource.contains("\"speaker.wave.3\""))
 
         XCTAssertTrue(appShellSource.contains("@StateObject private var whiteNoiseViewModel"))

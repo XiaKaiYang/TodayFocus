@@ -16,8 +16,8 @@ final class CurrentSessionViewModelTests: XCTestCase {
 
         harness.viewModel.startSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Focusing")
-        XCTAssertEqual(harness.viewModel.remainingMinutesText, "25 min")
+        XCTAssertEqual(harness.viewModel.phaseText, "专注中")
+        XCTAssertEqual(harness.viewModel.remainingMinutesText, "25 分钟")
         XCTAssertNil(harness.viewModel.errorMessage)
     }
 
@@ -49,10 +49,10 @@ final class CurrentSessionViewModelTests: XCTestCase {
 
         harness.viewModel.startSession()
         harness.viewModel.pauseSession()
-        XCTAssertEqual(harness.viewModel.phaseText, "Paused")
+        XCTAssertEqual(harness.viewModel.phaseText, "已暂停")
 
         harness.viewModel.resumeSession()
-        XCTAssertEqual(harness.viewModel.phaseText, "Focusing")
+        XCTAssertEqual(harness.viewModel.phaseText, "专注中")
     }
 
     func testExtendSessionIncreasesRemainingMinutes() throws {
@@ -67,7 +67,7 @@ final class CurrentSessionViewModelTests: XCTestCase {
         harness.viewModel.startSession()
         harness.viewModel.extendSession(byMinutes: 5)
 
-        XCTAssertEqual(harness.viewModel.remainingMinutesText, "30 min")
+        XCTAssertEqual(harness.viewModel.remainingMinutesText, "30 分钟")
     }
 
     func testFinishSessionTransitionsIntoReflecting() throws {
@@ -83,7 +83,7 @@ final class CurrentSessionViewModelTests: XCTestCase {
         harness.viewModel.startSession()
         harness.viewModel.finishSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Reflecting")
+        XCTAssertEqual(harness.viewModel.phaseText, "复盘中")
         XCTAssertTrue(harness.viewModel.showReflectionComposer)
         XCTAssertNil(harness.viewModel.errorMessage)
         XCTAssertEqual(
@@ -105,7 +105,7 @@ final class CurrentSessionViewModelTests: XCTestCase {
         harness.viewModel.pauseSession()
         harness.viewModel.finishSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Reflecting")
+        XCTAssertEqual(harness.viewModel.phaseText, "复盘中")
         XCTAssertTrue(harness.viewModel.showReflectionComposer)
         XCTAssertNil(harness.viewModel.errorMessage)
     }
@@ -148,8 +148,8 @@ final class CurrentSessionViewModelTests: XCTestCase {
         harness.viewModel.selectTask(secondTask)
         harness.viewModel.startSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Focusing")
-        XCTAssertEqual(harness.viewModel.remainingMinutesText, "25 min")
+        XCTAssertEqual(harness.viewModel.phaseText, "专注中")
+        XCTAssertEqual(harness.viewModel.remainingMinutesText, "25 分钟")
         XCTAssertNil(harness.viewModel.errorMessage)
     }
 
@@ -205,8 +205,8 @@ final class CurrentSessionViewModelTests: XCTestCase {
 
         harness.viewModel.startSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Idle")
-        XCTAssertEqual(harness.viewModel.errorMessage, "Create a task in Today first.")
+        XCTAssertEqual(harness.viewModel.phaseText, "空闲")
+        XCTAssertEqual(harness.viewModel.errorMessage, "请先在“今日”里创建任务。")
     }
 
     func testStartSessionRequiresSelectedTodayTaskWhenTodayTasksExist() throws {
@@ -221,8 +221,8 @@ final class CurrentSessionViewModelTests: XCTestCase {
 
         harness.viewModel.startSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Idle")
-        XCTAssertEqual(harness.viewModel.errorMessage, "Select a Today task first.")
+        XCTAssertEqual(harness.viewModel.phaseText, "空闲")
+        XCTAssertEqual(harness.viewModel.errorMessage, "请先选择一个“今日”任务。")
     }
 
     func testStartSessionRequiresDurationAboveZero() throws {
@@ -237,8 +237,8 @@ final class CurrentSessionViewModelTests: XCTestCase {
 
         harness.viewModel.startSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Idle")
-        XCTAssertEqual(harness.viewModel.errorMessage, "Turn the dial above 0 first.")
+        XCTAssertEqual(harness.viewModel.phaseText, "空闲")
+        XCTAssertEqual(harness.viewModel.errorMessage, "请先把表盘调到 0 以上。")
     }
 
     func testSelectTaskLoadsTodayPendingTasksAndConfiguresSession() throws {
@@ -398,7 +398,7 @@ final class CurrentSessionViewModelTests: XCTestCase {
         currentDate.addTimeInterval(10 * 60)
         harness.viewModel.finishSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Reflecting")
+        XCTAssertEqual(harness.viewModel.phaseText, "复盘中")
         XCTAssertTrue(harness.viewModel.showReflectionComposer)
         let records = try harness.focusRepository.fetchAll()
         XCTAssertEqual(records.count, 0)
@@ -648,8 +648,8 @@ final class CurrentSessionViewModelTests: XCTestCase {
         XCTAssertEqual(records.count, 1)
         XCTAssertEqual(records.first?.notes, "Need one more block.")
         XCTAssertEqual(records.first?.mood, .focused)
-        XCTAssertEqual(harness.viewModel.phaseText, "Focusing")
-        XCTAssertEqual(harness.viewModel.remainingMinutesText, "25 min")
+        XCTAssertEqual(harness.viewModel.phaseText, "专注中")
+        XCTAssertEqual(harness.viewModel.remainingMinutesText, "25 分钟")
         XCTAssertEqual(harness.viewModel.selectedTaskID, task.id)
         XCTAssertEqual(harness.viewModel.currentIntention, "Study policy iteration")
         XCTAssertTrue(try XCTUnwrap(harness.tasksRepository.task(id: task.id)).isCompleted == false)
@@ -712,7 +712,7 @@ final class CurrentSessionViewModelTests: XCTestCase {
         XCTAssertFalse(storedTask.isCompleted)
         XCTAssertEqual(storedTask.linkedSubtaskID, subtask.id)
         XCTAssertNil(storedTask.settledLinkedSubtaskID)
-        XCTAssertEqual(viewModel.phaseText, "Focusing")
+        XCTAssertEqual(viewModel.phaseText, "专注中")
 
         let refreshedGoal = try XCTUnwrap(try planRepository.fetchAll().first)
         XCTAssertEqual(refreshedGoal.subtasks.first?.baselineValue, 0)
@@ -736,9 +736,9 @@ final class CurrentSessionViewModelTests: XCTestCase {
 
         harness.viewModel.submitReflectionAndContinueEpisode()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Completed")
+        XCTAssertEqual(harness.viewModel.phaseText, "已完成")
         XCTAssertFalse(harness.viewModel.showReflectionComposer)
-        XCTAssertEqual(harness.viewModel.errorMessage, "Unable to continue because the selected Today task is no longer available.")
+        XCTAssertEqual(harness.viewModel.errorMessage, "无法继续，因为所选“今日”任务已经不可用。")
         XCTAssertNil(harness.viewModel.selectedTaskSelection)
         XCTAssertEqual(try harness.focusRepository.fetchAll().count, 1)
     }
@@ -759,7 +759,7 @@ final class CurrentSessionViewModelTests: XCTestCase {
         harness.viewModel.submitReflection()
         harness.viewModel.prepareNextSession()
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Idle")
+        XCTAssertEqual(harness.viewModel.phaseText, "空闲")
         XCTAssertEqual(harness.viewModel.sessionNotes, "")
         XCTAssertNil(harness.viewModel.selectedTaskID)
     }
@@ -779,7 +779,7 @@ final class CurrentSessionViewModelTests: XCTestCase {
         harness.viewModel.handleTimelineTick(at: currentDate)
         harness.viewModel.handleTimelineTick(at: currentDate.addingTimeInterval(1))
 
-        XCTAssertEqual(harness.viewModel.phaseText, "Reflecting")
+        XCTAssertEqual(harness.viewModel.phaseText, "复盘中")
         XCTAssertTrue(harness.viewModel.showReflectionComposer)
         XCTAssertEqual(try harness.focusRepository.fetchAll().count, 0)
     }

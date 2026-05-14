@@ -54,11 +54,11 @@ enum TaskRepeatRule: String, CaseIterable, Equatable, Hashable, Codable {
     var title: String {
         switch self {
         case .none:
-            "None"
+            AppText.tr("None")
         case .daily:
-            "Daily"
+            AppText.tr("Daily")
         case .weekly:
-            "Weekly"
+            AppText.tr("Weekly")
         }
     }
 }
@@ -75,19 +75,19 @@ enum TaskRepeatWeekday: Int, CaseIterable, Equatable, Hashable, Codable {
     var title: String {
         switch self {
         case .sunday:
-            "Sunday"
+            AppText.tr("Sunday")
         case .monday:
-            "Monday"
+            AppText.tr("Monday")
         case .tuesday:
-            "Tuesday"
+            AppText.tr("Tuesday")
         case .wednesday:
-            "Wednesday"
+            AppText.tr("Wednesday")
         case .thursday:
-            "Thursday"
+            AppText.tr("Thursday")
         case .friday:
-            "Friday"
+            AppText.tr("Friday")
         case .saturday:
-            "Saturday"
+            AppText.tr("Saturday")
         }
     }
 

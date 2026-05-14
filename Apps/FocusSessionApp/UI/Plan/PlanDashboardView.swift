@@ -195,7 +195,7 @@ struct PlanDashboardView: View {
                 Button {
                     viewModel.setTimelineMonthSpan(monthSpan)
                 } label: {
-                    Text("\(monthSpan)M")
+                    Text(AppText.format("%dM", monthSpan))
                         .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(
                             isSelected
@@ -833,7 +833,7 @@ struct PlanDashboardView: View {
                 .frame(height: 10)
 
                 HStack(alignment: .center, spacing: 12) {
-                    Text("\(viewModel.completedSubtaskCount(for: goal)) / \(goal.subtasks.count) subtasks complete")
+                    Text(AppText.format("%d / %d subtasks complete", viewModel.completedSubtaskCount(for: goal), goal.subtasks.count))
                         .font(.system(size: 13, weight: .medium, design: .rounded))
                         .foregroundStyle(AppSurfaceTheme.tertiaryText)
 
@@ -1236,7 +1236,7 @@ struct PlanDashboardView: View {
                                                     .font(.system(size: 14, weight: .semibold, design: .rounded))
                                                     .foregroundStyle(AppSurfaceTheme.primaryText)
 
-                                                Text("Contribution \(PlanViewModel.formatMetricValue(task.contributionValue ?? 0))")
+                                                Text(AppText.format("Contribution %@", PlanViewModel.formatMetricValue(task.contributionValue ?? 0)))
                                                     .font(.system(size: 12, weight: .medium, design: .rounded))
                                                     .foregroundStyle(AppSurfaceTheme.tertiaryText)
                                             }

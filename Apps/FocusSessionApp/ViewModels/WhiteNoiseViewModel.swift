@@ -121,9 +121,10 @@ final class WhiteNoiseViewModel: ObservableObject {
 
     private static func displayTitle(for assetName: String) -> String {
         let baseName = URL(fileURLWithPath: assetName).deletingPathExtension().lastPathComponent
-        return baseName
+        let normalizedTitle = baseName
             .replacingOccurrences(of: "_", with: " ")
             .replacingOccurrences(of: "-", with: " ")
             .localizedCapitalized
+        return AppText.tr(normalizedTitle)
     }
 }

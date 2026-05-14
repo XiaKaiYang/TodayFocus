@@ -1,6 +1,6 @@
 # TodayFocus
 
-TodayFocus is a SwiftUI focus planner for macOS and iOS. It combines daily task capture, longer-horizon planning, active focus sessions, white noise, notes, analytics, distraction blocking, and widget support in one codebase.
+TodayFocus is a SwiftUI focus planner for macOS and iOS. It combines daily task capture, longer-horizon planning, active focus sessions, white noise, notes, analytics, distraction blocking, account surfaces, and PK focus rooms in one codebase.
 
 ## Screenshots
 
@@ -20,19 +20,18 @@ TodayFocus is a SwiftUI focus planner for macOS and iOS. It combines daily task 
 - White-noise and sound cue support for focus sessions
 - Notes and analytics views for reviewing progress
 - macOS blocker module for distraction control
-- Shared widget data pipeline for goal-progress widgets
+- Account dashboard and public profile plumbing
+- PK room, leaderboard, and supervision scaffolding
 - `todayfocus://` deep link support for routing into the app
-- Shared Swift package (`FocusSessionCore`) for domain logic and widget data models
+- Shared Swift package (`FocusSessionCore`) for domain logic and routing models
 
 ## Project Structure
 
 - `Apps/FocusSessionApp`: macOS app target
 - `Apps/FocusSessionMobileApp`: iOS app target
 - `Apps/FocusSessionHelper`: macOS helper target
-- `Extensions/FocusSessionWidget`: widget extension
-- `Extensions/FocusSessionIntents`: intents extension
 - `Extensions/FocusSessionSafari`: Safari extension
-- `Packages/FocusSessionCore`: shared domain models, reducers, routing, and widget snapshot storage
+- `Packages/FocusSessionCore`: shared domain models, reducers, and routing
 - `Tests`: app-level tests
 
 ## Build
@@ -79,7 +78,8 @@ You can run package tests from Xcode, or use the app test targets after generati
 
 This repository snapshot includes:
 
-- goal-progress widget plumbing and snapshot storage
-- widget sync from the plan view model
-- deep-link routing for `todayfocus://plan`
+- Chinese UI copy and localized strings
+- account navigation and profile surfaces
+- PK room, leaderboard, and supervision scaffolding
+- CloudKit repository models for PK and supervision data
 - project config updates for optional local signing
